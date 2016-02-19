@@ -43,38 +43,10 @@ namespace AppGeoFit.DataAccesLayer.Data
              }
              catch (Exception ex)
              {
+                // Debug.WriteLine(@"				ERROR {0}", ex.Message);
                 throw new Exception(ex.Message);
              }
              return responseAsPlayer;
-        }
-
-        /*public Player GetPlayerSync(int PlayerId)
-        {
-            var uri = new Uri(string.Format(Constants.RestUrl + "Players/player/{0}", PlayerId));
-
-            try
-            {
-                HttpResponseMessage response = client.GetAsync(uri).Result;
-                
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseAsString = response.Content.ToString();
-                    Debug.WriteLine("{0}", responseAsString);
-                    responseAsPlayer = JsonConvert.DeserializeObject<Player>(responseAsString);
-
-                }
-                else
-                {
-                    Debug.WriteLine("Estado de la respuesta http : " + response.StatusCode);
-                }
-            }
-            catch (Exception ex)
-            {
-                // Debug.WriteLine(@"				ERROR {0}", ex.Message);
-                throw new Exception(ex.Message);
-            }
-            return responseAsPlayer;
-        }*/
-    
+        }    
     }
 }

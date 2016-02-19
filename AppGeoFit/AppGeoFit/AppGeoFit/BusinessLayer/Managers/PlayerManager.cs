@@ -9,7 +9,7 @@ namespace AppGeoFit.BusinessLayer.Managers
 {
     public class PlayerManager
     {
-        IRestService restService;
+        readonly IRestService restService;
         public PlayerManager()
         {
             restService = DependencyService.Get<RestService>();
@@ -20,11 +20,6 @@ namespace AppGeoFit.BusinessLayer.Managers
         {
             return restService.GetPlayerAsync(PlayerId);
         }
-
-       /* public Player GetPlayerSync(int PlayerId)
-        {
-            return restService.GetPlayerSync(PlayerId);
-        }*/
 
     }
 }

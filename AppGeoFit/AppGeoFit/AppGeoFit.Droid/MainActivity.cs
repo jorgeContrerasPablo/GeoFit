@@ -32,14 +32,8 @@ namespace AppGeoFit.Droid
 
             SetContentView(Resource.Layout.MainActivity);
             
-            TextView text = FindViewById<TextView>(Resource.Id.textView1);
+           // TextView text = FindViewById<TextView>(Resource.Id.textView1);
 
-            player = playerManager.GetPlayer(11).Result;
-            if (player != null)
-            {
-                text.Text = "Id : " + player.PlayerId;
-            }
-            else { text.Text = "Id : " + 0; }
            
         }
 	}
