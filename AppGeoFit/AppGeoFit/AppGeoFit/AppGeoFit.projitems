@@ -9,9 +9,16 @@
     <Import_RootNamespace>AppGeoFit</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="$(MSBuildThisFileDirectory)App.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\PlayerManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\IRestService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\RestService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Player.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)GettingStarted.Xamarin" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\" />
   </ItemGroup>
 </Project>

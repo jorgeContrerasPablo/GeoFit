@@ -23,7 +23,7 @@ namespace AppGeoFit.iOS
 		public override bool FinishedLaunching(UIApplication app, NSDictionary options)
 		{
 			global::Xamarin.Forms.Forms.Init ();
-			LoadApplication (new AppGeoFit.App ());
+			//LoadApplication (new AppGeoFit.App ());
 
 			return base.FinishedLaunching (app, options);
 		}
