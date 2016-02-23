@@ -21,5 +21,19 @@ namespace AppGeoFit.BusinessLayer.Managers
             return restService.GetPlayerAsync(PlayerId);
         }
 
+        public Task<int> CreatePlayer(Player player)
+        {
+            return restService.CreatePlayerAsync(player);
+        }
+
+        public Task<Boolean> DeletePlayer(int PlayerId)
+        {
+            return restService.DeletePlayerAsync(PlayerId);
+        }
+
+        public Task<Boolean> UpdatePlayer(Player player)
+        {
+            return restService.UpdatePlayerAsync(player);
+        }
     }
 }

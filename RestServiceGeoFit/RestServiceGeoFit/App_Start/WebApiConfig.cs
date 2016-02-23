@@ -17,7 +17,7 @@ namespace RestServiceGeoFit.App_Start
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
                 routeTemplate: "api/{controller}/{action}/{PlayerId}",
-                defaults: new { id = RouteParameter.Optional }
+                defaults: new { PlayerId = RouteParameter.Optional }
             );
         }
     }

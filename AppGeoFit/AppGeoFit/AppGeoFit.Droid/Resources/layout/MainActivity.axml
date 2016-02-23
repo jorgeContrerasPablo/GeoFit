@@ -4,7 +4,7 @@
     p1:minHeight="25px"
     p1:layout_width="match_parent"
     p1:layout_height="match_parent"
-    p1:id="@+id/tabHost1">
+    p1:id="@+id/tabHost">
     <LinearLayout
         p1:layout_width="match_parent"
         p1:layout_height="match_parent"
@@ -21,15 +21,62 @@
             <LinearLayout
                 p1:layout_width="match_parent"
                 p1:layout_height="match_parent"
-                p1:id="@+id/linearLayout2" />
+                p1:orientation="vertical"
+                p1:id="@+id/linearLayout2"
+                p1:minWidth="25px"
+                p1:minHeight="25px">
+                <Button
+                    p1:text="Button"
+                    p1:layout_width="match_parent"
+                    p1:layout_height="wrap_content"
+                    p1:id="@+id/button1" />
+                <TextView
+                    p1:text="Text"
+                    p1:layout_width="match_parent"
+                    p1:layout_height="wrap_content"
+                    p1:id="@+id/textView1" />
+                <Button
+                    p1:text="Button"
+                    p1:layout_width="match_parent"
+                    p1:layout_height="wrap_content"
+                    p1:id="@+id/button2" />
+                <TextView
+                    p1:text="Text"
+                    p1:layout_width="match_parent"
+                    p1:layout_height="wrap_content"
+                    p1:id="@+id/textView2" />
+            </LinearLayout>
             <LinearLayout
                 p1:layout_width="match_parent"
                 p1:layout_height="match_parent"
-                p1:id="@+id/linearLayout3" />
+                p1:orientation="vertical"
+                p1:id="@+id/linearLayout3"
+                p1:minWidth="25px"
+                p1:minHeight="25px" />
             <LinearLayout
                 p1:layout_width="match_parent"
                 p1:layout_height="match_parent"
-                p1:id="@+id/linearLayout4" />
+                p1:orientation="vertical"
+                p1:id="@+id/linearLayout4"
+                p1:layout_marginTop="0.0dp"
+                p1:layout_marginRight="0.0dp">
+                <TextView
+                    p1:text="Text"
+                    p1:layout_width="188.0dp"
+                    p1:layout_height="72.0dp"
+                    p1:id="@+id/Name" />
+                <TextView
+                    p1:text="Text"
+                    p1:layout_width="184.0dp"
+                    p1:layout_height="76.0dp"
+                    p1:layout_below="@+id/textView1"
+                    p1:id="@+id/Nick" />
+                <TextView
+                    p1:text="Text"
+                    p1:layout_width="match_parent"
+                    p1:layout_height="63.5dp"
+                    p1:id="@+id/LastName" />
+            </LinearLayout>
         </FrameLayout>
     </LinearLayout>
 </TabHost>

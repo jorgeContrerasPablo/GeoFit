@@ -21,8 +21,8 @@ namespace AppGeoFit
         public int PhoneNum { get; set; }
 
         public string PlayerMail { get; set; }
-
-        public Guid PhotoId { get; set; }
+        //TODO
+//        public Guid PhotoId { get; set; }
 
         public double Level { get; set; }
 

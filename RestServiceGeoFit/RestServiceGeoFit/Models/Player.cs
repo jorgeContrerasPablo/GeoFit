@@ -29,11 +29,13 @@ namespace RestServiceGeoFit.Models
         [Required]
         public string PlayerMail { get; set; }
 
-        public Guid PhotoId { get; set; }
+        //public Guid PhotoId { get; set; }
 
         public double Level { get; set; }
 
         public double MedOnTime { get; set; }
+
+       // public int FavoriteSport { get; set; }
 
         //public ICollection<Game> Games { get; set; }
 
