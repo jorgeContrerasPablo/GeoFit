@@ -18,7 +18,7 @@ namespace AppGeoFit.WinPhone
 			SupportedOrientations = SupportedPageOrientation.PortraitOrLandscape;
 
 			global::Xamarin.Forms.Forms.Init ();
-			LoadApplication (new AppGeoFit.App ());
+		//	LoadApplication (new AppGeoFit.App ());
 		}
 	}
 }

@@ -11,14 +11,12 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\PlayerManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\IRestService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\RestService.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Player.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\Exceptions\PlayerNotFoundException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\IPlayerRestService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\PlayerRestService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\Player.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)GettingStarted.Xamarin" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\" />
   </ItemGroup>
 </Project>

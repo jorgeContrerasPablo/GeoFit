@@ -207,6 +207,7 @@
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Models\FeedBack.cs" />
     <Compile Include="Models\Game.cs" />
+    <Compile Include="Models\Managers\Player\Exceptions\PlayerNotFoundException.cs" />
     <Compile Include="Models\Photo.cs" />
     <Compile Include="Models\Place.cs" />
     <Compile Include="Models\Sport.cs" />
@@ -218,7 +219,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\Player.cs" />
-    <Compile Include="Models\PlayerManager.cs" />
+    <Compile Include="Models\Managers\Player\PlayerManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Startup.cs" />
   </ItemGroup>

@@ -1,82 +1,223 @@
 <?xml version="1.0" encoding="utf-8"?>
-<TabHost xmlns:p1="http://schemas.android.com/apk/res/android"
-    p1:minWidth="25px"
-    p1:minHeight="25px"
-    p1:layout_width="match_parent"
-    p1:layout_height="match_parent"
-    p1:id="@+id/tabHost">
+<TabHost xmlns:android="http://schemas.android.com/apk/res/android"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/tabHost">
     <LinearLayout
-        p1:layout_width="match_parent"
-        p1:layout_height="match_parent"
-        p1:orientation="vertical"
-        p1:id="@+id/linearLayout1">
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:id="@+id/linearLayout1">
         <TabWidget
-            p1:id="@android:id/tabs"
-            p1:layout_width="match_parent"
-            p1:layout_height="wrap_content" />
+            android:id="@android:id/tabs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content" />
         <FrameLayout
-            p1:id="@android:id/tabcontent"
-            p1:layout_width="match_parent"
-            p1:layout_height="match_parent">
+            android:id="@android:id/tabcontent"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
             <LinearLayout
-                p1:layout_width="match_parent"
-                p1:layout_height="match_parent"
-                p1:orientation="vertical"
-                p1:id="@+id/linearLayout2"
-                p1:minWidth="25px"
-                p1:minHeight="25px">
-                <Button
-                    p1:text="Button"
-                    p1:layout_width="match_parent"
-                    p1:layout_height="wrap_content"
-                    p1:id="@+id/button1" />
-                <TextView
-                    p1:text="Text"
-                    p1:layout_width="match_parent"
-                    p1:layout_height="wrap_content"
-                    p1:id="@+id/textView1" />
-                <Button
-                    p1:text="Button"
-                    p1:layout_width="match_parent"
-                    p1:layout_height="wrap_content"
-                    p1:id="@+id/button2" />
-                <TextView
-                    p1:text="Text"
-                    p1:layout_width="match_parent"
-                    p1:layout_height="wrap_content"
-                    p1:id="@+id/textView2" />
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/PlayerProfileL"
+                android:layout_marginTop="0.0dp"
+                android:layout_marginRight="0.0dp">
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:minWidth="25px"
+                    android:minHeight="25px"
+                    android:layout_width="match_parent"
+                    android:layout_height="61.0dp"
+                    android:id="@+id/NameL">
+                    <TextView
+                        android:text="Name"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_width="87.5dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/LabelName"
+                        android:gravity="center"
+                        android:layout_marginRight="30.0dp" />
+                    <TextView
+                        android:text="Text"
+                        android:id="@+id/Name"
+                        android:gravity="center"
+                        android:layout_width="71.0dp"
+                        android:layout_height="match_parent" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:minWidth="25px"
+                    android:minHeight="25px"
+                    android:id="@+id/NickL"
+                    android:layout_width="match_parent"
+                    android:layout_height="61.0dp">
+                    <TextView
+                        android:text="Nick"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_width="87.5dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/LabelNick"
+                        android:gravity="center"
+                        android:layout_marginRight="30.0dp" />
+                    <TextView
+                        android:text="Text"
+                        android:id="@+id/Nick"
+                        android:layout_width="71.0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:minWidth="25px"
+                    android:minHeight="25px"
+                    android:layout_width="match_parent"
+                    android:layout_height="61.0dp"
+                    android:id="@+id/LastNameL">
+                    <TextView
+                        android:text="LastName"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_width="87.5dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/LabelLastName"
+                        android:gravity="center"
+                        android:layout_marginRight="30.0dp" />
+                    <TextView
+                        android:text="Text"
+                        android:id="@+id/LastName"
+                        android:layout_width="71.0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:minWidth="25px"
+                    android:minHeight="25px"
+                    android:layout_width="match_parent"
+                    android:layout_height="61.0dp"
+                    android:id="@+id/PhoneNumberL">
+                    <TextView
+                        android:text="PhoneNumber"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_width="87.5dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/LabelPhoneNumber"
+                        android:gravity="center"
+                        android:layout_marginRight="30.0dp" />
+                    <TextView
+                        android:text="Text"
+                        android:id="@+id/PhoneNumber"
+                        android:layout_width="71.0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:minWidth="25px"
+                    android:minHeight="25px"
+                    android:layout_width="match_parent"
+                    android:layout_height="61.0dp"
+                    android:id="@+id/EmailL">
+                    <TextView
+                        android:text="Email"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_width="87.5dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/LabelEmail"
+                        android:gravity="center"
+                        android:layout_marginRight="30.0dp" />
+                    <TextView
+                        android:text="Text"
+                        android:id="@+id/Email"
+                        android:layout_width="71.0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:minWidth="25px"
+                    android:minHeight="25px"
+                    android:layout_width="match_parent"
+                    android:layout_height="94.0dp"
+                    android:id="@+id/RatingL">
+                    <TextView
+                        android:text="Rating"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_width="87.5dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/LabelRating"
+                        android:gravity="center"
+                        android:layout_marginRight="30.0dp" />
+                    <RatingBar
+                        android:numStars="5"
+                        android:stepSize="0.1"
+                        style="?android:attr/ratingBarStyleIndicator"
+                        android:id="@+id/ratingBar"
+                        android:layout_width="wrap_content"
+                        android:layout_height="46.5dp"
+                        android:gravity="center"
+                        android:layout_marginTop="18.0dp" />
+                </LinearLayout>
+                <LinearLayout
+                    android:orientation="horizontal"
+                    android:minWidth="25px"
+                    android:minHeight="25px"
+                    android:layout_width="match_parent"
+                    android:layout_height="61.0dp"
+                    android:id="@+id/OnTimeL">
+                    <TextView
+                        android:text="OnTime"
+                        android:textAppearance="?android:attr/textAppearanceMedium"
+                        android:layout_width="87.5dp"
+                        android:layout_height="match_parent"
+                        android:id="@+id/LabelOnTime"
+                        android:gravity="center"
+                        android:layout_marginRight="30.0dp" />
+                    <TextView
+                        android:text="Text"
+                        android:id="@+id/OnTime"
+                        android:layout_width="71.0dp"
+                        android:layout_height="match_parent"
+                        android:gravity="center" />
+                </LinearLayout>
             </LinearLayout>
             <LinearLayout
-                p1:layout_width="match_parent"
-                p1:layout_height="match_parent"
-                p1:orientation="vertical"
-                p1:id="@+id/linearLayout3"
-                p1:minWidth="25px"
-                p1:minHeight="25px" />
-            <LinearLayout
-                p1:layout_width="match_parent"
-                p1:layout_height="match_parent"
-                p1:orientation="vertical"
-                p1:id="@+id/linearLayout4"
-                p1:layout_marginTop="0.0dp"
-                p1:layout_marginRight="0.0dp">
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/Games"
+                android:minWidth="25px"
+                android:minHeight="25px">
+                <Button
+                    android:text="Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button1" />
                 <TextView
-                    p1:text="Text"
-                    p1:layout_width="188.0dp"
-                    p1:layout_height="72.0dp"
-                    p1:id="@+id/Name" />
+                    android:text="Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView1" />
+                <Button
+                    android:text="Button"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/button2" />
                 <TextView
-                    p1:text="Text"
-                    p1:layout_width="184.0dp"
-                    p1:layout_height="76.0dp"
-                    p1:layout_below="@+id/textView1"
-                    p1:id="@+id/Nick" />
-                <TextView
-                    p1:text="Text"
-                    p1:layout_width="match_parent"
-                    p1:layout_height="63.5dp"
-                    p1:id="@+id/LastName" />
+                    android:text="Text"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:id="@+id/textView2" />
             </LinearLayout>
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="vertical"
+                android:id="@+id/linearLayout3"
+                android:minWidth="25px"
+                android:minHeight="25px" />
         </FrameLayout>
     </LinearLayout>
 </TabHost>

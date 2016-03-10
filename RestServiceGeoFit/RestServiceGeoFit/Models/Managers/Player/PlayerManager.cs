@@ -6,13 +6,27 @@ using System.Linq;
 using System.Web;
 using RestServiceGeoFit.Models;
 using System.Data;
+using RestServiceGeoFit.Models.Managers.Player.Exceptions;
 
 namespace RestServiceGeoFit.Models
 {
     public class PlayerManager
     {
-        readonly SqlConnection con = new SqlConnection(Constants.SqlCon);       
+        readonly SqlConnection con;
         AuxFunctions auxfunction = new AuxFunctions();
+
+        public PlayerManager(bool test)
+        {
+            if (test)
+            {
+                con = new SqlConnection(Constants.SqlConTest);
+            }
+            else
+            {
+                con = new SqlConnection(Constants.SqlCon);
+            }
+
+        }
 
         public Player GetPlayer(int PlayerId)
         {
@@ -30,34 +44,36 @@ namespace RestServiceGeoFit.Models
                 selectCommand = con.CreateCommand();
                 selectCommand.Connection = con;
 
+                //TODO Photo
                 selectCommand.CommandText =
                     "SELECT PlayerId,Password,PlayerNick, PlayerName, LastName, PhoneNum, PlayerMail, Level, MedOnTime " +
                     "FROM Player " +
                     "WHERE PlayerId = @playerid";
 
                 selectCommand.Transaction = transaction;
-                
+
                 selectCommand.Parameters.Add(auxfunction.createParameter("@playerid", PlayerId, selectCommand, DbType.Int32));
 
                 DbDataReader dataReader = selectCommand.ExecuteReader();
-               
+
                 if (!dataReader.HasRows)
                 {
                     dataReader.Close();
-                    throw new Exception("Error in data base acces!");
+                    throw new PlayerNotFoundException(PlayerId);
                 }
 
-               
+
                 while (dataReader.Read())
                 {
                     player.PlayerId = dataReader.GetInt32(0);
                     player.Password = dataReader.GetString(1);
                     player.PlayerNick = dataReader.GetString(2);
                     player.PlayerName = dataReader.GetString(3);
-                    player.LastName = dataReader.IsDBNull(4) ? String.Empty:dataReader.GetString(4);
+                    player.LastName = dataReader.IsDBNull(4) ? String.Empty : dataReader.GetString(4);
                     player.PhoneNum = dataReader.GetInt32(5);
                     player.PlayerMail = dataReader.GetString(6);
-//                    player.PhotoId = dataReader.IsDBNull(7) ? Guid.Empty:dataReader.GetGuid(7);
+                    //TODO
+                    //                    player.PhotoId = dataReader.IsDBNull(7) ? Guid.Empty:dataReader.GetGuid(7);
                     player.Level = dataReader.IsDBNull(7) ? new double() : dataReader.GetDouble(7);
                     player.MedOnTime = dataReader.IsDBNull(8) ? new double() : dataReader.GetDouble(8);
                 }
@@ -203,7 +219,7 @@ namespace RestServiceGeoFit.Models
             return (response == 1);
         }
 
-        public  bool UpdatePlayer(Player player)
+        public bool UpdatePlayer(Player player)
         {
             DbCommand selectCommand;
             bool commited = false;
@@ -224,9 +240,9 @@ namespace RestServiceGeoFit.Models
                 selectCommand.CommandText =
                     "UPDATE Player " +
                     "SET Password = @Password, PlayerNick = @PlayerNick, PlayerName = @PlayerName," +
-                    " LastName = @LastName, PhoneNum = @PhoneNum, PlayerMail = @PlayerMail, Level = @Level, MedOnTime= @MedOnTime "+
+                    " LastName = @LastName, PhoneNum = @PhoneNum, PlayerMail = @PlayerMail, Level = @Level, MedOnTime= @MedOnTime " +
                     "WHERE PlayerID = @PlayerID";
-                   
+
 
                 selectCommand.Transaction = transaction;
 
@@ -266,7 +282,66 @@ namespace RestServiceGeoFit.Models
                     con.Close();
                 }
             }
-            return (response==1);
+            return (response == 1);
+        }
+
+        public int FindPlayerByNickOrMail(string mailOrNick)
+        {
+            DbCommand selectCommand;
+            bool commited = false;
+            SqlTransaction transaction = null;
+            int response = 0;
+
+            try
+            {
+                con.Open();
+                transaction = con.BeginTransaction(IsolationLevel.Serializable);
+
+                //Create command and set properties
+                selectCommand = con.CreateCommand();
+                selectCommand.Connection = con;
+
+                //TODO add Photo
+                selectCommand.CommandText =
+                    "SELECT * " +
+                    "FROM Player " +
+                    "WHERE PlayerMail = @mailOrNick " +
+                    "OR PlayerNick = @mailOrNick ";
+
+                selectCommand.Transaction = transaction;
+                selectCommand.Parameters.Add(auxfunction.createParameter("@mailOrNick", mailOrNick, selectCommand, DbType.String));
+
+                object idPlayer = selectCommand.ExecuteScalar();
+                if (idPlayer != null)
+                {
+                    response = (Int32)idPlayer;
+                }
+
+                if (response == 0)
+                {
+                    throw new PlayerNotFoundException(mailOrNick);
+                }
+
+                transaction.Commit();
+                commited = true;
+            }
+
+            catch (DbException e)
+            {
+                throw new Exception(e.Message, e);
+            }
+            finally
+            {
+                if (!commited)
+                {
+                    transaction.Rollback();
+                }
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+            return response;
         }
     }
 }

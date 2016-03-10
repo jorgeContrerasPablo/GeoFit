@@ -10,23 +10,21 @@ namespace RestServiceGeoFit.Controllers
 {
     public class BaseApiController : ApiController
     {
-        protected HttpResponseMessage BuildSuccessResult(HttpStatusCode statusCode)
-        {
-            return this.Request.CreateResponse(statusCode);
-        }
 
-        protected HttpResponseMessage BuildSuccessResult(HttpStatusCode statusCode, object data)
+        protected HttpResponseMessage BuildErrorResult(HttpStatusCode statusCode, string errorCode)
         {
-            return data != null ? this.Request.CreateResponse(statusCode, data) : this.Request.CreateResponse(statusCode);
-        }
-
-        protected HttpResponseMessage BuildErrorResult(HttpStatusCode statusCode, string errorCode = null, string message = null)
-        {
-            return this.Request.CreateResponse(statusCode, new
+            return new HttpResponseMessage(statusCode)
             {
-                ErrorCode = errorCode,
-                Message = message
-            });
+                ReasonPhrase = errorCode
+            };
+        }
+
+        protected HttpResponseMessage BuildSuccesResult(HttpStatusCode statusCode, Object content)
+        {
+            return new HttpResponseMessage(statusCode)
+            {
+                Content = new ObjectContent<Object>(content, Configuration.Formatters.JsonFormatter)
+            };
         }
     }
 }

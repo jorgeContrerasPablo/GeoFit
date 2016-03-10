@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="25px"
+    android:minHeight="25px">
+    <TextView
+        android:text="Welcome To Geofit"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="71.0dp"
+        android:id="@+id/textView1"
+        android:layout_marginTop="47.5dp"
+        android:layout_marginLeft="80.5dp"
+        android:layout_marginRight="80.5dp"
+        android:layout_marginBottom="69.5dp"
+        android:gravity="center" />
+    <TextView
+        android:text="User Nick or Email"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView2"
+        android:gravity="center" />
+    <EditText
+        android:inputType="textEmailAddress"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/NickOrEmailText"
+        android:layout_marginLeft="78.0dp"
+        android:layout_marginRight="78.0dp"
+        android:layout_marginBottom="29.5dp"
+        android:hint="Email@GeoFit.com" />
+    <TextView
+        android:text="Password"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/textView3"
+        android:gravity="center" />
+    <EditText
+        android:inputType="textPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/passwordText"
+        android:layout_marginLeft="78.0dp"
+        android:layout_marginBottom="29.5dp"
+        android:layout_marginRight="78.0dp"
+        android:hint="********" />
+    <Button
+        android:text="Sign in"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="78.0dp"
+        android:id="@+id/SignInButton"
+        android:layout_marginBottom="19.5dp"
+        android:layout_marginRight="78.0dp" />
+    <TextView
+        android:text="Sign Up"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/SignUpTextL"
+        android:gravity="center" />
+</LinearLayout>
