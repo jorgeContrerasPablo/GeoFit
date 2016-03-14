@@ -3,5 +3,10 @@
 	<uses-sdk android:minSdkVersion="15" android:targetSdkVersion="23" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<application android:label="AppGeoFit" android:icon="@drawable/Icon"></application>
-	<build>none</build>
+	<!-- <build>none</build> -->
+  #if DEBUG
+  [assembly: Application(Debuggable=true)]
+  #else
+  [assembly: Application(Debuggable=false)]
+  #endif
 </manifest>

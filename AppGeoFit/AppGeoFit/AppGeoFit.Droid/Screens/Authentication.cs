@@ -13,11 +13,7 @@ namespace AppGeoFit.Droid.Screens
     [Activity(Label = "AppGeoFit", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class Authentication : Screen
     {
-        EditText emailOrNickT;
-        EditText password;
-        Drawable error;
         AppSession appSession;
-        TextView signUpLink;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -29,20 +25,23 @@ namespace AppGeoFit.Droid.Screens
             PlayerManager playerManager = new PlayerManager(false);
 
             //Recuperamos elementos
-            emailOrNickT = FindViewById<EditText>(Resource.Id.NickOrEmailText);
-            password = FindViewById<EditText>(Resource.Id.passwordText);
+            EditText emailOrNickT = FindViewById<EditText>(Resource.Id.NickOrEmailText);
+            EditText password = FindViewById<EditText>(Resource.Id.passwordText);
             Button signInB = FindViewById<Button>(Resource.Id.SignInButton);
-            signUpLink = FindViewById<TextView>(Resource.Id.SignUpTextL);
+            TextView signUpLink = FindViewById<TextView>(Resource.Id.SignUpTextL);
 
             //Se crea el icono exclamation_error
-            error = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);         
+            Drawable error = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);         
             error.SetBounds(0, 0, error.IntrinsicWidth, error.IntrinsicHeight);
 
             #region ButtonSignin
+            int response;
+            bool okE;
+            bool okP;
             signInB.Click += (o, e) =>
             {
-                bool okE = false;
-                bool okP = false;
+                okE = false;
+                okP = false;
 
                 if (emailOrNickT.Text.ToString().Length == 0)
                 {
@@ -66,7 +65,7 @@ namespace AppGeoFit.Droid.Screens
                     okP = true;
                 }
 
-                int response = 0;
+                response = 0;
                 if (okE && okP)
                 {
                     try
@@ -77,20 +76,21 @@ namespace AppGeoFit.Droid.Screens
                     {                      
                         foreach (var ex in aex.Flatten().InnerExceptions)
                         {
-                            BotonAlert("Alert", ex.Message, "OK", "Cancel", "asdf").Show();
+                            BotonAlert("Alert", ex.Message, "OK", "Cancel").Show();
                         }
                     }
                     if (response != 0)
                     {
                         appSession.setPlayer(playerManager.GetPlayer(response).Result);
                         StartActivity(typeof(MainActivity));
+                        this.Finish();
                     }
                 }
              };
             #endregion
 
             //Sign Up Button
-            signUpLink.Click += (o, e) => StartActivity(typeof(MainActivity));
+            signUpLink.Click += (o, e) => StartActivity(typeof(SignUp));
 
         }
 

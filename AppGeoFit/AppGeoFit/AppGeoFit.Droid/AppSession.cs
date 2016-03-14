@@ -18,7 +18,6 @@ namespace AppGeoFit.Droid
     {
         private ISharedPreferences appSharedPrefs;
         private ISharedPreferencesEditor appSharedPrefsEditor;
-        //private Context context;
 
         public AppSession(Context context)
         {
@@ -38,6 +37,12 @@ namespace AppGeoFit.Droid
         {
             String playerJson = appSharedPrefs.GetString("Player", "");
             return JsonConvert.DeserializeObject<Player>(playerJson);
+        }
+
+        public void deletePlayer()
+        {
+            appSharedPrefsEditor.Remove("Player");
+            appSharedPrefsEditor.Commit();
         }
     }
 }

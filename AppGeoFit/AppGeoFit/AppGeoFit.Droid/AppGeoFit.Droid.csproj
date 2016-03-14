@@ -44,14 +44,13 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
-    <AndroidUseSharedRuntime>True</AndroidUseSharedRuntime>
-    <AndroidLinkMode>SdkOnly</AndroidLinkMode>
+    <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
+    <AndroidLinkMode>None</AndroidLinkMode>
     <AndroidLinkSkip />
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
-    <AndroidSupportedAbis>
-    </AndroidSupportedAbis>
+    <AndroidSupportedAbis>armeabi,armeabi-v7a,x86,x86_64,arm64-v8a</AndroidSupportedAbis>
     <AndroidStoreUncompressedFileExtensions />
     <MandroidI18n />
     <Debugger>Xamarin</Debugger>
@@ -59,7 +58,7 @@
     <EnableLLVM>False</EnableLLVM>
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <EnableProguard>False</EnableProguard>
-    <DevInstrumentationEnabled>True</DevInstrumentationEnabled>
+    <DevInstrumentationEnabled>False</DevInstrumentationEnabled>
     <DebugSymbols>true</DebugSymbols>
   </PropertyGroup>
   <ItemGroup>
@@ -131,6 +130,7 @@
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Screens\Screen.cs" />
+    <Compile Include="Screens\SignUp.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config">
@@ -145,6 +145,9 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\Authentication.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\SignUp.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -162,6 +165,14 @@
     <AndroidResource Include="Resources\drawable-hdpi\exclamation_error.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\exclamation_error.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\exclamation_error.png" />
+    <AndroidResource Include="Resources\Drawable\Edit.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Edit.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Edit.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Edit.png" />
+    <AndroidResource Include="Resources\Drawable\Trash.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Trash.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Trash.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Trash.png" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Resources\values\" />

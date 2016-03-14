@@ -1749,115 +1749,121 @@ namespace AppGeoFit.Droid
 			public const int design_snackbar_background = 2130837567;
 			
 			// aapt resource value: 0x7f020040
-			public const int exclamation_error = 2130837568;
+			public const int Edit = 2130837568;
 			
 			// aapt resource value: 0x7f020041
-			public const int ic_cast_dark = 2130837569;
+			public const int exclamation_error = 2130837569;
 			
 			// aapt resource value: 0x7f020042
-			public const int ic_cast_disabled_light = 2130837570;
+			public const int ic_cast_dark = 2130837570;
 			
 			// aapt resource value: 0x7f020043
-			public const int ic_cast_light = 2130837571;
+			public const int ic_cast_disabled_light = 2130837571;
 			
 			// aapt resource value: 0x7f020044
-			public const int ic_cast_off_light = 2130837572;
+			public const int ic_cast_light = 2130837572;
 			
 			// aapt resource value: 0x7f020045
-			public const int ic_cast_on_0_light = 2130837573;
+			public const int ic_cast_off_light = 2130837573;
 			
 			// aapt resource value: 0x7f020046
-			public const int ic_cast_on_1_light = 2130837574;
+			public const int ic_cast_on_0_light = 2130837574;
 			
 			// aapt resource value: 0x7f020047
-			public const int ic_cast_on_2_light = 2130837575;
+			public const int ic_cast_on_1_light = 2130837575;
 			
 			// aapt resource value: 0x7f020048
-			public const int ic_cast_on_light = 2130837576;
+			public const int ic_cast_on_2_light = 2130837576;
 			
 			// aapt resource value: 0x7f020049
-			public const int ic_media_pause = 2130837577;
+			public const int ic_cast_on_light = 2130837577;
 			
 			// aapt resource value: 0x7f02004a
-			public const int ic_media_play = 2130837578;
+			public const int ic_media_pause = 2130837578;
 			
 			// aapt resource value: 0x7f02004b
-			public const int ic_media_route_disabled_mono_dark = 2130837579;
+			public const int ic_media_play = 2130837579;
 			
 			// aapt resource value: 0x7f02004c
-			public const int ic_media_route_off_mono_dark = 2130837580;
+			public const int ic_media_route_disabled_mono_dark = 2130837580;
 			
 			// aapt resource value: 0x7f02004d
-			public const int ic_media_route_on_0_mono_dark = 2130837581;
+			public const int ic_media_route_off_mono_dark = 2130837581;
 			
 			// aapt resource value: 0x7f02004e
-			public const int ic_media_route_on_1_mono_dark = 2130837582;
+			public const int ic_media_route_on_0_mono_dark = 2130837582;
 			
 			// aapt resource value: 0x7f02004f
-			public const int ic_media_route_on_2_mono_dark = 2130837583;
+			public const int ic_media_route_on_1_mono_dark = 2130837583;
 			
 			// aapt resource value: 0x7f020050
-			public const int ic_media_route_on_mono_dark = 2130837584;
+			public const int ic_media_route_on_2_mono_dark = 2130837584;
 			
 			// aapt resource value: 0x7f020051
-			public const int ic_pause_dark = 2130837585;
+			public const int ic_media_route_on_mono_dark = 2130837585;
 			
 			// aapt resource value: 0x7f020052
-			public const int ic_pause_light = 2130837586;
+			public const int ic_pause_dark = 2130837586;
 			
 			// aapt resource value: 0x7f020053
-			public const int ic_play_dark = 2130837587;
+			public const int ic_pause_light = 2130837587;
 			
 			// aapt resource value: 0x7f020054
-			public const int ic_play_light = 2130837588;
+			public const int ic_play_dark = 2130837588;
 			
 			// aapt resource value: 0x7f020055
-			public const int ic_setting_dark = 2130837589;
+			public const int ic_play_light = 2130837589;
 			
 			// aapt resource value: 0x7f020056
-			public const int ic_setting_light = 2130837590;
+			public const int ic_setting_dark = 2130837590;
 			
 			// aapt resource value: 0x7f020057
-			public const int Icon = 2130837591;
+			public const int ic_setting_light = 2130837591;
 			
 			// aapt resource value: 0x7f020058
-			public const int mr_ic_cast_dark = 2130837592;
+			public const int Icon = 2130837592;
 			
 			// aapt resource value: 0x7f020059
-			public const int mr_ic_cast_light = 2130837593;
+			public const int mr_ic_cast_dark = 2130837593;
 			
 			// aapt resource value: 0x7f02005a
-			public const int mr_ic_media_route_connecting_mono_dark = 2130837594;
+			public const int mr_ic_cast_light = 2130837594;
 			
 			// aapt resource value: 0x7f02005b
-			public const int mr_ic_media_route_connecting_mono_light = 2130837595;
+			public const int mr_ic_media_route_connecting_mono_dark = 2130837595;
 			
 			// aapt resource value: 0x7f02005c
-			public const int mr_ic_media_route_mono_dark = 2130837596;
+			public const int mr_ic_media_route_connecting_mono_light = 2130837596;
 			
 			// aapt resource value: 0x7f02005d
-			public const int mr_ic_media_route_mono_light = 2130837597;
+			public const int mr_ic_media_route_mono_dark = 2130837597;
 			
 			// aapt resource value: 0x7f02005e
-			public const int mr_ic_pause_dark = 2130837598;
+			public const int mr_ic_media_route_mono_light = 2130837598;
 			
 			// aapt resource value: 0x7f02005f
-			public const int mr_ic_pause_light = 2130837599;
+			public const int mr_ic_pause_dark = 2130837599;
 			
 			// aapt resource value: 0x7f020060
-			public const int mr_ic_play_dark = 2130837600;
+			public const int mr_ic_pause_light = 2130837600;
 			
 			// aapt resource value: 0x7f020061
-			public const int mr_ic_play_light = 2130837601;
+			public const int mr_ic_play_dark = 2130837601;
 			
 			// aapt resource value: 0x7f020062
-			public const int mr_ic_settings_dark = 2130837602;
+			public const int mr_ic_play_light = 2130837602;
 			
 			// aapt resource value: 0x7f020063
-			public const int mr_ic_settings_light = 2130837603;
+			public const int mr_ic_settings_dark = 2130837603;
 			
 			// aapt resource value: 0x7f020064
-			public const int notification_template_icon_bg = 2130837604;
+			public const int mr_ic_settings_light = 2130837604;
+			
+			// aapt resource value: 0x7f020066
+			public const int notification_template_icon_bg = 2130837606;
+			
+			// aapt resource value: 0x7f020065
+			public const int Trash = 2130837605;
 			
 			static Drawable()
 			{
@@ -1872,74 +1878,95 @@ namespace AppGeoFit.Droid
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f0b007f
-			public const int Email = 2131427455;
+			// aapt resource value: 0x7f0b0074
+			public const int Edit_AceptButton = 2131427444;
 			
-			// aapt resource value: 0x7f0b007d
-			public const int EmailL = 2131427453;
+			// aapt resource value: 0x7f0b007c
+			public const int Edit_CancelButton = 2131427452;
 			
-			// aapt resource value: 0x7f0b0086
-			public const int Games = 2131427462;
-			
-			// aapt resource value: 0x7f0b007e
-			public const int LabelEmail = 2131427454;
-			
-			// aapt resource value: 0x7f0b0078
-			public const int LabelLastName = 2131427448;
+			// aapt resource value: 0x7f0b007a
+			public const int Edit_Email = 2131427450;
 			
 			// aapt resource value: 0x7f0b0072
-			public const int LabelName = 2131427442;
-			
-			// aapt resource value: 0x7f0b0075
-			public const int LabelNick = 2131427445;
-			
-			// aapt resource value: 0x7f0b0084
-			public const int LabelOnTime = 2131427460;
-			
-			// aapt resource value: 0x7f0b007b
-			public const int LabelPhoneNumber = 2131427451;
-			
-			// aapt resource value: 0x7f0b0081
-			public const int LabelRating = 2131427457;
-			
-			// aapt resource value: 0x7f0b0079
-			public const int LastName = 2131427449;
-			
-			// aapt resource value: 0x7f0b0077
-			public const int LastNameL = 2131427447;
+			public const int Edit_LabelEmail = 2131427442;
 			
 			// aapt resource value: 0x7f0b0073
-			public const int Name = 2131427443;
+			public const int Edit_LabelFavoriteSport = 2131427443;
+			
+			// aapt resource value: 0x7f0b006f
+			public const int Edit_LabelLastName = 2131427439;
+			
+			// aapt resource value: 0x7f0b006e
+			public const int Edit_LabelName = 2131427438;
+			
+			// aapt resource value: 0x7f0b0070
+			public const int Edit_LabelNick = 2131427440;
 			
 			// aapt resource value: 0x7f0b0071
-			public const int NameL = 2131427441;
+			public const int Edit_LabelPhoneNumber = 2131427441;
+			
+			// aapt resource value: 0x7f0b0077
+			public const int Edit_LastName = 2131427447;
 			
 			// aapt resource value: 0x7f0b0076
-			public const int Nick = 2131427446;
+			public const int Edit_Name = 2131427446;
 			
-			// aapt resource value: 0x7f0b0074
-			public const int NickL = 2131427444;
+			// aapt resource value: 0x7f0b0078
+			public const int Edit_Nick = 2131427448;
+			
+			// aapt resource value: 0x7f0b0079
+			public const int Edit_PhoneNumber = 2131427449;
+			
+			// aapt resource value: 0x7f0b007b
+			public const int Edit_SpinnerFavoriteSport = 2131427451;
+			
+			// aapt resource value: 0x7f0b008d
+			public const int Email = 2131427469;
+			
+			// aapt resource value: 0x7f0b0090
+			public const int Games = 2131427472;
+			
+			// aapt resource value: 0x7f0b0085
+			public const int LabelEmail = 2131427461;
+			
+			// aapt resource value: 0x7f0b0082
+			public const int LabelLastName = 2131427458;
+			
+			// aapt resource value: 0x7f0b0087
+			public const int LabelMedOnTime = 2131427463;
+			
+			// aapt resource value: 0x7f0b0081
+			public const int LabelName = 2131427457;
+			
+			// aapt resource value: 0x7f0b0083
+			public const int LabelNick = 2131427459;
+			
+			// aapt resource value: 0x7f0b0084
+			public const int LabelPhoneNumber = 2131427460;
+			
+			// aapt resource value: 0x7f0b0086
+			public const int LabelRating = 2131427462;
+			
+			// aapt resource value: 0x7f0b008a
+			public const int LastName = 2131427466;
+			
+			// aapt resource value: 0x7f0b008f
+			public const int MedOnTime = 2131427471;
+			
+			// aapt resource value: 0x7f0b0089
+			public const int Name = 2131427465;
+			
+			// aapt resource value: 0x7f0b008b
+			public const int Nick = 2131427467;
 			
 			// aapt resource value: 0x7f0b0066
 			public const int NickOrEmailText = 2131427430;
 			
-			// aapt resource value: 0x7f0b0085
-			public const int OnTime = 2131427461;
+			// aapt resource value: 0x7f0b008c
+			public const int PhoneNumber = 2131427468;
 			
-			// aapt resource value: 0x7f0b0083
-			public const int OnTimeL = 2131427459;
-			
-			// aapt resource value: 0x7f0b007c
-			public const int PhoneNumber = 2131427452;
-			
-			// aapt resource value: 0x7f0b007a
-			public const int PhoneNumberL = 2131427450;
-			
-			// aapt resource value: 0x7f0b0070
-			public const int PlayerProfileL = 2131427440;
-			
-			// aapt resource value: 0x7f0b0080
-			public const int RatingL = 2131427456;
+			// aapt resource value: 0x7f0b007f
+			public const int PlayerProfileL = 2131427455;
 			
 			// aapt resource value: 0x7f0b0069
 			public const int SignInButton = 2131427433;
@@ -1947,8 +1974,74 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b006a
 			public const int SignUpTextL = 2131427434;
 			
-			// aapt resource value: 0x7f0b0098
-			public const int action0 = 2131427480;
+			// aapt resource value: 0x7f0b00ba
+			public const int SignUp_AceptButton = 2131427514;
+			
+			// aapt resource value: 0x7f0b00c4
+			public const int SignUp_CancelButton = 2131427524;
+			
+			// aapt resource value: 0x7f0b00c2
+			public const int SignUp_Email = 2131427522;
+			
+			// aapt resource value: 0x7f0b00b8
+			public const int SignUp_LabelEmail = 2131427512;
+			
+			// aapt resource value: 0x7f0b00b9
+			public const int SignUp_LabelFavoriteSport = 2131427513;
+			
+			// aapt resource value: 0x7f0b00b5
+			public const int SignUp_LabelLastName = 2131427509;
+			
+			// aapt resource value: 0x7f0b00b2
+			public const int SignUp_LabelName = 2131427506;
+			
+			// aapt resource value: 0x7f0b00b6
+			public const int SignUp_LabelNick = 2131427510;
+			
+			// aapt resource value: 0x7f0b00b3
+			public const int SignUp_LabelPassword = 2131427507;
+			
+			// aapt resource value: 0x7f0b00b7
+			public const int SignUp_LabelPhoneNumber = 2131427511;
+			
+			// aapt resource value: 0x7f0b00b4
+			public const int SignUp_LabelRepeatPassword = 2131427508;
+			
+			// aapt resource value: 0x7f0b00bf
+			public const int SignUp_LastName = 2131427519;
+			
+			// aapt resource value: 0x7f0b00bc
+			public const int SignUp_Name = 2131427516;
+			
+			// aapt resource value: 0x7f0b00c0
+			public const int SignUp_Nick = 2131427520;
+			
+			// aapt resource value: 0x7f0b00bd
+			public const int SignUp_Password = 2131427517;
+			
+			// aapt resource value: 0x7f0b00c1
+			public const int SignUp_PhoneNumber = 2131427521;
+			
+			// aapt resource value: 0x7f0b00be
+			public const int SignUp_RepeatPassword = 2131427518;
+			
+			// aapt resource value: 0x7f0b00c3
+			public const int SignUp_SpinnerFavoriteSport = 2131427523;
+			
+			// aapt resource value: 0x7f0b00b0
+			public const int SignUp_linearLayout1 = 2131427504;
+			
+			// aapt resource value: 0x7f0b00b1
+			public const int SignUp_relativeLayout1 = 2131427505;
+			
+			// aapt resource value: 0x7f0b00bb
+			public const int SignUp_relativeLayout2 = 2131427515;
+			
+			// aapt resource value: 0x7f0b00af
+			public const int SignUp_textView1 = 2131427503;
+			
+			// aapt resource value: 0x7f0b00a2
+			public const int action0 = 2131427490;
 			
 			// aapt resource value: 0x7f0b0055
 			public const int action_bar = 2131427413;
@@ -1974,8 +2067,8 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b0056
 			public const int action_context_bar = 2131427414;
 			
-			// aapt resource value: 0x7f0b009c
-			public const int action_divider = 2131427484;
+			// aapt resource value: 0x7f0b00a6
+			public const int action_divider = 2131427494;
 			
 			// aapt resource value: 0x7f0b0002
 			public const int action_menu_divider = 2131427330;
@@ -2001,8 +2094,8 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b001c
 			public const int always = 2131427356;
 			
-			// aapt resource value: 0x7f0b0090
-			public const int art = 2131427472;
+			// aapt resource value: 0x7f0b009a
+			public const int art = 2131427482;
 			
 			// aapt resource value: 0x7f0b0019
 			public const int beginning = 2131427353;
@@ -2010,20 +2103,20 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b0028
 			public const int bottom = 2131427368;
 			
-			// aapt resource value: 0x7f0b0087
-			public const int button1 = 2131427463;
+			// aapt resource value: 0x7f0b0091
+			public const int button1 = 2131427473;
 			
-			// aapt resource value: 0x7f0b0088
-			public const int button2 = 2131427464;
+			// aapt resource value: 0x7f0b0092
+			public const int button2 = 2131427474;
 			
 			// aapt resource value: 0x7f0b004b
 			public const int buttonPanel = 2131427403;
 			
-			// aapt resource value: 0x7f0b0095
-			public const int buttons = 2131427477;
+			// aapt resource value: 0x7f0b009f
+			public const int buttons = 2131427487;
 			
-			// aapt resource value: 0x7f0b0099
-			public const int cancel_action = 2131427481;
+			// aapt resource value: 0x7f0b00a3
+			public const int cancel_action = 2131427491;
 			
 			// aapt resource value: 0x7f0b0029
 			public const int center = 2131427369;
@@ -2037,8 +2130,8 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b004d
 			public const int checkbox = 2131427405;
 			
-			// aapt resource value: 0x7f0b009f
-			public const int chronometer = 2131427487;
+			// aapt resource value: 0x7f0b00a9
+			public const int chronometer = 2131427497;
 			
 			// aapt resource value: 0x7f0b0031
 			public const int clip_horizontal = 2131427377;
@@ -2064,17 +2157,14 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b003e
 			public const int default_activity_button = 2131427390;
 			
-			// aapt resource value: 0x7f0b008f
-			public const int default_control_frame = 2131427471;
+			// aapt resource value: 0x7f0b0099
+			public const int default_control_frame = 2131427481;
 			
 			// aapt resource value: 0x7f0b000d
 			public const int disableHome = 2131427341;
 			
-			// aapt resource value: 0x7f0b0096
-			public const int disconnect = 2131427478;
-			
-			// aapt resource value: 0x7f0b006d
-			public const int editText1 = 2131427437;
+			// aapt resource value: 0x7f0b00a0
+			public const int disconnect = 2131427488;
 			
 			// aapt resource value: 0x7f0b0057
 			public const int edit_query = 2131427415;
@@ -2082,8 +2172,8 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b001a
 			public const int end = 2131427354;
 			
-			// aapt resource value: 0x7f0b00a4
-			public const int end_padder = 2131427492;
+			// aapt resource value: 0x7f0b00ae
+			public const int end_padder = 2131427502;
 			
 			// aapt resource value: 0x7f0b0022
 			public const int enterAlways = 2131427362;
@@ -2127,23 +2217,29 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b003d
 			public const int image = 2131427389;
 			
-			// aapt resource value: 0x7f0b00a3
-			public const int info = 2131427491;
+			// aapt resource value: 0x7f0b0088
+			public const int imageButtonDelete = 2131427464;
+			
+			// aapt resource value: 0x7f0b0080
+			public const int imageButtonEdit = 2131427456;
+			
+			// aapt resource value: 0x7f0b00ad
+			public const int info = 2131427501;
 			
 			// aapt resource value: 0x7f0b002d
 			public const int left = 2131427373;
 			
-			// aapt resource value: 0x7f0b009d
-			public const int line1 = 2131427485;
+			// aapt resource value: 0x7f0b00a7
+			public const int line1 = 2131427495;
 			
-			// aapt resource value: 0x7f0b00a1
-			public const int line3 = 2131427489;
+			// aapt resource value: 0x7f0b00ab
+			public const int line3 = 2131427499;
 			
-			// aapt resource value: 0x7f0b006f
-			public const int linearLayout1 = 2131427439;
+			// aapt resource value: 0x7f0b007e
+			public const int linearLayout1 = 2131427454;
 			
-			// aapt resource value: 0x7f0b0089
-			public const int linearLayout3 = 2131427465;
+			// aapt resource value: 0x7f0b0093
+			public const int linearLayout3 = 2131427475;
 			
 			// aapt resource value: 0x7f0b000a
 			public const int listMode = 2131427338;
@@ -2151,20 +2247,20 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b003f
 			public const int list_item = 2131427391;
 			
-			// aapt resource value: 0x7f0b009b
-			public const int media_actions = 2131427483;
+			// aapt resource value: 0x7f0b00a5
+			public const int media_actions = 2131427493;
 			
-			// aapt resource value: 0x7f0b008e
-			public const int media_route_control_frame = 2131427470;
-			
-			// aapt resource value: 0x7f0b008a
-			public const int media_route_list = 2131427466;
-			
-			// aapt resource value: 0x7f0b0093
-			public const int media_route_volume_layout = 2131427475;
+			// aapt resource value: 0x7f0b0098
+			public const int media_route_control_frame = 2131427480;
 			
 			// aapt resource value: 0x7f0b0094
-			public const int media_route_volume_slider = 2131427476;
+			public const int media_route_list = 2131427476;
+			
+			// aapt resource value: 0x7f0b009d
+			public const int media_route_volume_layout = 2131427485;
+			
+			// aapt resource value: 0x7f0b009e
+			public const int media_route_volume_slider = 2131427486;
 			
 			// aapt resource value: 0x7f0b001b
 			public const int middle = 2131427355;
@@ -2196,8 +2292,8 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b0027
 			public const int pin = 2131427367;
 			
-			// aapt resource value: 0x7f0b0091
-			public const int play_pause = 2131427473;
+			// aapt resource value: 0x7f0b009b
+			public const int play_pause = 2131427483;
 			
 			// aapt resource value: 0x7f0b0005
 			public const int progress_circular = 2131427333;
@@ -2208,14 +2304,20 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b004f
 			public const int radio = 2131427407;
 			
-			// aapt resource value: 0x7f0b0082
-			public const int ratingBar = 2131427458;
+			// aapt resource value: 0x7f0b008e
+			public const int ratingBar = 2131427470;
+			
+			// aapt resource value: 0x7f0b006d
+			public const int relativeLayout1 = 2131427437;
+			
+			// aapt resource value: 0x7f0b0075
+			public const int relativeLayout2 = 2131427445;
 			
 			// aapt resource value: 0x7f0b002e
 			public const int right = 2131427374;
 			
-			// aapt resource value: 0x7f0b008c
-			public const int route_name = 2131427468;
+			// aapt resource value: 0x7f0b0096
+			public const int route_name = 2131427478;
 			
 			// aapt resource value: 0x7f0b0015
 			public const int screen = 2131427349;
@@ -2262,8 +2364,8 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b0063
 			public const int select_dialog_listview = 2131427427;
 			
-			// aapt resource value: 0x7f0b008d
-			public const int settings = 2131427469;
+			// aapt resource value: 0x7f0b0097
+			public const int settings = 2131427479;
 			
 			// aapt resource value: 0x7f0b004e
 			public const int shortcut = 2131427406;
@@ -2298,29 +2400,29 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b002f
 			public const int start = 2131427375;
 			
-			// aapt resource value: 0x7f0b009a
-			public const int status_bar_latest_event_content = 2131427482;
+			// aapt resource value: 0x7f0b00a4
+			public const int status_bar_latest_event_content = 2131427492;
 			
-			// aapt resource value: 0x7f0b0097
-			public const int stop = 2131427479;
+			// aapt resource value: 0x7f0b00a1
+			public const int stop = 2131427489;
 			
 			// aapt resource value: 0x7f0b0060
 			public const int submit_area = 2131427424;
 			
-			// aapt resource value: 0x7f0b0092
-			public const int subtitle = 2131427474;
+			// aapt resource value: 0x7f0b009c
+			public const int subtitle = 2131427484;
 			
-			// aapt resource value: 0x7f0b006e
-			public const int tabHost = 2131427438;
+			// aapt resource value: 0x7f0b007d
+			public const int tabHost = 2131427453;
 			
 			// aapt resource value: 0x7f0b000c
 			public const int tabMode = 2131427340;
 			
-			// aapt resource value: 0x7f0b00a2
-			public const int text = 2131427490;
+			// aapt resource value: 0x7f0b00ac
+			public const int text = 2131427500;
 			
-			// aapt resource value: 0x7f0b00a0
-			public const int text2 = 2131427488;
+			// aapt resource value: 0x7f0b00aa
+			public const int text2 = 2131427498;
 			
 			// aapt resource value: 0x7f0b0048
 			public const int textSpacerNoButtons = 2131427400;
@@ -2334,14 +2436,14 @@ namespace AppGeoFit.Droid
 			// aapt resource value: 0x7f0b0067
 			public const int textView3 = 2131427431;
 			
-			// aapt resource value: 0x7f0b009e
-			public const int time = 2131427486;
+			// aapt resource value: 0x7f0b00a8
+			public const int time = 2131427496;
 			
 			// aapt resource value: 0x7f0b0041
 			public const int title = 2131427393;
 			
-			// aapt resource value: 0x7f0b008b
-			public const int title_bar = 2131427467;
+			// aapt resource value: 0x7f0b0095
+			public const int title_bar = 2131427477;
 			
 			// aapt resource value: 0x7f0b0044
 			public const int title_template = 2131427396;
@@ -2562,7 +2664,10 @@ namespace AppGeoFit.Droid
 			public const int select_dialog_singlechoice_material = 2130903089;
 			
 			// aapt resource value: 0x7f030032
-			public const int support_simple_spinner_dropdown_item = 2130903090;
+			public const int SignUp = 2130903090;
+			
+			// aapt resource value: 0x7f030033
+			public const int support_simple_spinner_dropdown_item = 2130903091;
 			
 			static Layout()
 			{
