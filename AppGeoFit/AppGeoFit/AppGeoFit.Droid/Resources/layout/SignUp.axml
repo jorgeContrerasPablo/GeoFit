@@ -1,0 +1,237 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="25px"
+    android:minHeight="25px">
+    <TextView
+        android:text="Enter Your Data"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="43.7dp"
+        android:gravity="center"
+        android:id="@+id/SignUp_textView1" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/SignUp_linearLayout1">
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/SignUp_relativeLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Name *"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_LabelName"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Password *"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_LabelPassword"
+                android:layout_below="@+id/SignUp_LabelName"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="RepeatPassword *"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_LabelRepeatPassword"
+                android:layout_below="@+id/SignUp_LabelPassword"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Last Name"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_LabelLastName"
+                android:layout_below="@+id/SignUp_LabelRepeatPassword"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Nick *"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_LabelNick"
+                android:layout_below="@+id/SignUp_LabelLastName"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Phone Number *"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_LabelPhoneNumber"
+                android:layout_below="@+id/SignUp_LabelNick"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Email@ *"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_LabelEmail"
+                android:layout_below="@+id/SignUp_LabelPhoneNumber"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Select your favorite sport"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_LabelFavoriteSport"
+                android:layout_below="@+id/SignUp_LabelEmail"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <Button
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Acept"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_AceptButton"
+                android:layout_below="@+id/SignUp_LabelFavoriteSport"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="45.0dp"
+                android:layout_marginRight="43.0dp"
+                android:layout_marginTop="5dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/SignUp_relativeLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <EditText
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:hint="Name"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_Name"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <EditText
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:hint="*******"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_Password"
+                android:layout_below="@+id/SignUp_Name"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <EditText
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:hint="*******"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_RepeatPassword"
+                android:layout_below="@+id/SignUp_Password"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <EditText
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:hint="LastName"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_LastName"
+                android:layout_below="@+id/SignUp_RepeatPassword"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <EditText
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:hint="Nick"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_Nick"
+                android:layout_below="@+id/SignUp_LastName"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <EditText
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:hint="600123456"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_PhoneNumber"
+                android:layout_below="@+id/SignUp_Nick"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <EditText
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:inputType="textEmailAddress"
+                android:hint="Email@GeoFit.com"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_Email"
+                android:layout_below="@+id/SignUp_PhoneNumber"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <Spinner
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_SpinnerFavoriteSport"
+                android:layout_below="@+id/SignUp_Email"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <Button
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Cancel"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/SignUp_CancelButton"
+                android:layout_below="@+id/SignUp_SpinnerFavoriteSport"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="45.0dp"
+                android:layout_marginRight="43.0dp"
+                android:layout_marginTop="5dp" />
+        </RelativeLayout>
+    </LinearLayout>
+</LinearLayout>
