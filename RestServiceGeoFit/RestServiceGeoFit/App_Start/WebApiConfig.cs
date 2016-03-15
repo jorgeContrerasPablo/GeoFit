@@ -12,18 +12,20 @@ namespace RestServiceGeoFit.App_Start
     {
         public static void Register(HttpConfiguration config)
         {
-            //config.MapHttpAttributeRoutes();
+            config.MapHttpAttributeRoutes();
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApi",
-                routeTemplate: "api/{controller}/{action}/{Parameter1}",
-                defaults: new { Parameter1 = RouteParameter.Optional }
+                routeTemplate: "api/{controller}/{action}/{Parameter1}/{Parameter2}",
+                defaults: new { Parameter1 = RouteParameter.Optional, Parameter2 = RouteParameter.Optional }
             );
+
+            
 
             config.Routes.MapHttpRoute(
                 name: "DefaultApiTest",
-                routeTemplate: "apiTest/{controller}/{action}/{Parameter1}",
-                defaults: new { Parameter1 = RouteParameter.Optional }
+                routeTemplate: "apiTest/{controller}/{action}/{Parameter1}/{Parameter2}",
+                defaults: new { Parameter1 = RouteParameter.Optional, Parameter2 = RouteParameter.Optional }
             );
         }
     }

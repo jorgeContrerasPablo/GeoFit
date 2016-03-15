@@ -46,7 +46,7 @@ namespace RestServiceGeoFit.Models
 
                 //TODO Photo
                 selectCommand.CommandText =
-                    "SELECT PlayerId,Password,PlayerNick, PlayerName, LastName, PhoneNum, PlayerMail, Level, MedOnTime " +
+                    "SELECT PlayerID, Password, PlayerNick, PlayerName, LastName, PhoneNum, PlayerMail, Level, MedOnTime, PlayerSesion " +
                     "FROM Player " +
                     "WHERE PlayerId = @playerid";
 
@@ -76,6 +76,7 @@ namespace RestServiceGeoFit.Models
                     //                    player.PhotoId = dataReader.IsDBNull(7) ? Guid.Empty:dataReader.GetGuid(7);
                     player.Level = dataReader.IsDBNull(7) ? new double() : dataReader.GetDouble(7);
                     player.MedOnTime = dataReader.IsDBNull(8) ? new double() : dataReader.GetDouble(8);
+                    player.PlayerSesion = dataReader.GetBoolean(9);
                 }
                 dataReader.Close();
                 transaction.Commit();
@@ -119,8 +120,8 @@ namespace RestServiceGeoFit.Models
 
                 //TODO add Photo
                 selectCommand.CommandText =
-                    "INSERT INTO Player (Password, PlayerNick, PlayerName, LastName, PhoneNum, PlayerMail, Level, MedOnTime) " +
-                    "VALUES (@Password, @PlayerNick, @PlayerName, @LastName, @PhoneNum, @PlayerMail, @Level, @MedOnTime) ; SELECT CONVERT(int, SCOPE_IDENTITY())";
+                    "INSERT INTO Player (Password, PlayerNick, PlayerName, LastName, PhoneNum, PlayerMail, Level, MedOnTime, PlayerSesion) " +
+                    "VALUES (@Password, @PlayerNick, @PlayerName, @LastName, @PhoneNum, @PlayerMail, @Level, @MedOnTime, 0) ; SELECT CONVERT(int, SCOPE_IDENTITY())" ;
 
                 selectCommand.Transaction = transaction;
 
@@ -342,6 +343,116 @@ namespace RestServiceGeoFit.Models
                 }
             }
             return response;
+        }
+
+        public void Session(int playerId, bool OnSession)
+        {
+            DbCommand selectCommand;
+            bool commited = false;
+            SqlTransaction transaction = null;
+            int response = 0;
+
+            try
+            {
+                //open Connection
+                con.Open();
+                transaction = con.BeginTransaction(IsolationLevel.Serializable);
+
+                //Create command and set properties
+                selectCommand = con.CreateCommand();
+                selectCommand.Connection = con;
+
+                //TODO add Photo
+                selectCommand.CommandText =
+                    "UPDATE Player " +
+                    "SET PlayerSesion = @OnSession " +
+                    "WHERE PlayerID = @PlayerID";
+
+                selectCommand.Transaction = transaction;
+                selectCommand.Parameters.Add(auxfunction.createParameter("@OnSession", OnSession, selectCommand, DbType.Boolean));
+                selectCommand.Parameters.Add(auxfunction.createParameter("@PlayerID", playerId, selectCommand, DbType.Int32));
+
+                response = selectCommand.ExecuteNonQuery();
+
+                if (response != 1)
+                {
+                    throw new Exception("Error in data base acces!");
+                }
+
+                transaction.Commit();
+                commited = true;
+
+            }
+            catch (DbException e)
+            {
+                throw new Exception(e.Message, e);
+            }
+            finally
+            {
+                if (!commited)
+                {
+                    transaction.Rollback();
+                }
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+        }
+
+        public bool IsOnSession(int playerId)
+        {
+            DbCommand selectCommand;
+            bool commited = false;
+            SqlTransaction transaction = null;
+            bool response = false;
+
+            try
+            {
+                //open Connection
+                con.Open();
+                transaction = con.BeginTransaction(IsolationLevel.Serializable);
+
+                //Create command and set properties
+                selectCommand = con.CreateCommand();
+                selectCommand.Connection = con;
+
+                //TODO add Photo
+                selectCommand.CommandText =
+                    "SELECT * " +
+                    "FROM Player " +
+                    "WHERE PlayerID = @playerId " +
+                    "AND OnSession = 1 ";
+
+                selectCommand.Transaction = transaction;
+                object idPlayer = selectCommand.ExecuteScalar();
+                if (idPlayer != null)
+                {
+                    response = true;
+                }
+
+                transaction.Commit();
+                commited = true;
+
+            }
+            catch (DbException e)
+            {
+                throw new Exception(e.Message, e);
+            }
+            finally
+            {
+                if (!commited)
+                {
+                    transaction.Rollback();
+                }
+                if (con != null)
+                {
+                    con.Close();
+                }
+            }
+
+            return response;
+
         }
     }
 }

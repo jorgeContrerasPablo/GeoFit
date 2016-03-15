@@ -44,5 +44,12 @@ namespace AppGeoFit.Droid
             appSharedPrefsEditor.Remove("Player");
             appSharedPrefsEditor.Commit();
         }
+
+        public void updateSession(bool state)
+        {
+            Player playerToUpdate = this.getPlayer();
+            playerToUpdate.PlayerSesion = state;
+            this.setPlayer(playerToUpdate);
+        }
     }
 }

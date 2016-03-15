@@ -22,15 +22,13 @@ namespace AppGeoFit.Droid
 
         protected override void OnCreate(Bundle bundle)
         {
-            
+            base.OnCreate(bundle);
+            global::Xamarin.Forms.Forms.Init(this, bundle);
+            SetContentView(Resource.Layout.MainActivity);
             AppSession appSession = new AppSession(this.ApplicationContext);
 
             Player player = new Player();
             PlayerManager playerManager = new PlayerManager(false);
-
-            base.OnCreate(bundle);
-            global::Xamarin.Forms.Forms.Init(this, bundle);
-            SetContentView(Resource.Layout.MainActivity);
 
             // Init TabHost
             TabHost tabH = FindViewById<TabHost>(Resource.Id.tabHost);
@@ -87,7 +85,7 @@ namespace AppGeoFit.Droid
             Button baDeleteNegativeButton;
             buttonTrash.Click += (o, e) =>
             {
-                baDelete = BotonAlertb("Alert", "Are you sure? Do you want to delete your account?", "OK", "Cancel");
+                baDelete = BotonAlert("Alert", "Are you sure? Do you want to delete your account?", "OK", "Cancel");
                 baDelete.Show();
                 baDeletePositiveButton = baDelete.GetButton((int)DialogButtonType.Positive);
                 baDeleteNegativeButton = baDelete.GetButton((int)DialogButtonType.Negative);
@@ -136,6 +134,17 @@ namespace AppGeoFit.Droid
                 playerToUpdate.PlayerName = "Jugador Modificado";
                 ResponseT2.Text = "Jugador modificado ? => " + playerManager.UpdatePlayer(playerToUpdate).Result.ToString();
             };
+        }
+
+        protected override void OnDestroy()
+        {
+            base.OnDestroy();
+            PlayerManager playerManager = new PlayerManager(false);
+            AppSession appSession = new AppSession(this.ApplicationContext);
+            playerManager.OutSession(appSession.getPlayer().PlayerId);
+            appSession.deletePlayer();
+            //Finish();
+
         }
     }
 }

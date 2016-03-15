@@ -43,9 +43,24 @@ namespace AppGeoFit.BusinessLayer.Managers
             return restService.UpdatePlayerAsync(player);
         }
 
-        public Task<int> FindPlayerByNickOrMail(string nickOrMail)
+        public Task<int> FindPlayerByMail(string nickOrMail, string post)
         {
-            return restService.FindPlayerByNickOrMailAsync(nickOrMail);
+            return restService.FindPlayerByMailAsync(nickOrMail, post);
+        }
+
+        public Task<int> FindPlayerByNick(string nickOrMail)
+        {
+            return restService.FindPlayerByNickAsync(nickOrMail);
+        }
+
+        public void Session(int playerId)
+        {
+            restService.Session(playerId);
+        }
+
+        public void OutSession(int playerId)
+        {
+            restService.OutSession(playerId);
         }
     }
 }

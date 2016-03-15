@@ -42,6 +42,7 @@ namespace AppGeoFit.Droid
             //spinnerFavoriteSport_et.Text = player.FavoriteSport;
             Button acept_bn = FindViewById<Button>(Resource.Id.Edit_AceptButton);
             Button cancel_bn = FindViewById<Button>(Resource.Id.Edit_CancelButton);
+            cancel_bn.Click += (o, e) => StartActivity(typeof(MainActivity));
 
             //Se crea el icono exclamation_error
             Drawable error = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
@@ -56,74 +57,49 @@ namespace AppGeoFit.Droid
             int id_responseNick;
             bool okmail = false;
             bool oknick = false;
+            bool okphone = false;
             bool update = false;
+            int n = 0;
+            string finalEmail = String.Empty;
+            string[] emailParts;
 
             acept_bn.Click += (o, e) =>
             {
-                okN = false;
-                okNi = false;
-                okP = false;
-                okE = false;
-                okmail = false;
-                oknick = false;
+                okN = IsRequired(name_et, "Name is required", error);
+                okNi = IsRequired(nick_et, "Nick is required", error);
+                okP = IsRequired(phoneNumber_et, "Phone is required", error); 
+                okE = IsRequired(email_et, "Email is required", error);
+
+                okmail = IsValid(email_et, "It's not a correct email", error, Android.Util.Patterns.EmailAddress.Matcher(email_et.Text.ToString()).Matches());
+                oknick = IsValid(nick_et, "Use only alphabets characters", error, Java.Util.Regex.Pattern.Compile("^[a-zA-Z ]+$").Matcher(nick_et.Text.ToString()).Matches());
+                okphone = IsValid(phoneNumber_et, "It's not a correct phone", error, Android.Util.Patterns.Phone.Matcher(phoneNumber_et.Text.ToString()).Matches());
+
                 id_responseMail = 0;
                 id_responseNick = 0;
                 update = false;
-
-                #region comprobacionCamposVacios
-                if (email_et.Text.ToString().Length == 0)
+                
+                if (!okN && !okNi && !okP && !okE && okmail && oknick && okphone)
                 {
-                    email_et.SetError("Email is required", error);
-                    okE = false;
-                }
-                else {
-                    email_et.SetError(String.Empty, null);
-                    email_et.Error = null;
-                    okE = true;
-                }
-
-                if (name_et.Text.ToString().Length == 0)
-                {
-                    name_et.SetError("Name is required", error);
-                    okN = false;
-                }
-                else {
-                    name_et.SetError(String.Empty, null);
-                    name_et.Error = null;
-                    okN = true;
-                }
-
-                if (nick_et.Text.ToString().Length == 0)
-                {
-                    nick_et.SetError("Nick is required", error);
-                    okNi = false;
-                }
-                else {
-                    nick_et.SetError(String.Empty, null);
-                    nick_et.Error = null;
-                    okNi = true;
-                }
-
-                if (phoneNumber_et.Text.ToString().Length == 0)
-                {
-                    phoneNumber_et.SetError("Phone is required", error);
-                    okP = false;
-                }
-                else {
-                    phoneNumber_et.SetError(String.Empty, null);
-                    phoneNumber_et.Error = null;
-                    okP = true;
-                }
-                #endregion
-
-
-                if (okN && okNi && okP && okE)
-                {
+                    n = 0;
+                    finalEmail = String.Empty;
+                    okmail = false;
+                    oknick = false;
 
                     // Comprobamos si el nick o el mail existen ya en base de datos
                     try
                     {
-                        id_responseMail = playerManager.FindPlayerByNickOrMail(email_et.Text).Result;
+                        emailParts = email_et.Text.Split('.');
+                        while (n <= emailParts.Length - 2)
+                        {
+                            if (n == 0)
+                                finalEmail += emailParts[n];
+                            else
+                            {
+                                finalEmail += "." + emailParts[n];
+                            }
+                            n++;
+                        }
+                        id_responseMail = playerManager.FindPlayerByMail(emailParts[0], emailParts[1]).Result;
                     }
                     catch (AggregateException aex)
                     {
@@ -135,7 +111,7 @@ namespace AppGeoFit.Droid
                     }
                     try
                     {
-                        id_responseNick = playerManager.FindPlayerByNickOrMail(nick_et.Text).Result;
+                        id_responseNick = playerManager.FindPlayerByNick(nick_et.Text).Result;
                     }
                     catch (AggregateException aex)
                     {

@@ -18,6 +18,11 @@ namespace AppGeoFit.Droid.Screens
         protected override void OnCreate(Bundle bundle)
         {
             appSession = new AppSession(this.ApplicationContext);
+            /*if(appSession.getPlayer() != null && appSession.getPlayer().PlayerSesion)
+            {
+                StartActivity(typeof(MainActivity));
+            }*/
+
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             SetContentView(Resource.Layout.Authentication);
@@ -35,42 +40,43 @@ namespace AppGeoFit.Droid.Screens
             error.SetBounds(0, 0, error.IntrinsicWidth, error.IntrinsicHeight);
 
             #region ButtonSignin
+            string finalEmail = String.Empty;
+            int n = 0;
             int response;
             bool okE;
             bool okP;
+            int response2 = 0;
+            string[] emailParts;
+
             signInB.Click += (o, e) =>
             {
-                okE = false;
-                okP = false;
-
-                if (emailOrNickT.Text.ToString().Length == 0)
-                {
-                    emailOrNickT.SetError("Email is required", error);
-                    okE = false;
-                }
-                else {
-                    emailOrNickT.SetError(String.Empty, null);
-                    emailOrNickT.Error = null;
-                    okE = true;
-                }
-
-                if (password.Text.ToString().Length == 0)
-                {
-                    password.SetError("Password is required", error);
-                    okP = false;
-                }
-                else {
-                    password.SetError(String.Empty, null);
-                    password.Error = null;
-                    okP = true;
-                }
+                okE = IsRequired(emailOrNickT, "Name is required", error);
+                okP = IsRequired(password, "password is required", error);
 
                 response = 0;
-                if (okE && okP)
+                n = 0;
+                finalEmail = String.Empty;
+                if (!okE && !okP)
                 {
                     try
                     {
-                        response = playerManager.FindPlayerByNickOrMail(emailOrNickT.Text).Result;
+                        emailParts = emailOrNickT.Text.Split('.');
+                       
+                        if(emailParts.Length > 1)
+                        {
+                            while (n <= emailParts.Length - 2)
+                            {
+                                if(n==0)
+                                    finalEmail += emailParts[n];
+                                else
+                                {
+                                    finalEmail += "."+emailParts[n];
+                                }
+                                n++;
+                            }
+                            response = playerManager.FindPlayerByMail(finalEmail, emailParts[emailParts.Length-1]).Result;
+                        }
+                        else response = playerManager.FindPlayerByNick(emailParts[0]).Result;
                     }
                     catch (AggregateException aex)
                     {                      
@@ -81,9 +87,34 @@ namespace AppGeoFit.Droid.Screens
                     }
                     if (response != 0)
                     {
-                        appSession.setPlayer(playerManager.GetPlayer(response).Result);
-                        StartActivity(typeof(MainActivity));
-                        this.Finish();
+                        Player player = playerManager.GetPlayer(response).Result;
+                        if (player.PlayerSesion)
+                        {
+                            BotonAlert("Alert", "User : " + player.PlayerNick + " is already connected", "OK", "Cancel").Show();
+                        }
+                        else
+                        {
+                            response2 = 0;
+                            try
+                            {
+                                playerManager.Session(player.PlayerId);
+                                response2 = 1;
+                            }
+                            catch (AggregateException aex)
+                            {
+                                foreach (var ex in aex.Flatten().InnerExceptions)
+                                {
+                                    BotonAlert("Alert", ex.Message, "OK", "Cancel").Show();
+                                }
+                            }
+                            if (response2 != 0)
+                            {
+                                appSession.setPlayer(player);
+                                StartActivity(typeof(MainActivity));
+                                //this.Finish();
+                            }
+                        }
+                       
                     }
                 }
              };
@@ -93,10 +124,6 @@ namespace AppGeoFit.Droid.Screens
             signUpLink.Click += (o, e) => StartActivity(typeof(SignUp));
 
         }
-
-        protected override void OnResume()
-        {
-            base.OnResume();
 
             /*emailOrNickT.AfterTextChanged += (sender, e) =>
             {
@@ -120,9 +147,6 @@ namespace AppGeoFit.Droid.Screens
             */
             //  emailOrNickT.cle
             //Keyboard keyboard = new Keyboard();
-
-
-        }
 
 
        /*Control del boton return

@@ -133,10 +133,32 @@ namespace AppGeoFit.DataAccesLayer.Data
             return responseSucced;
         }
 
-        public async Task<int> FindPlayerByNickOrMailAsync(string nickOrMail)
+        public async Task<int> FindPlayerByMailAsync(string nickOrMail, string post)
         {
             int responseSucced = 0;
-            Uri uri = new Uri(string.Format(url + "Players/FindPlayerByNickOrMail/{0}", nickOrMail));
+
+            Uri uri = new Uri(string.Format(url + "Players/FindPlayerByMail/{0}/{1}", nickOrMail, post));
+            
+            HttpResponseMessage response = client.GetAsync(uri).Result;
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new PlayerNotFoundException(response.ReasonPhrase);
+            }
+            else
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+                responseSucced = JsonConvert.DeserializeObject<int>(responseAsString);
+            }
+
+            return responseSucced;
+
+        }
+
+        public async Task<int> FindPlayerByNickAsync(string nickOrMail)
+        {
+            int responseSucced = 0;
+            Uri uri = new Uri(string.Format(url + "Players/FindPlayerByNick/{0}", nickOrMail));
 
             HttpResponseMessage response = client.GetAsync(uri).Result;
 
@@ -152,6 +174,48 @@ namespace AppGeoFit.DataAccesLayer.Data
 
             return responseSucced;
 
+        }
+
+        public void Session(int playerId)
+        {
+            var uri = new Uri(string.Format(url + "Players/Session/{0}", playerId));
+           
+            try
+            {
+                var json = JsonConvert.SerializeObject("");
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = client.PutAsync(uri, content).Result;
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    throw new Exception(response.ReasonPhrase);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
+        }
+
+        public void OutSession(int playerId)
+        {
+            var uri = new Uri(string.Format(url + "Players/OutSession/{0}", playerId));
+
+            try
+            {
+                var json = JsonConvert.SerializeObject("");
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = client.PutAsync(uri, content).Result;
+                if (response.StatusCode == HttpStatusCode.BadRequest)
+                {
+                    throw new Exception(response.ReasonPhrase);
+                }
+            }
+            catch (Exception ex)
+            {
+                throw new Exception(ex.Message);
+            }
         }
     }
 }

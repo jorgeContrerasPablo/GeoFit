@@ -35,7 +35,9 @@ namespace RestServiceGeoFit.Models
 
         public double MedOnTime { get; set; }
 
-       // public int FavoriteSport { get; set; }
+        public bool PlayerSesion { get; set; }
+
+        // public int FavoriteSport { get; set; }
 
         //public ICollection<Game> Games { get; set; }
 

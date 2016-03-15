@@ -12,6 +12,9 @@ namespace AppGeoFit.DataAccesLayer.Data
         Task <int> CreatePlayerAsync(Player player);
         Task <Boolean> DeletePlayerAsync(int PlayerId);
         Task <Boolean> UpdatePlayerAsync(Player player);
-        Task <int> FindPlayerByNickOrMailAsync(string nickOrMail);
+        Task <int> FindPlayerByMailAsync(string nickOrMail, string post);
+        Task<int> FindPlayerByNickAsync(string nickOrMail);
+        void Session(int playerId);
+        void OutSession(int playerId);
     }
 }

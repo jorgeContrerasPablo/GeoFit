@@ -27,5 +27,8 @@ namespace AppGeoFit
         public double Level { get; set; }
 
         public double MedOnTime { get; set; }
+
+        public bool PlayerSesion { get; set; }
+
     }
 }
