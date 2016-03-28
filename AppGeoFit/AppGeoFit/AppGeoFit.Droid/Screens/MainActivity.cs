@@ -18,7 +18,7 @@ namespace AppGeoFit.Droid
 	[Activity (Label = "AppGeoFit", Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
 	public class MainActivity : Screens.Screen
 	{
-        protected ListView taskListView = null;
+        protected ListView taskListView;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -27,7 +27,7 @@ namespace AppGeoFit.Droid
             SetContentView(Resource.Layout.MainActivity);
             AppSession appSession = new AppSession(this.ApplicationContext);
 
-            Player player = new Player();
+            Player player;
             PlayerManager playerManager = new PlayerManager(false);
 
             // Init TabHost
@@ -95,54 +95,32 @@ namespace AppGeoFit.Droid
                     appSession.deletePlayer();
                     StartActivity(typeof(Screens.Authentication));
                 };
-            };
+            };         
 
-                 
+        }
 
-            // Prube create and update
-            int playerBID = 0;
 
-            Player playerB = new Player(); ;
-            Player playerToUpdate = new Player();
+        protected override void OnPause()
+        {
+            PlayerManager playerManager = new PlayerManager(false);
+            AppSession appSession = new AppSession(this.ApplicationContext);
 
-            //Create player Bottons
-            TextView ResponseT = FindViewById<TextView>(Resource.Id.textView1);
-            Button button = FindViewById<Button>(Resource.Id.button1);
-            Button button2 = FindViewById<Button>(Resource.Id.button2);
-            TextView ResponseT2 = FindViewById<TextView>(Resource.Id.textView2);
-
-            button.Click += (o, e) => 
+            if (appSession.getPlayer() != null)
             {
-                
-                playerB.PlayerName = "Jugador Creado para rating";
-                playerB.Password = "HAbria q cambiar esto";
-                playerB.PlayerNick = "otronick";
-                playerB.LastName = "lastname";
-                playerB.PhoneNum = 12312123;
-                playerB.PlayerMail = "@otromail";
-                playerB.Level = 1;
-                playerB.MedOnTime = 1;
-                playerBID = playerManager.CreatePlayer(playerB).Result;
-                ResponseT.Text = "Jugador creado con id : " + playerBID;
-                //ResponseT.Text = playerManager.DeletePlayer(2).Result.ToString();
-            };
+                playerManager.OutSession(appSession.getPlayer().PlayerId);
+                appSession.updateSession(false);
+            }
+            base.OnPause();
 
-            button2.Click += (o, e) =>
-            {
-                
-                playerToUpdate = playerManager.GetPlayer(playerBID).Result;
-                playerToUpdate.PlayerName = "Jugador Modificado";
-                ResponseT2.Text = "Jugador modificado ? => " + playerManager.UpdatePlayer(playerToUpdate).Result.ToString();
-            };
         }
 
         protected override void OnDestroy()
         {
-            base.OnDestroy();
             PlayerManager playerManager = new PlayerManager(false);
             AppSession appSession = new AppSession(this.ApplicationContext);
             playerManager.OutSession(appSession.getPlayer().PlayerId);
             appSession.deletePlayer();
+            base.OnDestroy();
             //Finish();
 
         }

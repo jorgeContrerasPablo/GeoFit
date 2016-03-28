@@ -13,6 +13,14 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "AppGeoFit", "AppGeoFit\AppG
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "UnitTestAppGeoFit", "UnitTestAppGeoFit\UnitTestAppGeoFit.csproj", "{914DD82E-0303-4E3A-B9DB-1168EE759B74}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9CB13FBD-06C1-41FA-ADFE-F2E006BE7761}"
+	ProjectSection(SolutionItems) = preProject
+		SonarQube\GFCSharp.ruleset = SonarQube\GFCSharp.ruleset
+		SonarQube\kCSharp.ruleset = SonarQube\kCSharp.ruleset
+		SonarQube\PrkCSharp.ruleset = SonarQube\PrkCSharp.ruleset
+		SonarQube\SolutionBinding.sqconfig = SonarQube\SolutionBinding.sqconfig
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		AppGeoFit\AppGeoFit\AppGeoFit.projitems*{914dd82e-0303-4e3a-b9db-1168ee759b74}*SharedItemsImports = 4

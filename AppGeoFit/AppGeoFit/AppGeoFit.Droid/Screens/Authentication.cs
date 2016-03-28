@@ -17,17 +17,23 @@ namespace AppGeoFit.Droid.Screens
 
         protected override void OnCreate(Bundle bundle)
         {
-            appSession = new AppSession(this.ApplicationContext);
-            /*if(appSession.getPlayer() != null && appSession.getPlayer().PlayerSesion)
-            {
-                StartActivity(typeof(MainActivity));
-            }*/
-
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
-            SetContentView(Resource.Layout.Authentication);
+           
 
             PlayerManager playerManager = new PlayerManager(false);
+            Player player;
+            appSession = new AppSession(this.ApplicationContext);
+            
+            if (appSession.getPlayer() != null)
+            {
+                if (!appSession.getPlayer().PlayerSesion)
+                {
+                    appSession.updateSession(true);
+                    StartActivity(typeof(MainActivity));
+                }
+            }
+            SetContentView(Resource.Layout.Authentication);
 
             //Recuperamos elementos
             EditText emailOrNickT = FindViewById<EditText>(Resource.Id.NickOrEmailText);
@@ -87,7 +93,7 @@ namespace AppGeoFit.Droid.Screens
                     }
                     if (response != 0)
                     {
-                        Player player = playerManager.GetPlayer(response).Result;
+                        player = playerManager.GetPlayer(response).Result;
                         if (player.PlayerSesion)
                         {
                             BotonAlert("Alert", "User : " + player.PlayerNick + " is already connected", "OK", "Cancel").Show();
@@ -125,45 +131,50 @@ namespace AppGeoFit.Droid.Screens
 
         }
 
-            /*emailOrNickT.AfterTextChanged += (sender, e) =>
-            {
-                if (!imm.IsAcceptingText && emailOrNickT.Text.ToString().Length == 0)
-                {                 
-                     emailOrNickT.SetError("Email is required", errorEmail);
-                }
-            };
-
-            password.TextChanged += (sender, e) =>
-            {
-                if (password.Text.ToString().Length == 0)
-                {                 
-                    password.SetError("Email is required", errorPassword);                    
-                }
-            };*/
-
-            /* To Hide the keyboard
-                InputMethodManager imm = (InputMethodManager)GetSystemService(Context.InputMethodService);
-                imm.HideSoftInputFromWindow(emailOrNickT.WindowToken, 0);
-            */
-            //  emailOrNickT.cle
-            //Keyboard keyboard = new Keyboard();
-
-
-       /*Control del boton return
-       
-        public override void OnBackPressed()
+        protected override void OnPause()
         {
-            if (emailOrNickT.Length() == 0)
-            {
-                emailOrNickT.SetError("", null);
-                emailOrNickT.SetError("Email is required", errorEmail);
-            }
+            base.OnPause();
+        }
 
-            if (password.Length() == 0)
-            {
-                password.SetError("", null);
-                password.SetError("Password is required", errorPassword);
+        /*emailOrNickT.AfterTextChanged += (sender, e) =>
+        {
+            if (!imm.IsAcceptingText && emailOrNickT.Text.ToString().Length == 0)
+            {                 
+                 emailOrNickT.SetError("Email is required", errorEmail);
             }
-        }*/
+        };
+
+        password.TextChanged += (sender, e) =>
+        {
+            if (password.Text.ToString().Length == 0)
+            {                 
+                password.SetError("Email is required", errorPassword);                    
+            }
+        };*/
+
+        /* To Hide the keyboard
+            InputMethodManager imm = (InputMethodManager)GetSystemService(Context.InputMethodService);
+            imm.HideSoftInputFromWindow(emailOrNickT.WindowToken, 0);
+        */
+        //  emailOrNickT.cle
+        //Keyboard keyboard = new Keyboard();
+
+
+        /*Control del boton return
+
+         public override void OnBackPressed()
+         {
+             if (emailOrNickT.Length() == 0)
+             {
+                 emailOrNickT.SetError("", null);
+                 emailOrNickT.SetError("Email is required", errorEmail);
+             }
+
+             if (password.Length() == 0)
+             {
+                 password.SetError("", null);
+                 password.SetError("Password is required", errorPassword);
+             }
+         }*/
     }
 }

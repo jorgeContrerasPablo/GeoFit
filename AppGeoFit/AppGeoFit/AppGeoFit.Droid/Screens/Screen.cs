@@ -30,6 +30,16 @@ namespace AppGeoFit.Droid.Screens
             return builder.Create();
         }
 
+        public AlertDialog BotonAlert(string title, string message)
+        {
+            // BOTON ALERT
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle(title);
+            builder.SetMessage(message);
+
+            return builder.Create();
+        }
+
         public bool IsRequired(EditText editText, string message, Drawable error)
         {
             if (editText.Text.ToString().Length == 0)
@@ -58,32 +68,34 @@ namespace AppGeoFit.Droid.Screens
             }
         }
 
-        public string[] split (string email)
-        {
-            return email.Split('.');
-        }
-
-      /*  protected override void OnStop()
-        {
-            base.OnStop();
-            PlayerManager playerManager = new PlayerManager(false);
-            AppSession appSession = new AppSession(this.ApplicationContext);
-            playerManager.OutSession(appSession.getPlayer().PlayerId);
-            appSession.updateSession(false);
-
-        }
-
         protected override void OnRestart()
         {
             base.OnRestart();
             PlayerManager playerManager = new PlayerManager(false);
             AppSession appSession = new AppSession(this.ApplicationContext);
-            if (appSession.getPlayer().PlayerSesion)
+            if (appSession.getPlayer() != null)
             {
-                StartActivity(typeof(Authentication));
+                try
+                {
+                    appSession.setPlayer(playerManager.GetPlayer(appSession.getPlayer().PlayerId).Result);
+                }
+                catch (AggregateException aex)
+                {
+                    foreach (var ex in aex.Flatten().InnerExceptions)
+                    {
+                        appSession.deletePlayer();
+                        StartActivity(typeof(Authentication));
+                    }
+                }
+                if (appSession.getPlayer().PlayerSesion)
+                {
+                    appSession.deletePlayer();
+                    StartActivity(typeof(Authentication));
+                }
+                playerManager.Session(appSession.getPlayer().PlayerId);
+                appSession.updateSession(true);
             }
-            playerManager.Session(appSession.getPlayer().PlayerId);
-            appSession.updateSession(true);
-        }*/
+            
+        }
     }
 }

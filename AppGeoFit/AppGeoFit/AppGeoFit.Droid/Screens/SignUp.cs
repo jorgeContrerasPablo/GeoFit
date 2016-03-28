@@ -15,6 +15,7 @@ using Android.Support.V4.Content;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using Java.Util.Regex;
 using Android.OS;
+using AppGeoFit.BusinessLayer.Exceptions;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -48,8 +49,8 @@ namespace AppGeoFit.Droid.Screens
             cancel_bn.Click += (o, e) => StartActivity(typeof(MainActivity));
 
             //Se crea el icono exclamation_error
-            Drawable error = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
-            error.SetBounds(0, 0, error.IntrinsicWidth, error.IntrinsicHeight);
+            Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
+            errorD.SetBounds(0, 0, errorD.IntrinsicWidth, errorD.IntrinsicHeight);
 
             bool okN = false;
             bool okPass = false;
@@ -58,116 +59,83 @@ namespace AppGeoFit.Droid.Screens
             bool okNi = false;
             bool okP = false;
             bool okE = false;
-            int id_responseMail;
-            int id_responseNick;
             bool okmail = false;
             bool oknick = false;
             bool okphone = false;
-            string[] emailParts = null;
-            int n = 0;
-            string finalEmail = String.Empty;
+            bool error = false;
+
 
             acept_bn.Click += (o, e) =>
             {
-                okN = IsRequired(name_et, "Name is required", error);
-                okPass = IsRequired(password_et, "Password is required", error);
-                okRpassR = IsRequired(repeatePassword_et, "Repeate password", error);
-                okNi = IsRequired(nick_et, "Nick is required", error);
-                okP = IsRequired(phoneNumber_et, "Phone is required", error);
-                okE = IsRequired(email_et, "Email is required", error);
+                okN = IsRequired(name_et, "Name is required", errorD);
+                okPass = IsRequired(password_et, "Password is required", errorD);
+                okRpassR = IsRequired(repeatePassword_et, "Repeate password", errorD);
+                okNi = IsRequired(nick_et, "Nick is required", errorD);
+                okP = IsRequired(phoneNumber_et, "Phone is required", errorD);
+                okE = IsRequired(email_et, "Email is required", errorD);
 
-                id_responseMail = 0;
-                id_responseNick = 0;
-
-                okmail = IsValid(email_et, "It's not a correct email", error, Android.Util.Patterns.EmailAddress.Matcher(email_et.Text.ToString()).Matches());
-                oknick = IsValid(nick_et, "Use only alphabets characters", error, Java.Util.Regex.Pattern.Compile("^[a-zA-Z ]+$").Matcher(nick_et.Text.ToString()).Matches());
-                okphone = IsValid(phoneNumber_et, "It's not a correct phone", error,Android.Util.Patterns.Phone.Matcher(phoneNumber_et.Text.ToString()).Matches());
-                okRpassV = IsValid(repeatePassword_et, "Repeate the password correctly", error, password_et.Text.Equals(repeatePassword_et.Text));
+                okmail = IsValid(email_et, "It's not a correct email", errorD, Android.Util.Patterns.EmailAddress.Matcher(email_et.Text.ToString()).Matches());
+                oknick = IsValid(nick_et, "Use only alphabets characters", errorD, Java.Util.Regex.Pattern.Compile("^[a-zA-Z ]+$").Matcher(nick_et.Text.ToString()).Matches());
+                okphone = IsValid(phoneNumber_et, "It's not a correct phone", errorD, Android.Util.Patterns.Phone.Matcher(phoneNumber_et.Text.ToString()).Matches());
+                okRpassV = IsValid(repeatePassword_et, "Repeate the password correctly", errorD, password_et.Text.Equals(repeatePassword_et.Text));
 
                 if (!okN && !okNi && !okP && !okE && !okPass && !okRpassR && okRpassV && okmail && oknick && okphone)
                 {
-                    okmail = false;
-                    oknick = false;
-                    finalEmail = String.Empty;
-                    n = 0;
+                    error = false;
+                    okmail = IsValid(email_et, "", errorD, true);
+                    oknick = IsValid(nick_et, "", errorD, true);
 
+                    player.PlayerName = name_et.Text;
+                    player.LastName = lastName_et.Text;
+                    player.Password = password_et.Text;
+                    player.PlayerNick = nick_et.Text;
+                    player.PhoneNum = Convert.ToInt32(phoneNumber_et.Text);
+                    player.PlayerMail = email_et.Text;
+                    //TODO favorite sport
                     try
                     {
-                        emailParts = email_et.Text.Split('.');
-                        while (n <= emailParts.Length - 2)
-                        {
-                            if (n == 0)
-                                finalEmail += emailParts[n];
-                            else
-                            {
-                                finalEmail += "." + emailParts[n];
-                            }
-                            n++;
-                        }
-                        id_responseMail = playerManager.FindPlayerByMail(emailParts[0], emailParts[1]).Result;
+                        playerManager.CreatePlayer(player);
                     }
-                    catch (AggregateException aex)
+                    catch (DuplicatePlayerNickException exN)
                     {
-                        foreach (var ex in aex.Flatten().InnerExceptions)
-                        {
-                            if (ex is PlayerNotFoundException)
-                                okmail = true;
-                        }
+                        error = true;
+                        oknick = IsValid(nick_et, exN.Message, errorD, false);
                     }
-
-                    try
+                    catch (DuplicatePlayerMailException exM)
                     {
-                        id_responseNick = playerManager.FindPlayerByNick(nick_et.Text).Result;
+                        error = true;
+                        okmail = IsValid(email_et, exM.Message, errorD, false);
                     }
-                    catch (AggregateException aex)
+                    catch (Exception ex)
                     {
-                        foreach (var ex in aex.Flatten().InnerExceptions)
-                        {
-                            if (ex is PlayerNotFoundException)
-                                oknick = true;
-                        }
+                        BotonAlert("Alert", ex.Message, "OK", "Cancel").Show();
                     }
-
-                    if (okmail && oknick)
+                   
+                    if (!error)
                     {
-                        player.PlayerName = name_et.Text;
-                        player.LastName = lastName_et.Text;
-                        //TODO encrypt
-                        player.Password = password_et.Text;
-                        player.PlayerNick = nick_et.Text;
-                        player.PhoneNum = Convert.ToInt32(phoneNumber_et.Text);
-                        player.PlayerMail = email_et.Text;
-                        //TODO favorite sport
-                        try
-                        {
-                            playerManager.CreatePlayer(player);
-                        }
-                        catch (AggregateException aex)
-                        {
-                            foreach (var ex in aex.Flatten().InnerExceptions)
-                            {
-                                BotonAlert("Alert", ex.Message, "OK", "Cancel").Show();
-                            }
-                        }
-                        //Todo better button
-                        BotonAlert("Atention", "The account has been created correctly", "OK", "Cancel").Show();
+                       // Dialog a = BotonAlert("The account has been created correctly", "OK");
+                        Toast.MakeText(ApplicationContext, "Your account has been created correctly", ToastLength.Short);
                         StartActivity(typeof(Authentication));
-                        //this.Finish();
                     }
-                    else
-                    {
-                        if (!oknick)
-                            BotonAlert("Alert", "This nick is allready used", "OK", "Cancel").Show();
-                        else {
-                            if (!okmail)
-                                BotonAlert("Alert", "This mail is allready used", "OK", "Cancel").Show();
-                        }
-                    }
-
-
                 }
                 
             };
+
+
+        }
+
+        protected override void OnPause()
+        {
+            PlayerManager playerManager = new PlayerManager(false);
+            AppSession appSession = new AppSession(this.ApplicationContext);
+
+            if (appSession.getPlayer() != null)
+            {
+                playerManager.OutSession(appSession.getPlayer().PlayerId);
+                appSession.updateSession(false);
+            }
+            base.OnPause();
+
         }
     }
 }

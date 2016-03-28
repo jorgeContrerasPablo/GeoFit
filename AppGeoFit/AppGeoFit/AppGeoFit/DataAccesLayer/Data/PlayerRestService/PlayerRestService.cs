@@ -27,7 +27,7 @@ namespace AppGeoFit.DataAccesLayer.Data
         {
             Player responseAsPlayer = new Player();
             var uri = new Uri(string.Format(url + "Players/GetPlayer/{0}", PlayerId));
-            HttpResponseMessage response = new HttpResponseMessage();
+            HttpResponseMessage response;
 
          
             response =  client.GetAsync(uri).Result;
@@ -35,7 +35,11 @@ namespace AppGeoFit.DataAccesLayer.Data
             {
                     throw new PlayerNotFoundException(response.ReasonPhrase);
             }
-            else
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
             {
                 string responseAsString = await response.Content.ReadAsStringAsync();
 
@@ -51,28 +55,24 @@ namespace AppGeoFit.DataAccesLayer.Data
             int responseSucced = 0;
             HttpResponseMessage response = new HttpResponseMessage();
 
-            try
-            {
-                var json = JsonConvert.SerializeObject(player);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                response = client.PostAsync(uri, content).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseAsString = await response.Content.ReadAsStringAsync();
+            var json = JsonConvert.SerializeObject(player);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    responseSucced = JsonConvert.DeserializeObject<int>(responseAsString);
-                }
-                else
-                {
-                    Debug.WriteLine("Estado de la respuesta http : " + response.StatusCode);
-                }
-            }
-            catch (Exception ex)
+            response = client.PostAsync(uri, content).Result;
+
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                // Debug.WriteLine(@"				ERROR {0}", ex.Message);
                 throw new Exception(response.ReasonPhrase);
             }
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+
+                responseSucced = JsonConvert.DeserializeObject<int>(responseAsString);
+            }
+
             return responseSucced; 
 
         }
@@ -81,25 +81,21 @@ namespace AppGeoFit.DataAccesLayer.Data
         {
             var uri = new Uri(string.Format(url + "Players/DeletePlayer/{0}", PlayerId));
             Boolean responseSucced = false;
-            try
-            {
-                HttpResponseMessage response = client.DeleteAsync(uri).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseAsString = await response.Content.ReadAsStringAsync();
 
-                    responseSucced = JsonConvert.DeserializeObject<Boolean>(responseAsString);
-                }
-                else
-                {
-                    Debug.WriteLine("Estado de la respuesta http : " + response.StatusCode);
-                }
-            }
-            catch (Exception ex)
+            HttpResponseMessage response = client.DeleteAsync(uri).Result;
+
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                // Debug.WriteLine(@"				ERROR {0}", ex.Message);
-                throw new Exception(ex.Message);
+                throw new Exception(response.ReasonPhrase);
             }
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+
+                responseSucced = JsonConvert.DeserializeObject<Boolean>(responseAsString);
+            }
+
             return responseSucced;
 
         }
@@ -108,28 +104,24 @@ namespace AppGeoFit.DataAccesLayer.Data
         {
             var uri = new Uri(string.Format(url + "Players/UpdatePlayer"));
             Boolean responseSucced = false;
-            try
-            {
-                var json = JsonConvert.SerializeObject(player);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = client.PutAsync(uri, content).Result;
-                if (response.IsSuccessStatusCode)
-                {
-                    string responseAsString = await response.Content.ReadAsStringAsync();
+            var json = JsonConvert.SerializeObject(player);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                    responseSucced = JsonConvert.DeserializeObject<Boolean>(responseAsString);
-                }
-                else
-                {
-                    Debug.WriteLine("Estado de la respuesta http : " + response.StatusCode);
-                }
-            }
-            catch (Exception ex)
+            HttpResponseMessage response = client.PutAsync(uri, content).Result;
+
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                // Debug.WriteLine(@"				ERROR {0}", ex.Message);
-                throw new Exception(ex.Message);
+                throw new Exception(response.ReasonPhrase);
             }
+
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+
+                responseSucced = JsonConvert.DeserializeObject<Boolean>(responseAsString);
+            }
+
             return responseSucced;
         }
 
@@ -145,7 +137,12 @@ namespace AppGeoFit.DataAccesLayer.Data
             {
                 throw new PlayerNotFoundException(response.ReasonPhrase);
             }
-            else
+
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
             {
                 string responseAsString = await response.Content.ReadAsStringAsync();
                 responseSucced = JsonConvert.DeserializeObject<int>(responseAsString);
@@ -166,7 +163,11 @@ namespace AppGeoFit.DataAccesLayer.Data
             {
                 throw new PlayerNotFoundException(response.ReasonPhrase);
             }
-            else
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
             {
                 string responseAsString = await response.Content.ReadAsStringAsync();
                 responseSucced = JsonConvert.DeserializeObject<int>(responseAsString);

@@ -1,8 +1,7 @@
-﻿using AppGeoFit.DataAccesLayer.Data;
+﻿using AppGeoFit.BusinessLayer.Exceptions;
+using AppGeoFit.DataAccesLayer.Data;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -14,10 +13,7 @@ namespace AppGeoFit.BusinessLayer.Managers
         public PlayerManager(bool test)
         {
             restService = DependencyService.Get<RestService>();
-            if (test)
-                restService.url = Constants.RestUrlTest;
-            else
-                restService.url = Constants.RestUrl;
+            restService.url = test ? Constants.RestUrlTest : Constants.RestUrl;
 
         }
 
@@ -28,8 +24,45 @@ namespace AppGeoFit.BusinessLayer.Managers
 
         public Task<int> CreatePlayer(Player player)
         {
-            //TODO comprobación nick y usuario único con findPlayerByNickOrMail
-            //, string nick, string mail
+            string[] finalEmail = splitFunction( player.PlayerMail );
+            int reciveIdEmail = 0;
+            int reciveIdNick = 0;
+
+            // Comprobamos mail duplicado
+            try
+            {
+                reciveIdEmail = restService.FindPlayerByMailAsync(finalEmail[0], finalEmail[1]).Result;
+                throw new DuplicatePlayerMailException("Player with mail: " + player.PlayerMail + " already exists.");
+
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is PlayerNotFoundException){}
+                    else
+                        throw new Exception(ex.Message);              
+                }
+            }
+
+            // Comprobamos nick duplicado
+            try
+            {
+                reciveIdNick = restService.FindPlayerByNickAsync(player.PlayerNick).Result;            
+                throw new DuplicatePlayerNickException("Player with nick: " + player.PlayerNick + " already exists.");
+
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is PlayerNotFoundException){}
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            //TODO Encriptación contraseña
+
             return restService.CreatePlayerAsync(player);
         }
 
@@ -40,7 +73,62 @@ namespace AppGeoFit.BusinessLayer.Managers
 
         public Task<Boolean> UpdatePlayer(Player player)
         {
+            string[] finalEmail = splitFunction(player.PlayerMail);
+            int id_responseMail = 0;
+            int id_responseNick = 0;
+            bool okMail = false;
+            bool okNick = false;
+
+            // Comprobamos mail duplicado
+            try
+            {
+                id_responseMail = restService.FindPlayerByMailAsync(finalEmail[0], finalEmail[1]).Result;
+                okMail = false;
+
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is PlayerNotFoundException) {
+                        okMail = true;
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+
+            // Comprobamos nick duplicado
+            try
+            {
+                id_responseNick = restService.FindPlayerByNickAsync(player.PlayerNick).Result;
+                okNick = false;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is PlayerNotFoundException) {
+                        okNick = true;
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+
+            if (!okNick)
+            {
+                if (id_responseNick != player.PlayerId)
+                    throw new DuplicatePlayerNickException("Player with nick: " + player.PlayerNick + " already exists.");
+            }
+            if (!okMail)
+            {
+                if (id_responseMail != player.PlayerId)
+                    throw new DuplicatePlayerMailException("Player with mail: " + player.PlayerMail + " already exists.");
+            }
+
             return restService.UpdatePlayerAsync(player);
+
         }
 
         public Task<int> FindPlayerByMail(string nickOrMail, string post)
@@ -62,5 +150,32 @@ namespace AppGeoFit.BusinessLayer.Managers
         {
             restService.OutSession(playerId);
         }
+
+        // Funcion split, necesario para el parametro mail.
+        string[] splitFunction (string playerMail)
+        {
+
+            int n = 0;
+            string[] finalEmail = new string [2];
+
+            string[] emailParts = playerMail.Split('.');
+
+            while (n <= emailParts.Length - 2)
+            {
+                if (n == 0)
+                    //finalEmail[0].Insert(0,emailParts[n]);
+                    finalEmail[0] = emailParts[n];
+                else
+                {
+                    //finalEmail[0].Insert(emailParts[n - 1].Length, "." + emailParts[n]);
+                    finalEmail[0] += "." + emailParts[n];
+                }
+                n++;
+            }
+            finalEmail[1] = emailParts[emailParts.Length - 1];
+
+            return finalEmail;
+        }
+        
     }
 }

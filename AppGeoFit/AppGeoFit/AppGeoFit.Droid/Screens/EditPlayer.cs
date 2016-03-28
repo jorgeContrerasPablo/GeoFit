@@ -8,6 +8,7 @@ using AppGeoFit.BusinessLayer.Managers;
 using System;
 using AppGeoFit.Droid.Screens;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
+using AppGeoFit.BusinessLayer.Exceptions;
 
 namespace AppGeoFit.Droid
 {
@@ -45,139 +46,83 @@ namespace AppGeoFit.Droid
             cancel_bn.Click += (o, e) => StartActivity(typeof(MainActivity));
 
             //Se crea el icono exclamation_error
-            Drawable error = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
-            error.SetBounds(0, 0, error.IntrinsicWidth, error.IntrinsicHeight);
+            Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
+            errorD.SetBounds(0, 0, errorD.IntrinsicWidth, errorD.IntrinsicHeight);
 
             #region Edit
-            bool okN = false;
-            bool okNi = false;
-            bool okP = false;
-            bool okE = false;
-            int id_responseMail;
-            int id_responseNick;
+            bool reN = false;
+            bool reNi = false;
+            bool reP = false;
+            bool reE = false;
             bool okmail = false;
             bool oknick = false;
             bool okphone = false;
-            bool update = false;
-            int n = 0;
-            string finalEmail = String.Empty;
-            string[] emailParts;
+            bool error = false;
 
             acept_bn.Click += (o, e) =>
             {
-                okN = IsRequired(name_et, "Name is required", error);
-                okNi = IsRequired(nick_et, "Nick is required", error);
-                okP = IsRequired(phoneNumber_et, "Phone is required", error); 
-                okE = IsRequired(email_et, "Email is required", error);
+                reN = IsRequired(name_et, "Name is required", errorD);
+                reNi = IsRequired(nick_et, "Nick is required", errorD);
+                reP = IsRequired(phoneNumber_et, "Phone is required", errorD); 
+                reE = IsRequired(email_et, "Email is required", errorD);
 
-                okmail = IsValid(email_et, "It's not a correct email", error, Android.Util.Patterns.EmailAddress.Matcher(email_et.Text.ToString()).Matches());
-                oknick = IsValid(nick_et, "Use only alphabets characters", error, Java.Util.Regex.Pattern.Compile("^[a-zA-Z ]+$").Matcher(nick_et.Text.ToString()).Matches());
-                okphone = IsValid(phoneNumber_et, "It's not a correct phone", error, Android.Util.Patterns.Phone.Matcher(phoneNumber_et.Text.ToString()).Matches());
+                okmail = IsValid(email_et, "It's not a correct email", errorD, Android.Util.Patterns.EmailAddress.Matcher(email_et.Text.ToString()).Matches());
+                oknick = IsValid(nick_et, "Use only alphabets characters", errorD, Java.Util.Regex.Pattern.Compile("^[a-zA-Z ]+$").Matcher(nick_et.Text.ToString()).Matches());
+                okphone = IsValid(phoneNumber_et, "It's not a correct phone", errorD, Android.Util.Patterns.Phone.Matcher(phoneNumber_et.Text.ToString()).Matches());
 
-                id_responseMail = 0;
-                id_responseNick = 0;
-                update = false;
-                
-                if (!okN && !okNi && !okP && !okE && okmail && oknick && okphone)
+                if (!reN && !reNi && !reP && !reE && okmail && oknick && okphone)
                 {
-                    n = 0;
-                    finalEmail = String.Empty;
-                    okmail = false;
-                    oknick = false;
+                    error = false;
 
-                    // Comprobamos si el nick o el mail existen ya en base de datos
+                    player.PlayerName = name_et.Text;
+                    player.LastName = lastName_et.Text;
+                    player.PlayerNick = nick_et.Text;
+                    player.PhoneNum = Convert.ToInt32(phoneNumber_et.Text);
+                    player.PlayerMail = email_et.Text;
+                    appSession.setPlayer(player);
+
                     try
                     {
-                        emailParts = email_et.Text.Split('.');
-                        while (n <= emailParts.Length - 2)
-                        {
-                            if (n == 0)
-                                finalEmail += emailParts[n];
-                            else
-                            {
-                                finalEmail += "." + emailParts[n];
-                            }
-                            n++;
-                        }
-                        id_responseMail = playerManager.FindPlayerByMail(emailParts[0], emailParts[1]).Result;
+                        playerManager.UpdatePlayer(player);
                     }
-                    catch (AggregateException aex)
+                    catch (DuplicatePlayerNickException exN)
                     {
-                        foreach (var ex in aex.Flatten().InnerExceptions)
-                        {
-                            if (ex is PlayerNotFoundException)
-                                okmail = true;
-                        }
+                        error = true;
+                        oknick = IsValid(nick_et, exN.Message, errorD, false);
                     }
-                    try
+                    catch (DuplicatePlayerMailException exM)
                     {
-                        id_responseNick = playerManager.FindPlayerByNick(nick_et.Text).Result;
+                        error = true;
+                        okmail = IsValid(email_et, exM.Message, errorD, false);
                     }
-                    catch (AggregateException aex)
+                    catch (Exception ex)
                     {
-                        foreach (var ex in aex.Flatten().InnerExceptions)
-                        {
-                            if (ex is PlayerNotFoundException)
-                                oknick = true;
-                        }
+                        BotonAlert("Alert", ex.Message, "OK", "Cancel").Show();
                     }
-
-                    //Dado que puede ser nuestro propio nick el que encuentre, comprobaremos que no sea ese caso.
-                    if (okmail && oknick)
+                    if (!error)
                     {
-                        update = true;
-                    }
-                    else
-                    {
-                        if (okmail && !oknick)
-                        {
-                            if (id_responseNick == player.PlayerId)
-                                update = true;
-                        }
-                        if((!okmail && oknick))
-                        {
-                            if (id_responseMail == player.PlayerId)
-                                update = true;
-                        }                  
-                        if(!oknick && !okmail)
-                        {
-                            if (id_responseNick == player.PlayerId && id_responseMail == player.PlayerId)
-                                update = true;
-                        }                         
-                    }
-                    if (update)
-                    {
-                        player.PlayerName = name_et.Text;
-                        player.LastName = lastName_et.Text;
-                        player.PlayerNick = nick_et.Text;
-                        player.PhoneNum = Convert.ToInt32(phoneNumber_et.Text);
-                        player.PlayerMail = email_et.Text;
-                        appSession.setPlayer(player);
-                        try
-                        {
-                            playerManager.UpdatePlayer(player);
-                        }
-                        catch (AggregateException aex)
-                        {
-                            foreach (var ex in aex.Flatten().InnerExceptions)
-                            {
-                                BotonAlert("Alert", ex.Message, "OK", "Cancel").Show();
-                            }
-                        }
+                        //Dialog a = BotonAlert("The account has been created correctly", "OK");
+                        Toast.MakeText(ApplicationContext, "Your account has been update correctly", ToastLength.Short);
                         StartActivity(typeof(MainActivity));
-                        //this.Finish();
-                    }
-                    else
-                    {
-                        if(id_responseNick != player.PlayerId && !oknick)
-                            BotonAlert("Alert", "This nick is allready used", "OK", "Cancel").Show();
-                        else
-                            BotonAlert("Alert", "This mail is allready used", "OK", "Cancel").Show();
                     }
 
                 }
             };
             #endregion
+
+        }
+
+        protected override void OnPause()
+        {
+            PlayerManager playerManager = new PlayerManager(false);
+            AppSession appSession = new AppSession(this.ApplicationContext);
+
+            if (appSession.getPlayer() != null)
+            {
+                playerManager.OutSession(appSession.getPlayer().PlayerId);
+                appSession.updateSession(false);
+            }
+            base.OnPause();
 
         }
     }

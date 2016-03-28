@@ -35,7 +35,11 @@ namespace AppGeoFit.Droid
 
         public Player getPlayer()
         {
-            String playerJson = appSharedPrefs.GetString("Player", "");
+            string playerJson = appSharedPrefs.GetString("Player", "");
+            if (playerJson == "")
+            {
+                return null;
+            }
             return JsonConvert.DeserializeObject<Player>(playerJson);
         }
 

@@ -32,7 +32,11 @@ namespace RestServiceGeoFit.Controllers
             {
                 return BuildErrorResult(HttpStatusCode.NotFound, ex.Message);
             }
-            
+            catch (Exception ex)
+            {
+                return BuildErrorResult(HttpStatusCode.BadRequest, ex.Message);
+            }
+
 
             return BuildSuccesResult(HttpStatusCode.OK, player);
         }
@@ -40,13 +44,21 @@ namespace RestServiceGeoFit.Controllers
         [HttpPost]
         public HttpResponseMessage CreatePlayer(Player player)
         {
+            int response = 0;
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 playerManager = new PlayerManager(test);
             }
-            //TODO TRY CATcH
-            int response = playerManager.CreatePlayer(player);
+            try
+            {
+                response = playerManager.CreatePlayer(player);
+            }
+            catch (Exception ex)
+            {
+                return BuildErrorResult(HttpStatusCode.BadRequest, ex.Message);
+            }
+           
             return new HttpResponseMessage(HttpStatusCode.OK)
             {
                 Content = new ObjectContent<int>(response, Configuration.Formatters.JsonFormatter)
