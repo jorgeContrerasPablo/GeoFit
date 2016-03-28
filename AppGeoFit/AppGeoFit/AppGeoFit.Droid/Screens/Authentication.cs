@@ -7,6 +7,8 @@ using Android.Graphics.Drawables;
 using Android.Support.V4.Content;
 using AppGeoFit.BusinessLayer.Managers;
 using Android.Views;
+using DevOne.Security.Cryptography.BCrypt;
+using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -20,9 +22,8 @@ namespace AppGeoFit.Droid.Screens
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
            
-
+            // Comprobamos si el usuario aun tiene una sesion disponible para conectarse sin loguearse y que no esté ocupada por otro dispositivo
             PlayerManager playerManager = new PlayerManager(false);
-            Player player;
             appSession = new AppSession(this.ApplicationContext);
             
             if (appSession.getPlayer() != null)
@@ -42,85 +43,36 @@ namespace AppGeoFit.Droid.Screens
             TextView signUpLink = FindViewById<TextView>(Resource.Id.SignUpTextL);
 
             //Se crea el icono exclamation_error
-            Drawable error = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);         
-            error.SetBounds(0, 0, error.IntrinsicWidth, error.IntrinsicHeight);
+            Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
+            errorD.SetBounds(0, 0, errorD.IntrinsicWidth, errorD.IntrinsicHeight);
 
             #region ButtonSignin
-            string finalEmail = String.Empty;
-            int n = 0;
-            int response;
             bool okE;
             bool okP;
-            int response2 = 0;
-            string[] emailParts;
+            bool error;
+            Player player = new Player();
 
             signInB.Click += (o, e) =>
             {
-                okE = IsRequired(emailOrNickT, "Name is required", error);
-                okP = IsRequired(password, "password is required", error);
+                okE = IsRequired(emailOrNickT, "Name is required", errorD);
+                okP = IsRequired(password, "password is required", errorD);
 
-                response = 0;
-                n = 0;
-                finalEmail = String.Empty;
                 if (!okE && !okP)
                 {
+                    error = false;
                     try
                     {
-                        emailParts = emailOrNickT.Text.Split('.');
-                       
-                        if(emailParts.Length > 1)
-                        {
-                            while (n <= emailParts.Length - 2)
-                            {
-                                if(n==0)
-                                    finalEmail += emailParts[n];
-                                else
-                                {
-                                    finalEmail += "."+emailParts[n];
-                                }
-                                n++;
-                            }
-                            response = playerManager.FindPlayerByMail(finalEmail, emailParts[emailParts.Length-1]).Result;
-                        }
-                        else response = playerManager.FindPlayerByNick(emailParts[0]).Result;
+                        player = playerManager.Authentication(emailOrNickT.Text, password.Text);
                     }
-                    catch (AggregateException aex)
-                    {                      
-                        foreach (var ex in aex.Flatten().InnerExceptions)
-                        {
-                            BotonAlert("Alert", ex.Message, "OK", "Cancel").Show();
-                        }
-                    }
-                    if (response != 0)
+                    catch (Exception ex)
                     {
-                        player = playerManager.GetPlayer(response).Result;
-                        if (player.PlayerSesion)
-                        {
-                            BotonAlert("Alert", "User : " + player.PlayerNick + " is already connected", "OK", "Cancel").Show();
-                        }
-                        else
-                        {
-                            response2 = 0;
-                            try
-                            {
-                                playerManager.Session(player.PlayerId);
-                                response2 = 1;
-                            }
-                            catch (AggregateException aex)
-                            {
-                                foreach (var ex in aex.Flatten().InnerExceptions)
-                                {
-                                    BotonAlert("Alert", ex.Message, "OK", "Cancel").Show();
-                                }
-                            }
-                            if (response2 != 0)
-                            {
-                                appSession.setPlayer(player);
-                                StartActivity(typeof(MainActivity));
-                                //this.Finish();
-                            }
-                        }
-                       
+                        BotonAlert("Alert", ex.Message, "OK", "Cancel").Show();
+                        error = true;
+                    }
+                    if (!error)
+                    {
+                        appSession.setPlayer(player);
+                        StartActivity(typeof(MainActivity));
                     }
                 }
              };

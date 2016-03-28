@@ -1,6 +1,7 @@
 ﻿using AppGeoFit.BusinessLayer.Exceptions;
 using AppGeoFit.DataAccesLayer.Data;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
+using DevOne.Security.Cryptography.BCrypt;
 using System;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -61,7 +62,8 @@ namespace AppGeoFit.BusinessLayer.Managers
                         throw new Exception(ex.Message);
                 }
             }
-            //TODO Encriptación contraseña
+            //Encriptacion de la contraseña
+            player.Password = BCryptHelper.HashPassword(player.Password, BCryptHelper.GenerateSalt());
 
             return restService.CreatePlayerAsync(player);
         }
@@ -83,18 +85,16 @@ namespace AppGeoFit.BusinessLayer.Managers
             try
             {
                 id_responseMail = restService.FindPlayerByMailAsync(finalEmail[0], finalEmail[1]).Result;
-                okMail = false;
+                if (id_responseMail != player.PlayerId)
+                    throw new DuplicatePlayerMailException("Player with mail: " + player.PlayerMail + " already exists.");
 
             }
             catch (AggregateException aex)
             {
                 foreach (var ex in aex.Flatten().InnerExceptions)
                 {
-                    if (ex is PlayerNotFoundException) {
-                        okMail = true;
-                    }
-                    else
-                        throw new Exception(ex.Message);
+                    if (ex is Exception)
+                            throw new Exception(ex.Message);
                 }
             }
 
@@ -102,32 +102,74 @@ namespace AppGeoFit.BusinessLayer.Managers
             try
             {
                 id_responseNick = restService.FindPlayerByNickAsync(player.PlayerNick).Result;
-                okNick = false;
+                if (id_responseNick != player.PlayerId)
+                    throw new DuplicatePlayerNickException("Player with nick: " + player.PlayerNick + " already exists.");
             }
             catch (AggregateException aex)
             {
                 foreach (var ex in aex.Flatten().InnerExceptions)
                 {
-                    if (ex is PlayerNotFoundException) {
-                        okNick = true;
-                    }
-                    else
+                    if (ex is Exception)
                         throw new Exception(ex.Message);
                 }
             }
 
-            if (!okNick)
-            {
-                if (id_responseNick != player.PlayerId)
-                    throw new DuplicatePlayerNickException("Player with nick: " + player.PlayerNick + " already exists.");
-            }
-            if (!okMail)
-            {
-                if (id_responseMail != player.PlayerId)
-                    throw new DuplicatePlayerMailException("Player with mail: " + player.PlayerMail + " already exists.");
-            }
-
             return restService.UpdatePlayerAsync(player);
+
+        }
+
+        public Player Authentication (string nickOrMail, string password)
+        {
+            int response = 0;
+            string[] finalEmail = splitFunction(nickOrMail);
+
+            try
+            {
+                if (finalEmail[1] != null)
+                {
+                    response = restService.FindPlayerByMailAsync(finalEmail[0], finalEmail[1]).Result;
+                }
+                else response = restService.FindPlayerByNickAsync(finalEmail[0]).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is Exception)
+                        throw new Exception(ex.Message);
+                    if (ex is PlayerNotFoundException)
+                        throw new PlayerNotFoundException(ex.Message);
+                }
+            }
+            Player player = restService.GetPlayerAsync(response).Result;
+            if (BCryptHelper.CheckPassword(password, player.Password))
+            {
+                if (player.PlayerSesion)
+                {
+                    throw new PlayerAlreadyConnectedException("User : " + player.PlayerNick + " is already connected");
+                }
+                else
+                {
+                    try
+                    {
+                        restService.Session(player.PlayerId);
+                    }
+                    catch (AggregateException aex)
+                    {
+                        foreach (var ex in aex.Flatten().InnerExceptions)
+                        {
+                            if (ex is Exception)
+                                throw new Exception(ex.Message);
+                        }
+                    }
+                }
+
+            }
+            else
+                throw new PasswordIncorrectException("Nick/mail or password was incorrect ");
+
+            return player;
+
 
         }
 
@@ -172,7 +214,10 @@ namespace AppGeoFit.BusinessLayer.Managers
                 }
                 n++;
             }
-            finalEmail[1] = emailParts[emailParts.Length - 1];
+            if(emailParts.Length >1)
+                finalEmail[1] = emailParts[emailParts.Length - 1];
+            else
+                finalEmail[0] = emailParts[emailParts.Length - 1];
 
             return finalEmail;
         }

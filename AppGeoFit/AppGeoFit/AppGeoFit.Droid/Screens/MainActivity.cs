@@ -25,7 +25,7 @@ namespace AppGeoFit.Droid
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             SetContentView(Resource.Layout.MainActivity);
-            AppSession appSession = new AppSession(this.ApplicationContext);
+            AppSession appSession = new AppSession(ApplicationContext);
 
             Player player;
             PlayerManager playerManager = new PlayerManager(false);

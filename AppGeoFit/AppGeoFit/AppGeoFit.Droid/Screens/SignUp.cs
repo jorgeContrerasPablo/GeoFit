@@ -46,7 +46,7 @@ namespace AppGeoFit.Droid.Screens
 
             Button acept_bn = FindViewById<Button>(Resource.Id.SignUp_AceptButton);
             Button cancel_bn = FindViewById<Button>(Resource.Id.SignUp_CancelButton);
-            cancel_bn.Click += (o, e) => StartActivity(typeof(MainActivity));
+            cancel_bn.Click += (o, e) => StartActivity(typeof(Authentication));
 
             //Se crea el icono exclamation_error
             Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
@@ -116,6 +116,7 @@ namespace AppGeoFit.Droid.Screens
                        // Dialog a = BotonAlert("The account has been created correctly", "OK");
                         Toast.MakeText(ApplicationContext, "Your account has been created correctly", ToastLength.Short);
                         StartActivity(typeof(Authentication));
+                        this.Finish();
                     }
                 }
                 

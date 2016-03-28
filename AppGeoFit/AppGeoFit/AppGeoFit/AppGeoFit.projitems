@@ -11,6 +11,8 @@
   <ItemGroup>
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\DuplicatePlayerMailException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\DuplicatePlayerNickException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\PasswordIncorrectException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\PlayerAlreadyConnectedException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\PlayerManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\Exceptions\PlayerNotFoundException.cs" />
