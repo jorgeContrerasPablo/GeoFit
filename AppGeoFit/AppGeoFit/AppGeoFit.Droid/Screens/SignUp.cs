@@ -16,6 +16,7 @@ using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using Java.Util.Regex;
 using Android.OS;
 using AppGeoFit.BusinessLayer.Exceptions;
+using AppGeoFit.DataAccesLayer.Models;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -116,7 +117,7 @@ namespace AppGeoFit.Droid.Screens
                        // Dialog a = BotonAlert("The account has been created correctly", "OK");
                         Toast.MakeText(ApplicationContext, "Your account has been created correctly", ToastLength.Short);
                         StartActivity(typeof(Authentication));
-                        this.Finish();
+                        Finish();
                     }
                 }
                 

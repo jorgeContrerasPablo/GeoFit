@@ -1,47 +1,41 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-//using System.ComponentModel.DataAnnotations;
 
 namespace AppGeoFit.DataAccesLayer.Models
 {
-    public class Player
+    public class Team
     {
-
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
-        public Player()
+        public Team()
         {
             FeedBacks = new HashSet<FeedBack>();
-            Joineds = new HashSet<Joined>();
             Games = new HashSet<Game>();
+            Games1 = new HashSet<Game>();
+            Joineds = new HashSet<Joined>();
+            Places = new HashSet<Place>();
         }
 
-        public int PlayerId { get; set; }
+        public int TeamID { get; set; }
 
-        public string Password { get; set; }
+        public string TeamName { get; set; }
 
-        public string PlayerNick { get; set; }
+        public string ColorTeam { get; set; }
 
-        public string PlayerName { get; set; }
-
-        public string LastName { get; set; }
-
-        public int PhoneNum { get; set; }
-
-        public string PlayerMail { get; set; }
-
-        public Guid? PhotoID { get; set; }
+        public Guid? EmblemID { get; set; }
 
         public double? Level { get; set; }
 
-        public double? MedOnTime { get; set; }
-
-        public int? FavoriteSportID { get; set; }
-
-        public bool PlayerSesion { get; set; }
+        public int? SportID { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FeedBack> FeedBacks { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Game> Games { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public virtual ICollection<Game> Games1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Joined> Joineds { get; set; }
@@ -51,7 +45,6 @@ namespace AppGeoFit.DataAccesLayer.Models
         public virtual Sport Sport { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Game> Games { get; set; }
-
+        public virtual ICollection<Place> Places { get; set; }
     }
 }

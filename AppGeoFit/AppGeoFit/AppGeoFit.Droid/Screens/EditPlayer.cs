@@ -9,6 +9,7 @@ using System;
 using AppGeoFit.Droid.Screens;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.BusinessLayer.Exceptions;
+using AppGeoFit.DataAccesLayer.Models;
 
 namespace AppGeoFit.Droid
 {
@@ -41,6 +42,9 @@ namespace AppGeoFit.Droid
             //TODO
             //EditText spinnerFavoriteSport_et = FindViewById<EditText>(Resource.Id.Edit_SpinnerFavoriteSport);
             //spinnerFavoriteSport_et.Text = player.FavoriteSport;
+
+            // TODO EDIT PASSWORD
+
             Button acept_bn = FindViewById<Button>(Resource.Id.Edit_AceptButton);
             Button cancel_bn = FindViewById<Button>(Resource.Id.Edit_CancelButton);
             cancel_bn.Click += (o, e) => StartActivity(typeof(MainActivity));

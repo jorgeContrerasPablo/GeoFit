@@ -41,8 +41,7 @@ namespace RestServiceGeoFit.Models
 
         //public ICollection<Game> Games { get; set; }
 
-        //public ICollection<Team> Teams { get; set; }
-
+        public ICollection<int> Teams { get; set; }
 
     }
 }

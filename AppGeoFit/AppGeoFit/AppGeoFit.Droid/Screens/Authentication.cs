@@ -9,6 +9,7 @@ using AppGeoFit.BusinessLayer.Managers;
 using Android.Views;
 using DevOne.Security.Cryptography.BCrypt;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
+using AppGeoFit.DataAccesLayer.Models;
 
 namespace AppGeoFit.Droid.Screens
 {

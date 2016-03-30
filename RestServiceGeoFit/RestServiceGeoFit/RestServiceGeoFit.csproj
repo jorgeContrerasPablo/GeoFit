@@ -85,6 +85,8 @@
       <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.3\lib\net45\System.Net.Http.Formatting.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.Security" />
     <Reference Include="System.Web.DynamicData" />
     <Reference Include="System.Web.Entity" />
     <Reference Include="System.Web.ApplicationServices" />
@@ -205,6 +207,16 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
+    <Compile Include="Controllers\Players2Controller.cs" />
+    <Compile Include="Models2\AppGeoFitDBContext.cs" />
+    <Compile Include="Models2\FeedBack.cs" />
+    <Compile Include="Models2\Game.cs" />
+    <Compile Include="Models2\Joined.cs" />
+    <Compile Include="Models2\Photo.cs" />
+    <Compile Include="Models2\Place.cs" />
+    <Compile Include="Models2\Player.cs" />
+    <Compile Include="Models2\Sport.cs" />
+    <Compile Include="Models2\Team.cs" />
     <Compile Include="Models\FeedBack.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\Managers\Player\Exceptions\PlayerNotFoundException.cs" />

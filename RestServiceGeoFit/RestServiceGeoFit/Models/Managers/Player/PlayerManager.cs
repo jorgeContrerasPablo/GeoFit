@@ -79,6 +79,12 @@ namespace RestServiceGeoFit.Models
                     player.PlayerSesion = dataReader.GetBoolean(9);
                 }
                 dataReader.Close();
+
+         /*       selectCommand.CommandText =
+                    "SELECT TeamID "+
+                    "FROM Joined " +
+                    "WHERE PlayerId = @playerid";*/
+
                 transaction.Commit();
                 commited = true;
 

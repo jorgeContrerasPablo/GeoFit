@@ -11,6 +11,7 @@ using Android.Views;
 using Android.Widget;
 using Android.Preferences;
 using Newtonsoft.Json;
+using AppGeoFit.DataAccesLayer.Models;
 
 namespace AppGeoFit.Droid
 {

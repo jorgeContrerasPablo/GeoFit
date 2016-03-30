@@ -1,13 +1,14 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-//using System.ComponentModel.DataAnnotations;
-
-namespace AppGeoFit.DataAccesLayer.Models
+namespace RestServiceGeoFit.Models2
 {
-    public class Player
-    {
+    using System;
+    using System.Collections.Generic;
+    using System.ComponentModel.DataAnnotations;
+    using System.ComponentModel.DataAnnotations.Schema;
+    using System.Data.Entity.Spatial;
 
+    [Table("Player")]
+    public partial class Player
+    {
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors")]
         public Player()
         {
@@ -16,18 +17,27 @@ namespace AppGeoFit.DataAccesLayer.Models
             Games = new HashSet<Game>();
         }
 
-        public int PlayerId { get; set; }
+        public int PlayerID { get; set; }
 
+        [Required]
+        [StringLength(60)]
         public string Password { get; set; }
 
+        [Required]
+        [StringLength(20)]
         public string PlayerNick { get; set; }
 
+        [Required]
+        [StringLength(50)]
         public string PlayerName { get; set; }
 
+        [StringLength(50)]
         public string LastName { get; set; }
 
         public int PhoneNum { get; set; }
 
+        [Required]
+        [StringLength(50)]
         public string PlayerMail { get; set; }
 
         public Guid? PhotoID { get; set; }
@@ -52,6 +62,5 @@ namespace AppGeoFit.DataAccesLayer.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Game> Games { get; set; }
-
     }
 }

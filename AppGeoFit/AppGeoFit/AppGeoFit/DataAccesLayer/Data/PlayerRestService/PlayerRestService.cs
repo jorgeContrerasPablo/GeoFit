@@ -7,6 +7,7 @@ using Xamarin.Forms;
 using System.Net;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using System.Net.Http;
+using AppGeoFit.DataAccesLayer.Models;
 
 [assembly: Dependency(typeof(AppGeoFit.DataAccesLayer.Data.RestService))]
 namespace AppGeoFit.DataAccesLayer.Data
@@ -26,7 +27,7 @@ namespace AppGeoFit.DataAccesLayer.Data
 
         {
             Player responseAsPlayer = new Player();
-            var uri = new Uri(string.Format(url + "Players/GetPlayer/{0}", PlayerId));
+            var uri = new Uri(string.Format(url + "Players2/GetPlayer/{0}", PlayerId));
             HttpResponseMessage response;
 
          
@@ -51,7 +52,7 @@ namespace AppGeoFit.DataAccesLayer.Data
 
         public async Task<int> CreatePlayerAsync(Player player)
         {
-            var uri = new Uri(string.Format(url + "Players/CreatePlayer"));
+            var uri = new Uri(string.Format(url + "Players2/CreatePlayer"));
             int responseSucced = 0;
             HttpResponseMessage response = new HttpResponseMessage();
 
@@ -79,7 +80,7 @@ namespace AppGeoFit.DataAccesLayer.Data
 
         public async Task<Boolean> DeletePlayerAsync(int PlayerId)
         {
-            var uri = new Uri(string.Format(url + "Players/DeletePlayer/{0}", PlayerId));
+            var uri = new Uri(string.Format(url + "Players2/DeletePlayer/{0}", PlayerId));
             Boolean responseSucced = false;
 
             HttpResponseMessage response = client.DeleteAsync(uri).Result;
@@ -102,7 +103,7 @@ namespace AppGeoFit.DataAccesLayer.Data
 
         public async Task<Boolean> UpdatePlayerAsync(Player player)
         {
-            var uri = new Uri(string.Format(url + "Players/UpdatePlayer"));
+            var uri = new Uri(string.Format(url + "Players2/UpdatePlayer"));
             Boolean responseSucced = false;
 
             var json = JsonConvert.SerializeObject(player);
@@ -129,7 +130,7 @@ namespace AppGeoFit.DataAccesLayer.Data
         {
             int responseSucced = 0;
 
-            Uri uri = new Uri(string.Format(url + "Players/FindPlayerByMail/{0}/{1}", nickOrMail, post));
+            Uri uri = new Uri(string.Format(url + "Players2/FindPlayerByMail/{0}/{1}", nickOrMail, post));
             
             HttpResponseMessage response = client.GetAsync(uri).Result;
 
@@ -155,7 +156,7 @@ namespace AppGeoFit.DataAccesLayer.Data
         public async Task<int> FindPlayerByNickAsync(string nickOrMail)
         {
             int responseSucced = 0;
-            Uri uri = new Uri(string.Format(url + "Players/FindPlayerByNick/{0}", nickOrMail));
+            Uri uri = new Uri(string.Format(url + "Players2/FindPlayerByNick/{0}", nickOrMail));
 
             HttpResponseMessage response = client.GetAsync(uri).Result;
 
@@ -179,7 +180,7 @@ namespace AppGeoFit.DataAccesLayer.Data
 
         public void Session(int playerId)
         {
-            var uri = new Uri(string.Format(url + "Players/Session/{0}", playerId));
+            var uri = new Uri(string.Format(url + "Players2/Session/{0}", playerId));
            
             try
             {
@@ -200,7 +201,7 @@ namespace AppGeoFit.DataAccesLayer.Data
 
         public void OutSession(int playerId)
         {
-            var uri = new Uri(string.Format(url + "Players/OutSession/{0}", playerId));
+            var uri = new Uri(string.Format(url + "Players2/OutSession/{0}", playerId));
 
             try
             {

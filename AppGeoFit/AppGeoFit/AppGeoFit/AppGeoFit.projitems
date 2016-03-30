@@ -18,7 +18,14 @@
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\Exceptions\PlayerNotFoundException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\IPlayerRestService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\PlayerRestService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\FeedBack.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\Game.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\Joined.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\Photo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\Place.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\Player.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\Sport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\Team.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)GettingStarted.Xamarin" />

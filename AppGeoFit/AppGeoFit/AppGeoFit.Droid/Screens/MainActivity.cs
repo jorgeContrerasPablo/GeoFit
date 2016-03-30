@@ -12,6 +12,7 @@ using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using Android.Content;
 using Android.Support.V4.Content;
 using Android.Graphics.Drawables;
+using AppGeoFit.DataAccesLayer.Models;
 
 namespace AppGeoFit.Droid
 {
@@ -94,6 +95,7 @@ namespace AppGeoFit.Droid
                     playerManager.DeletePlayer(player.PlayerId);
                     appSession.deletePlayer();
                     StartActivity(typeof(Screens.Authentication));
+                    Finish();
                 };
             };         
 

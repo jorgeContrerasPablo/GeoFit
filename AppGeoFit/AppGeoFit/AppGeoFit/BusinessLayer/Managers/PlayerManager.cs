@@ -1,6 +1,7 @@
 ﻿using AppGeoFit.BusinessLayer.Exceptions;
 using AppGeoFit.DataAccesLayer.Data;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
+using AppGeoFit.DataAccesLayer.Models;
 using DevOne.Security.Cryptography.BCrypt;
 using System;
 using System.Threading.Tasks;
