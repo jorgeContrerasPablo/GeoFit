@@ -1,4 +1,5 @@
-﻿using RestServiceGeoFit.App_Start;
+﻿using Newtonsoft.Json;
+using RestServiceGeoFit.App_Start;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,7 +17,8 @@ namespace RestServiceGeoFit
         {
            // AreaRegistration.RegisterAllAreas();
             GlobalConfiguration.Configure(WebApiConfig.Register);
-          //  FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
+            GlobalConfiguration.Configuration.Formatters.JsonFormatter.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+            //  FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters);
         }
     }
 }

@@ -10,6 +10,8 @@ namespace RestServiceGeoFit.Models2
         public AppGeoFitDBContext()
             : base("name=AppGeoFitDBContext")
         {
+            //Configuration.ProxyCreationEnabled = false;
+            //Configuration.LazyLoadingEnabled = false;
         }
 
         public virtual DbSet<FeedBack> FeedBacks { get; set; }

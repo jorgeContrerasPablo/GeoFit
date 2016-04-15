@@ -33,7 +33,7 @@ namespace RestServiceGeoFit.Models2
 
         public double? Level { get; set; }
 
-        public int? SportID { get; set; }
+        public int SportID { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<FeedBack> FeedBacks { get; set; }

@@ -1,40 +1,42 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Diagnostics;
+﻿using System;
+using System.Collections.Generic;
+using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
+using AppGeoFit.DataAccesLayer.Models;
 using Xamarin.Forms;
 using System.Net;
+using Newtonsoft.Json;
+using AppGeoFit.DataAccesLayer.Data.TeamRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
-using System.Net.Http;
-using AppGeoFit.DataAccesLayer.Models;
+using System.Collections;
+using System.Collections.ObjectModel;
 
-[assembly: Dependency(typeof(AppGeoFit.DataAccesLayer.Data.PlayerRestService.PlayerRestService))]
-namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
+[assembly: Dependency(typeof(AppGeoFit.DataAccesLayer.Data.TeamRestService.TeamRestService))]
+
+namespace AppGeoFit.DataAccesLayer.Data.TeamRestService
 {
-    class PlayerRestService : IPlayerRestService
+    class TeamRestService : ITeamRestService
     {
-        public string url  { get; set; }
+        public string url { get; set; }
         readonly HttpClient client;
 
-        public PlayerRestService()
-            {
-                client = new HttpClient();
-                client.MaxResponseContentBufferSize = 256000;
-            }
-
-        public async Task<Player> GetPlayerAsync(int playerId)
-
+        public TeamRestService()
         {
-            Player responseAsPlayer = new Player();
-            var uri = new Uri(string.Format(url + "Players2/GetPlayer/{0}", playerId));
+            client = new HttpClient();
+            client.MaxResponseContentBufferSize = 256000;
+        }
+
+        public async Task<Team> GetTeamAsync(int teamId)
+        {
+            Team responseAsTeam = new Team();
+            var uri = new Uri(string.Format(url + "Team/GetTeam/{0}", teamId));
             HttpResponseMessage response;
 
-         
-            response =  client.GetAsync(uri).Result;
+            response = client.GetAsync(uri).Result;
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                throw new PlayerNotFoundException(response.ReasonPhrase);
+                throw new TeamNotFoundException(response.ReasonPhrase);
             }
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {
@@ -44,20 +46,20 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
             {
                 string responseAsString = await response.Content.ReadAsStringAsync();
 
-                responseAsPlayer = JsonConvert.DeserializeObject<Player>(responseAsString);
+                responseAsTeam = JsonConvert.DeserializeObject<Team>(responseAsString);
             }
-            
-            return responseAsPlayer;
+
+            return responseAsTeam;
         }
 
-        public async Task<int> CreatePlayerAsync(Player player)
+        public async Task<int> CreateTeamAsync(Team team)
         {
-            var uri = new Uri(string.Format(url + "Players2/CreatePlayer"));
+            var uri = new Uri(string.Format(url + "Team/CreateTeam"));
             int responseSucced = 0;
             HttpResponseMessage response = new HttpResponseMessage();
 
 
-            var json = JsonConvert.SerializeObject(player);
+            var json = JsonConvert.SerializeObject(team);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             response = client.PostAsync(uri, content).Result;
@@ -74,13 +76,12 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
                 responseSucced = JsonConvert.DeserializeObject<int>(responseAsString);
             }
 
-            return responseSucced; 
-
+            return responseSucced;
         }
 
-        public async Task<Boolean> DeletePlayerAsync(int PlayerId)
+        public async Task<bool> DeleteTeamAsync(int teamId)
         {
-            var uri = new Uri(string.Format(url + "Players2/DeletePlayer/{0}", PlayerId));
+            var uri = new Uri(string.Format(url + "Team/DeleteTeam/{0}", teamId));
             Boolean responseSucced = false;
 
             HttpResponseMessage response = client.DeleteAsync(uri).Result;
@@ -98,15 +99,14 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
             }
 
             return responseSucced;
-
         }
 
-        public async Task<Boolean> UpdatePlayerAsync(Player player)
+        public async Task<bool> UpdateTeamAsync(Team team)
         {
-            var uri = new Uri(string.Format(url + "Players2/UpdatePlayer"));
+            var uri = new Uri(string.Format(url + "Team/UpdateTeam"));
             Boolean responseSucced = false;
 
-            var json = JsonConvert.SerializeObject(player);
+            var json = JsonConvert.SerializeObject(team);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
 
             HttpResponseMessage response = client.PutAsync(uri, content).Result;
@@ -126,110 +126,68 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
             return responseSucced;
         }
 
-        public async Task<int> FindPlayerByMailAsync(string nickOrMail, string post)
+        public async Task<bool> AddPlayer(int teamId, int playerId, bool captain)
+        {
+            var uri = new Uri(string.Format(url + "Team/AddPlayer/{0}/{1}/{2}", teamId,playerId,captain));
+            Boolean responseSucced = false;
+
+            HttpResponseMessage response = client.GetAsync(uri).Result;
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                if (response.ReasonPhrase.Contains("Player"))
+                    throw new PlayerNotFoundException(response.ReasonPhrase);
+                else
+                    throw new TeamNotFoundException(response.ReasonPhrase);
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+
+                responseSucced = JsonConvert.DeserializeObject<Boolean>(responseAsString);
+            }
+            return responseSucced;
+        }
+
+        public async Task<ICollection<Sport>> GetSports()
+        {
+            var uri = new Uri(string.Format(url + "Team/GetSports"));
+            ICollection<Sport> responseSports = new Collection<Sport>();
+
+            HttpResponseMessage response = client.GetAsync(uri).Result;
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+               throw new SportsNotFoundException(response.ReasonPhrase);            
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+
+                responseSports = JsonConvert.DeserializeObject<ICollection<Sport>>(responseAsString);
+            }
+            return responseSports;
+
+        }
+
+        public async Task<int> FindTeamByNameOnSports(string teamName, int sportId)
         {
             int responseSucced = 0;
-
-            Uri uri = new Uri(string.Format(url + "Players2/FindPlayerByMail/{0}/{1}", nickOrMail, post));
+            Uri uri = new Uri(string.Format(url + "Team/FindTeamByNameOnSports/{0}/{1}", teamName, sportId));
             
             HttpResponseMessage response = client.GetAsync(uri).Result;
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
-                throw new PlayerNotFoundException(response.ReasonPhrase);
-            }
-
-            if (response.StatusCode == HttpStatusCode.BadRequest)
-            {
-                throw new Exception(response.ReasonPhrase);
-            }
-            if (response.IsSuccessStatusCode)
-            {
-                string responseAsString = await response.Content.ReadAsStringAsync();
-                responseSucced = JsonConvert.DeserializeObject<int>(responseAsString);
-            }
-
-            return responseSucced;
-
-        }
-
-        public async Task<int> FindPlayerByNickAsync(string nickOrMail)
-        {
-            int responseSucced = 0;
-            Uri uri = new Uri(string.Format(url + "Players2/FindPlayerByNick/{0}", nickOrMail));
-
-            HttpResponseMessage response = client.GetAsync(uri).Result;
-
-            if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                throw new PlayerNotFoundException(response.ReasonPhrase);
-            }
-            if (response.StatusCode == HttpStatusCode.BadRequest)
-            {
-                throw new Exception(response.ReasonPhrase);
-            }
-            if (response.IsSuccessStatusCode)
-            {
-                string responseAsString = await response.Content.ReadAsStringAsync();
-                responseSucced = JsonConvert.DeserializeObject<int>(responseAsString);
-            }
-
-            return responseSucced;
-
-        }
-
-        public void Session(int playerId)
-        {
-            var uri = new Uri(string.Format(url + "Players2/Session/{0}", playerId));
-           
-            try
-            {
-                var json = JsonConvert.SerializeObject("");
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = client.PutAsync(uri, content).Result;
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    throw new Exception(response.ReasonPhrase);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public void OutSession(int playerId)
-        {
-            var uri = new Uri(string.Format(url + "Players2/OutSession/{0}", playerId));
-
-            try
-            {
-                var json = JsonConvert.SerializeObject("");
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = client.PutAsync(uri, content).Result;
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    throw new Exception(response.ReasonPhrase);
-                }
-            }
-            catch (Exception ex)
-            {
-                throw new Exception(ex.Message);
-            }
-        }
-
-        public async Task<int> FindCaptainOnSports(int playerId, int sportId)
-        {
-            int responseSucced = 0;
-            Uri uri = new Uri(string.Format(url + "Players2/FindCaptainOnSports/{0}/{1}", playerId, sportId));
-
-            HttpResponseMessage response = client.GetAsync(uri).Result;
-
-            if (response.StatusCode == HttpStatusCode.NotFound)
-            {
-                throw new CaptainNotFoundException(response.ReasonPhrase);
+                throw new TeamNotFoundException(response.ReasonPhrase);
             }
             if (response.StatusCode == HttpStatusCode.BadRequest)
             {

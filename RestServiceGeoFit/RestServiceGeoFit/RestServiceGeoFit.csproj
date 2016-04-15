@@ -208,6 +208,7 @@
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
     <Compile Include="Controllers\Players2Controller.cs" />
+    <Compile Include="Controllers\TeamController.cs" />
     <Compile Include="Models2\AppGeoFitDBContext.cs" />
     <Compile Include="Models2\FeedBack.cs" />
     <Compile Include="Models2\Game.cs" />
@@ -256,7 +257,9 @@
     <Folder Include="App_Data\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
     <None Include="Project_Readme.html" />
   </ItemGroup>
   <ItemGroup>

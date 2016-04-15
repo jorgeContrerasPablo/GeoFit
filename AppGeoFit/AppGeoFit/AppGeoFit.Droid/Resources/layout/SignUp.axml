@@ -144,6 +144,7 @@
                 android:layout_marginLeft="14dp"
                 android:layout_marginRight="14dp" />
             <EditText
+                android:inputType="textPassword"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:hint="*******"
                 android:layout_width="match_parent"
@@ -155,6 +156,7 @@
                 android:layout_marginLeft="14dp"
                 android:layout_marginRight="14dp" />
             <EditText
+                android:inputType="textPassword"
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:hint="*******"
                 android:layout_width="match_parent"

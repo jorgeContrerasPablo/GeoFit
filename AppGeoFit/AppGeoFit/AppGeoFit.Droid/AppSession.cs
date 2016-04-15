@@ -15,7 +15,7 @@ using AppGeoFit.DataAccesLayer.Models;
 
 namespace AppGeoFit.Droid
 {
-    class AppSession
+    public class AppSession
     {
         private ISharedPreferences appSharedPrefs;
         private ISharedPreferencesEditor appSharedPrefsEditor;

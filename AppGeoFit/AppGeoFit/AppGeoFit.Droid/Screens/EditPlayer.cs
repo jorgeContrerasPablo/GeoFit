@@ -101,7 +101,7 @@ namespace AppGeoFit.Droid
                     }
                     catch (Exception ex)
                     {
-                        BotonAlert("Alert", ex.Message, "OK", "Cancel").Show();
+                        BotonAlert("Alert", ex.Message, "OK", "Cancel",this).Show();
                     }
                     if (!error)
                     {

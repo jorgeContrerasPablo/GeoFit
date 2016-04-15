@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="Text"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/actualIp"
+        android:gravity="center"
+        android:layout_marginTop="108.7dp" />
+    <EditText
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/editIp"
+        android:layout_marginTop="33.3dp" />
+    <Button
+        android:text="OK"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/buttonChangeIp"
+        android:layout_marginTop="39.0dp"
+        android:layout_marginRight="79.7dp"
+        android:layout_marginLeft="75.3dp" />
+</LinearLayout>

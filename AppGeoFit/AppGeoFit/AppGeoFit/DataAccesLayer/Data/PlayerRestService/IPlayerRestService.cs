@@ -4,9 +4,9 @@ using System.Collections.Generic;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppGeoFit.DataAccesLayer.Data
+namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
 {
-    public interface IRestService
+    public interface IPlayerRestService
     {
         string url { get; set; }
         Task <Player> GetPlayerAsync(int PlayerId);
@@ -17,5 +17,6 @@ namespace AppGeoFit.DataAccesLayer.Data
         Task<int> FindPlayerByNickAsync(string nickOrMail);
         void Session(int playerId);
         void OutSession(int playerId);
+        Task<int> FindCaptainOnSports(int playerId, int sportId);
     }
 }

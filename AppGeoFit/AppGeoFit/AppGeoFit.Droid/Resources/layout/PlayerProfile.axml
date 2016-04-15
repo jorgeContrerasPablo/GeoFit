@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="horizontal"
+    android:id="@+id/PlayerProfileL"
+    android:layout_marginTop="0.0dp"
+    android:layout_marginRight="0.0dp"
+    tools:context=".DeviceFragment">
+    <RelativeLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout1"
+        android:layout_weight="1">
+        <ImageButton
+            android:src="@drawable/Edit"
+            android:layout_width="match_parent"
+            android:layout_height="36.7dp"
+            android:id="@+id/imageButtonEdit"
+            android:layout_marginTop="8.3dp"
+            android:layout_marginRight="17.7dp"
+            android:layout_marginLeft="19.0dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/LabelName"
+            android:layout_below="@id/imageButtonEdit"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="22.0dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Last Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/LabelLastName"
+            android:layout_below="@+id/LabelName"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Nick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/LabelNick"
+            android:layout_below="@+id/LabelLastName"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Phone Number"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/LabelPhoneNumber"
+            android:layout_below="@+id/LabelNick"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Email@"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/LabelEmail"
+            android:layout_below="@+id/LabelPhoneNumber"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Rating %"
+            android:layout_width="match_parent"
+            android:layout_height="31.0dp"
+            android:id="@+id/LabelRating"
+            android:layout_below="@+id/LabelEmail"
+            android:gravity="center"
+            android:layout_marginBottom="22.3dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Med On Time %"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/LabelMedOnTime"
+            android:layout_below="@+id/LabelRating"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout2"
+        android:layout_weight="1">
+        <ImageButton
+            android:src="@drawable/Trash"
+            android:layout_width="match_parent"
+            android:layout_height="36.7dp"
+            android:id="@+id/imageButtonDelete"
+            android:layout_marginTop="8.3dp"
+            android:layout_marginRight="17.7dp"
+            android:layout_marginLeft="19.0dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Name"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Name"
+            android:layout_below="@+id/imageButtonDelete"
+            android:gravity="center"
+            android:layout_marginBottom="16dp"
+            android:layout_marginTop="22.0dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="LastName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/LastName"
+            android:layout_below="@+id/Name"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Nick"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Nick"
+            android:layout_below="@+id/LastName"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="PhoneNumber"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/PhoneNumber"
+            android:layout_below="@+id/Nick"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Email"
+            android:layout_below="@+id/PhoneNumber"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+        <RatingBar
+            android:layout_width="wrap_content"
+            android:layout_height="31.0dp"
+            android:id="@+id/ratingBar"
+            android:numStars="5"
+            android:stepSize="0.1"
+            style="?android:attr/ratingBarStyleIndicator"
+            android:layout_below="@+id/Email"
+            android:gravity="center"
+            android:layout_marginBottom="22.3dp" />
+        <TextView
+            android:textAppearance="?android:attr/textAppearanceMedium"
+            android:text="Med On Time"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/MedOnTime"
+            android:layout_below="@+id/ratingBar"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+    </RelativeLayout>
+</LinearLayout>

@@ -9,6 +9,7 @@ using System.Web.Http;
 using RestServiceGeoFit.Models.Managers.Player.Exceptions;
 using RestServiceGeoFit.Models2;
 using System.Web.Mvc;
+using System.Data.SqlClient;
 
 namespace RestServiceGeoFit.Controllers
 {
@@ -16,7 +17,7 @@ namespace RestServiceGeoFit.Controllers
     {
         static readonly bool test = true;
         //PlayerManager playerManager = new PlayerManager(!test);
-        private AppGeoFitDBContext db = new AppGeoFitDBContext();
+        private readonly AppGeoFitDBContext db = new AppGeoFitDBContext();
 
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetPlayer(int parameter1)
@@ -183,5 +184,33 @@ namespace RestServiceGeoFit.Controllers
 
             return BuildSuccesResult(HttpStatusCode.OK, player.PlayerSesion);
         }
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage FindCaptainOnSports(int parameter1, int parameter2)
+        {
+            if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                //  playerManager = new PlayerManager(test);
+            }
+            var playerId = new SqlParameter("@PlayerId", parameter1);
+            var sportId = new SqlParameter("@SportId", parameter2);
+            string nativeSQLQuery = @"SELECT PlayerID, TeamID, Captain " +
+                                    "FROM GeoFitDB.dbo.Joined " +
+                                    "WHERE PlayerID = @PlayerId AND Captain = 1 "+
+                                             "AND TeamID in ( SELECT TeamID " +
+                                                     "FROM GeoFitDB.dbo.Team " +
+                                                     "WHERE SportID = @SportId)";
+
+            var joined = db.Joineds.SqlQuery(nativeSQLQuery, playerId, sportId).FirstOrDefault<Joined>(); ;
+
+            if (joined == null)
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "Player with name: " + 
+                    parameter1 + " is not a captain on sportId "+parameter2+".");
+            }
+            return BuildSuccesResult(HttpStatusCode.OK, joined.PlayerID);
+        }
+
+    
     }
 }

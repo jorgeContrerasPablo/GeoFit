@@ -10,6 +10,7 @@ using Android.Views;
 using DevOne.Security.Cryptography.BCrypt;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Models;
+using Android.Content;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -22,11 +23,11 @@ namespace AppGeoFit.Droid.Screens
         {
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
-           
+
             // Comprobamos si el usuario aun tiene una sesion disponible para conectarse sin loguearse y que no esté ocupada por otro dispositivo
             PlayerManager playerManager = new PlayerManager(false);
-            appSession = new AppSession(this.ApplicationContext);
-            
+            appSession = new AppSession(ApplicationContext);
+
             if (appSession.getPlayer() != null)
             {
                 if (!appSession.getPlayer().PlayerSesion)
@@ -42,6 +43,10 @@ namespace AppGeoFit.Droid.Screens
             EditText password = FindViewById<EditText>(Resource.Id.passwordText);
             Button signInB = FindViewById<Button>(Resource.Id.SignInButton);
             TextView signUpLink = FindViewById<TextView>(Resource.Id.SignUpTextL);
+            TextView changeIpLink = FindViewById<TextView>(Resource.Id.ChangeIpTextL);
+
+
+
 
             //Se crea el icono exclamation_error
             Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
@@ -67,7 +72,7 @@ namespace AppGeoFit.Droid.Screens
                     }
                     catch (Exception ex)
                     {
-                        BotonAlert("Alert", ex.Message, "OK", "Cancel").Show();
+                        BotonAlert("Alert", ex.Message, "OK", "Cancel", this).Show();
                         error = true;
                     }
                     if (!error)
@@ -76,12 +81,40 @@ namespace AppGeoFit.Droid.Screens
                         StartActivity(typeof(MainActivity));
                     }
                 }
-             };
+            };
             #endregion
 
             //Sign Up Button
             signUpLink.Click += (o, e) => StartActivity(typeof(SignUp));
 
+            // Change IP Debug Button
+            changeIpLink.Click += (o, e) =>
+            {
+                AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                // Get the layout inflater
+                LayoutInflater inflater = LayoutInflater;
+
+                View dialogView = inflater.Inflate(Resource.Layout.dialog_ip, null);
+                // Inflate and set the layout for the dialog
+                // Pass null as the parent view because its going in the dialog layout
+                builder.SetView(dialogView);
+
+                TextView ipText = dialogView.FindViewById<TextView>(Resource.Id.actualIp);
+                ipText.Text = Constants.RestUrl;
+                EditText ipTextChange = dialogView.FindViewById<EditText>(Resource.Id.editIp);
+                Button okButton = dialogView.FindViewById<Button>(Resource.Id.buttonChangeIp);
+                AlertDialog ad = builder.Create();
+                okButton.Click += (i, p) =>
+                {
+                    if (ipTextChange.Text != "")
+                    {
+                        Constants.RestUrl = ipTextChange.Text;
+                        ad.Cancel();
+                    }
+                };              
+                ad.Show();
+            };            
         }
 
         protected override void OnPause()

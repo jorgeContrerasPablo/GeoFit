@@ -1,5 +1,5 @@
 ﻿using AppGeoFit.BusinessLayer.Exceptions;
-using AppGeoFit.DataAccesLayer.Data;
+using AppGeoFit.DataAccesLayer.Data.PlayerRestService;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Models;
 using DevOne.Security.Cryptography.BCrypt;
@@ -11,10 +11,10 @@ namespace AppGeoFit.BusinessLayer.Managers
 {
     public class PlayerManager
     {
-        readonly IRestService restService;
+        readonly IPlayerRestService restService;
         public PlayerManager(bool test)
         {
-            restService = DependencyService.Get<RestService>();
+            restService = DependencyService.Get<PlayerRestService>();
             restService.url = test ? Constants.RestUrlTest : Constants.RestUrl;
 
         }
@@ -79,8 +79,6 @@ namespace AppGeoFit.BusinessLayer.Managers
             string[] finalEmail = splitFunction(player.PlayerMail);
             int id_responseMail = 0;
             int id_responseNick = 0;
-            bool okMail = false;
-            bool okNick = false;
 
             // Comprobamos mail duplicado
             try
@@ -136,10 +134,10 @@ namespace AppGeoFit.BusinessLayer.Managers
             {
                 foreach (var ex in aex.Flatten().InnerExceptions)
                 {
-                    if (ex is Exception)
-                        throw new Exception(ex.Message);
                     if (ex is PlayerNotFoundException)
                         throw new PlayerNotFoundException(ex.Message);
+                    if (ex is Exception)
+                        throw new Exception(ex.Message);                    
                 }
             }
             Player player = restService.GetPlayerAsync(response).Result;

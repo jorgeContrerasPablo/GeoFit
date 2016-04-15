@@ -18,10 +18,10 @@ namespace AppGeoFit.Droid.Screens
     {
         public Screen() { }
 
-        public AlertDialog BotonAlert(string title, string message, string positiveButton, string negativeButton)
+        public AlertDialog BotonAlert(string title, string message, string positiveButton, string negativeButton, Context cntx)
         {
             // BOTON ALERT
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            AlertDialog.Builder builder = new AlertDialog.Builder(cntx);
             builder.SetTitle(title);
             builder.SetMessage(message);
             builder.SetPositiveButton(positiveButton, (EventHandler<DialogClickEventArgs>)null);
