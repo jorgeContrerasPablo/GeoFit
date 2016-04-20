@@ -36,6 +36,7 @@ namespace AppGeoFit.Droid.Screens
 
             mTabHost.AddTab(mTabHost.NewTabSpec("TabProfile").SetIndicator("Player Profile"), Java.Lang.Class.FromType(typeof(PlayerProfile)), null);
             mTabHost.AddTab(mTabHost.NewTabSpec("TabTeam").SetIndicator("Team"), Java.Lang.Class.FromType(typeof(Team)), null);
+
             /*            TabHost.TabSpec spec = tabH.NewTabSpec("TabGames");
                         //spec.SetContent(Resource.Id.Games);
                         spec.SetContent(new Intent(this, typeof(PlayerProfile)));

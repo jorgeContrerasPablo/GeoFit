@@ -31,6 +31,7 @@ namespace AppGeoFit.Droid.Screens
             global::Xamarin.Forms.Forms.Init(this, bundle);
             SetContentView(Resource.Layout.SignUp);
 
+            TeamManager teamManager = new TeamManager(false);
             PlayerManager playerManager = new PlayerManager(false);
             Player player = new Player();
 
@@ -42,12 +43,45 @@ namespace AppGeoFit.Droid.Screens
             EditText nick_et = FindViewById<EditText>(Resource.Id.SignUp_Nick);
             EditText phoneNumber_et = FindViewById<EditText>(Resource.Id.SignUp_PhoneNumber);
             EditText email_et = FindViewById<EditText>(Resource.Id.SignUp_Email);
-            //TODO
+            
             Spinner spinnerFavoriteSport_et = FindViewById<Spinner>(Resource.Id.SignUp_SpinnerFavoriteSport);
+            ICollection<Sport> sports = teamManager.GetSports().Result;
+
+            List<String> sportsNames = new List<String>();
+
+            //Recojemos la lista de Sports y creamos una lista con los nombres para el spinner
+            var n = 0;
+            while (n < sports.Count)
+            {
+                if (n == 0)
+                    sportsNames.Add("");
+                sportsNames.Add(sports.ElementAt<Sport>(n).SportName);
+                n++;
+            }
+
+            //Spinner control
+            spinnerFavoriteSport_et.ItemSelected += (o, e) =>
+            {
+                if (sportsNames.ElementAt<String>(e.Position) != "")
+                {
+                    player.FavoriteSportID = sports.ElementAt<Sport>(e.Position - 1).SportID;
+                    //player.Sport = sports.ElementAt<Sport>(e.Position - 1);
+                }
+                else
+                {
+                    player.FavoriteSportID = null;
+                    //player.Sport = null;
+                }
+            };
+            var adapter = new ArrayAdapter<String>(
+                    this, Android.Resource.Layout.SimpleSpinnerItem, sportsNames);
+            adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
+            spinnerFavoriteSport_et.Adapter = adapter;
+
 
             Button acept_bn = FindViewById<Button>(Resource.Id.SignUp_AceptButton);
             Button cancel_bn = FindViewById<Button>(Resource.Id.SignUp_CancelButton);
-            cancel_bn.Click += (o, e) => StartActivity(typeof(Authentication));
+            cancel_bn.Click += (o, e) => Finish();//StartActivity(typeof(Authentication));
 
             //Se crea el icono exclamation_error
             Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
@@ -63,8 +97,6 @@ namespace AppGeoFit.Droid.Screens
             bool okmail = false;
             bool oknick = false;
             bool okphone = false;
-            bool error = false;
-
 
             acept_bn.Click += (o, e) =>
             {
@@ -80,9 +112,10 @@ namespace AppGeoFit.Droid.Screens
                 okphone = IsValid(phoneNumber_et, "It's not a correct phone", errorD, Android.Util.Patterns.Phone.Matcher(phoneNumber_et.Text.ToString()).Matches());
                 okRpassV = IsValid(repeatePassword_et, "Repeate the password correctly", errorD, password_et.Text.Equals(repeatePassword_et.Text));
 
-                if (!okN && !okNi && !okP && !okE && !okPass && !okRpassR && okRpassV && okmail && oknick && okphone)
+                bool validate = !okN && !okNi && !okP && !okE && !okPass && !okRpassR && okRpassV && okmail && oknick && okphone;
+
+                if (validate)
                 {
-                    error = false;
                     okmail = IsValid(email_et, "", errorD, true);
                     oknick = IsValid(nick_et, "", errorD, true);
 
@@ -92,32 +125,27 @@ namespace AppGeoFit.Droid.Screens
                     player.PlayerNick = nick_et.Text;
                     player.PhoneNum = Convert.ToInt32(phoneNumber_et.Text);
                     player.PlayerMail = email_et.Text;
-                    //TODO favorite sport
+                    player.Level = 0;
+                    player.MedOnTime = 0;
                     try
                     {
                         playerManager.CreatePlayer(player);
+                        // Dialog a = BotonAlert("The account has been created correctly", "OK");
+                        Toast.MakeText(ApplicationContext, "Your account has been created correctly", ToastLength.Short).Show();
+                        //StartActivity(typeof(Authentication));
+                        Finish();
                     }
                     catch (DuplicatePlayerNickException exN)
                     {
-                        error = true;
                         oknick = IsValid(nick_et, exN.Message, errorD, false);
                     }
                     catch (DuplicatePlayerMailException exM)
                     {
-                        error = true;
                         okmail = IsValid(email_et, exM.Message, errorD, false);
                     }
                     catch (Exception ex)
                     {
                         BotonAlert("Alert", ex.Message, "OK", "Cancel",this).Show();
-                    }
-                   
-                    if (!error)
-                    {
-                       // Dialog a = BotonAlert("The account has been created correctly", "OK");
-                        Toast.MakeText(ApplicationContext, "Your account has been created correctly", ToastLength.Short);
-                        StartActivity(typeof(Authentication));
-                        Finish();
                     }
                 }
                 
@@ -129,7 +157,7 @@ namespace AppGeoFit.Droid.Screens
         protected override void OnPause()
         {
             PlayerManager playerManager = new PlayerManager(false);
-            AppSession appSession = new AppSession(this.ApplicationContext);
+            appSession = new AppSession(this.ApplicationContext);
 
             if (appSession.getPlayer() != null)
             {

@@ -49,6 +49,8 @@ namespace RestServiceGeoFit.Controllers
             }
             if (ModelState.IsValid)
             {
+                if(player.FavoriteSportID != null)
+                    player.Sport = db.Sports.Find(player.FavoriteSportID);
                 db.Players.Add(player);
                 db.SaveChanges();
             }

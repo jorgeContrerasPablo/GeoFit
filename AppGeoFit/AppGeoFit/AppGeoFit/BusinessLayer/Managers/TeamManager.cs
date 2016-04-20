@@ -61,7 +61,6 @@ namespace AppGeoFit.BusinessLayer.Managers
                     if (ex is CaptainNotFoundException) { }
                     else 
                         throw new Exception(ex.Message);
-                    
                 }
             }
             try

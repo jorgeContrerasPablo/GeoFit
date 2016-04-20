@@ -44,6 +44,7 @@ namespace RestServiceGeoFit.Controllers
             }
             if (ModelState.IsValid)
             {
+                team.Sport = db.Sports.Find(team.SportID);
                 db.Teams.Add(team);
                 db.SaveChanges();
             }

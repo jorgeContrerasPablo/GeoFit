@@ -6,6 +6,5 @@
 	<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
 	<RunCodeAnalysis>false</RunCodeAnalysis>
 	<Rebuild>false</Rebuild>
-  <build>none</build>
-  
+	<build>none</build>
 </manifest>

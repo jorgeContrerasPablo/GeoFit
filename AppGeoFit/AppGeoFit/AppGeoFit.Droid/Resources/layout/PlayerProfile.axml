@@ -155,8 +155,8 @@
             android:id="@+id/ratingBar"
             android:numStars="5"
             android:stepSize="0.1"
-            style="?android:attr/ratingBarStyleIndicator"
             android:layout_below="@+id/Email"
+            style="?android:attr/ratingBarStyleIndicator"
             android:gravity="center"
             android:layout_marginBottom="22.3dp" />
         <TextView

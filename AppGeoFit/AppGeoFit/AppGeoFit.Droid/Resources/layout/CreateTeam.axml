@@ -88,24 +88,41 @@
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="14dp"
                 android:layout_marginRight="14dp" />
-            <Button
-                android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Select color team"
+            <RelativeLayout
+                android:minWidth="25px"
+                android:minHeight="25px"
                 android:layout_width="match_parent"
-                android:layout_height="35dp"
-                android:id="@+id/CreateTeam_Color"
+                android:layout_height="wrap_content"
                 android:layout_below="@+id/CreateTeam_Name"
-                android:gravity="center"
-                android:layout_marginBottom="16dp"
-                android:layout_marginLeft="45.0dp"
-                android:layout_marginRight="43.0dp"
-                android:layout_marginTop="5dp" />
+                android:id="@+id/CreateTeam_relativeLayoutColor">
+                <ImageView
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:id="@+id/CreateTeam_imageColor"
+                    android:layout_weight="1"
+                    android:layout_alignParentLeft="true"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="14dp" />
+                <Button
+                    android:textAppearance="?android:attr/textAppearanceSmall"
+                    android:text="Select color team"
+                    android:layout_width="wrap_content"
+                    android:layout_height="35dp"
+                    android:layout_alignParentRight="true"
+                    android:id="@+id/CreateTeam_ColorButton"
+                    android:layout_toRightOf="@+id/CreateTeam_imageColor"
+                    android:gravity="center"
+                    android:layout_weight="1"
+                    android:layout_marginBottom="16dp"
+                    android:layout_marginLeft="14dp"
+                    android:layout_marginRight="14dp" />
+            </RelativeLayout>
             <Spinner
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:id="@+id/CreateTeam_SpinnerSport"
-                android:layout_below="@+id/CreateTeam_Color"
+                android:layout_below="@+id/CreateTeam_relativeLayoutColor"
                 android:gravity="center"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="14dp"

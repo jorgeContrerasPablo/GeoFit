@@ -40,7 +40,10 @@ namespace AppGeoFit.Droid.Screens
             player = appSession.getPlayer();
             NameT.Text = player.PlayerName;
             NickT.Text = player.PlayerNick;
-            LastNameT.Text = player.LastName;
+            if(player.LastName != null)
+                LastNameT.Text = player.LastName;
+            else
+                LastNameT.Enabled = false;
             PhoneNumberT.Text = player.PhoneNum.ToString();
             EmailT.Text = player.PlayerMail;
             rating.Rating = (int)player.Level;

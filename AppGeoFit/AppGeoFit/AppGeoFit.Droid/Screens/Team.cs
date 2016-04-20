@@ -30,7 +30,7 @@ namespace AppGeoFit.Droid.Screens
             TextView teamNameT = view.FindViewById<TextView>(Resource.Id.teamName);
             ImageButton addPlayerButton = view.FindViewById<ImageButton>(Resource.Id.addPlayerButton);
 
-            //teamNameT.Text = teamManager.GetTeam(1).Result.Joineds.First<Joined>().Player.Joineds.Count.ToString();
+            teamNameT.Text = teamManager.GetTeam(16).Result.Sport.SportName;
             
             createPlayerB.Click += (o,e) => Activity.StartActivity(typeof(CreateTeam));
 

@@ -23,6 +23,8 @@ namespace AppGeoFit.Droid.Screens
     public class CreateTeam : Screen
     {
         AppSession appSession;
+        
+
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -30,11 +32,15 @@ namespace AppGeoFit.Droid.Screens
             SetContentView(Resource.Layout.CreateTeam);
             appSession = new AppSession(ApplicationContext);
             TeamManager teamManager = new TeamManager(false);
+            string colorCode = Intent.GetStringExtra("ColorCode") ?? "#ffffff";
 
             Button aceptButton = FindViewById<Button>(Resource.Id.CreateTeam_AceptButton);
             Button cancelButton = FindViewById<Button>(Resource.Id.CreateTeam_CancelButton);
+            Button selectColor = FindViewById<Button>(Resource.Id.CreateTeam_ColorButton);
             EditText teamNameET = FindViewById<EditText>(Resource.Id.CreateTeam_Name);
             Spinner spinnerSports = FindViewById<Spinner>(Resource.Id.CreateTeam_SpinnerSport);
+            ImageView colorView = FindViewById<ImageView>(Resource.Id.CreateTeam_imageColor);
+            colorView.SetBackgroundColor(Android.Graphics.Color.ParseColor(colorCode));
             DataAccesLayer.Models.Team team = new DataAccesLayer.Models.Team();
 
             //Se crea el icono exclamation_error
@@ -48,18 +54,19 @@ namespace AppGeoFit.Droid.Screens
 
             //Recojemos la lista de Sports y creamos una lista con los nombres para el spinner
             var n = 0;
-            while (n < sports.Count - 1)
+            while (n < sports.Count)
             {
                 sportsID.Add(sports.ElementAt<Sport>(n).SportName);
                 n++;
             }
-
             //Spinner control
             string sportName = "";
             spinnerSports.ItemSelected += (o, e) =>
                                     {
-                                        sportName = sports.ElementAt<Sport>(e.Position).SportName;
-                                        team.SportID = sports.ElementAt<Sport>(e.Position).SportID;
+                                            sportName = sports.ElementAt<Sport>(e.Position).SportName;
+                                            team.SportID = sports.ElementAt<Sport>(e.Position).SportID;
+                                            //team.Sport = sports.ElementAt<Sport>(e.Position);
+                                        
                                     };
             var adapter = new ArrayAdapter<String>(
                     this, Android.Resource.Layout.SimpleSpinnerItem, sportsID);
@@ -73,11 +80,12 @@ namespace AppGeoFit.Droid.Screens
                 if (!okName)
                 {                  
                     team.TeamName = teamNameET.Text;
-                    //TODO Color picker
-                    team.ColorTeam = "Green";                   
+                    team.ColorTeam = colorCode;                   
                     try
                     {
                         teamManager.CreateTeam(team, appSession.getPlayer());
+                        Toast.MakeText(ApplicationContext, "Your Team has been create correctly", ToastLength.Short).Show();
+                        Finish(); //StartActivity(typeof(MainActivity));
                     }
                     catch (DuplicateTeamNameException exN)
                     {
@@ -94,7 +102,8 @@ namespace AppGeoFit.Droid.Screens
                 }
             };
 
-            cancelButton.Click += (o,e) =>  StartActivity(typeof(MainActivity));
+            cancelButton.Click += (o,e) => Finish();//StartActivity(typeof(MainActivity));
+            selectColor.Click += (o, e) => StartActivity(typeof(ColorPicker));
         }
     }
 }
