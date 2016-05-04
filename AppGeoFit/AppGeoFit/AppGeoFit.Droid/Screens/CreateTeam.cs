@@ -19,7 +19,7 @@ using AppGeoFit.BusinessLayer.Exceptions;
 
 namespace AppGeoFit.Droid.Screens
 {
-    [Activity(Label = "AppGeoFit", Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class CreateTeam : Screen
     {
         AppSession appSession;
@@ -47,29 +47,17 @@ namespace AppGeoFit.Droid.Screens
             Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
             errorD.SetBounds(0, 0, errorD.IntrinsicWidth, errorD.IntrinsicHeight);
 
-            // TODO METER ESTO EN LA SESSION
-            ICollection<Sport> sports = teamManager.GetSports().Result;
-
-            List<String> sportsID = new List<String>();
-
-            //Recojemos la lista de Sports y creamos una lista con los nombres para el spinner
-            var n = 0;
-            while (n < sports.Count)
-            {
-                sportsID.Add(sports.ElementAt<Sport>(n).SportName);
-                n++;
-            }
+            ICollection<Sport> sports = appSession.getSports();
             //Spinner control
             string sportName = "";
             spinnerSports.ItemSelected += (o, e) =>
                                     {
                                             sportName = sports.ElementAt<Sport>(e.Position).SportName;
                                             team.SportID = sports.ElementAt<Sport>(e.Position).SportID;
-                                            //team.Sport = sports.ElementAt<Sport>(e.Position);
-                                        
+                                            //team.Sport = sports.ElementAt<Sport>(e.Position);                                        
                                     };
-            var adapter = new ArrayAdapter<String>(
-                    this, Android.Resource.Layout.SimpleSpinnerItem, sportsID);
+            var adapter = new ArrayAdapter<Sport>(
+                    this, Android.Resource.Layout.SimpleSpinnerItem, sports.ToList());
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             spinnerSports.Adapter = adapter;            
 
@@ -105,5 +93,6 @@ namespace AppGeoFit.Droid.Screens
             cancelButton.Click += (o,e) => Finish();//StartActivity(typeof(MainActivity));
             selectColor.Click += (o, e) => StartActivity(typeof(ColorPicker));
         }
+
     }
 }

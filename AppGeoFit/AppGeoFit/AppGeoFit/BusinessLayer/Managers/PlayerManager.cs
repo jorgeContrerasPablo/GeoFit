@@ -4,6 +4,7 @@ using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Models;
 using DevOne.Security.Cryptography.BCrypt;
 using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -22,6 +23,11 @@ namespace AppGeoFit.BusinessLayer.Managers
         public Task<Player> GetPlayer(int playerId)
         {
             return restService.GetPlayerAsync(playerId);
+        }
+
+        public Task<ICollection<Player>> GetAll()
+        {
+            return restService.GetAllAsync();
         }
 
         public Task<int> CreatePlayer(Player player)
@@ -182,6 +188,11 @@ namespace AppGeoFit.BusinessLayer.Managers
             return restService.FindPlayerByNickAsync(nickOrMail);
         }
 
+        public Task<ICollection<Team>> FindTeamsJoined(int playerId, int sportId)
+        {
+            return restService.FindTeamsJoinedAsync(playerId, sportId);
+        }
+
         public void Session(int playerId)
         {
             restService.Session(playerId);
@@ -191,6 +202,8 @@ namespace AppGeoFit.BusinessLayer.Managers
         {
             restService.OutSession(playerId);
         }
+
+
 
         // Funcion split, necesario para el parametro mail.
         string[] splitFunction (string playerMail)

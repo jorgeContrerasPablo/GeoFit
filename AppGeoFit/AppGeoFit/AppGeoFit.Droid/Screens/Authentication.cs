@@ -11,10 +11,12 @@ using DevOne.Security.Cryptography.BCrypt;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Models;
 using Android.Content;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace AppGeoFit.Droid.Screens
 {
-    [Activity(Label = "AppGeoFit", Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class Authentication : Screen
     {
         AppSession appSession;
@@ -24,9 +26,12 @@ namespace AppGeoFit.Droid.Screens
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
-            // Comprobamos si el usuario aun tiene una sesion disponible para conectarse sin loguearse y que no esté ocupada por otro dispositivo
-            PlayerManager playerManager = new PlayerManager(false);
+            // Comprobamos si el usuario aun tiene una sesion disponible para conectarse 
+            // sin loguearse y que no esté ocupada por otro dispositivo
+            PlayerManager playerManager = new PlayerManager(false);          
             appSession = new AppSession(ApplicationContext);
+            TeamManager teamManager = new TeamManager(false);
+            appSession.setSports(teamManager.GetSports().Result);
 
             if (appSession.getPlayer() != null)
             {
@@ -36,7 +41,11 @@ namespace AppGeoFit.Droid.Screens
                     StartActivity(typeof(MainActivity));
                 }
             }
+
             SetContentView(Resource.Layout.Authentication);
+            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbarPrincipal);
+            SetActionBar(toolbar);
+            ActionBar.Title = "GeoFit";
 
             //Recuperamos elementos
             EditText emailOrNickT = FindViewById<EditText>(Resource.Id.NickOrEmailText);
@@ -44,9 +53,6 @@ namespace AppGeoFit.Droid.Screens
             Button signInB = FindViewById<Button>(Resource.Id.SignInButton);
             TextView signUpLink = FindViewById<TextView>(Resource.Id.SignUpTextL);
             TextView changeIpLink = FindViewById<TextView>(Resource.Id.ChangeIpTextL);
-
-
-
 
             //Se crea el icono exclamation_error
             Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);

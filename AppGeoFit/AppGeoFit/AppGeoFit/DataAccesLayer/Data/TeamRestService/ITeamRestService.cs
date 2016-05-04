@@ -14,7 +14,10 @@ namespace AppGeoFit.DataAccesLayer.Data.TeamRestService
         Task<Boolean> DeleteTeamAsync(int teamId);
         Task<Boolean> UpdateTeamAsync(Team team);
         Task<Boolean> AddPlayer(int teamId, int playerId, bool captain);
+        Task<Boolean> RemovePlayer(int teamId, int playerId, bool captain);
         Task<ICollection<Sport>> GetSports();
         Task<int> FindTeamByNameOnSports(string teamName, int sportId);
+        Task<Player> GetCaptainAsync(int teamId);
+        //Task<Player> UpdateCaptain(int captainId, int newCaptainId,int teamId);
     }
 }

@@ -79,7 +79,7 @@ namespace AppGeoFit.DataAccesLayer.Data.TeamRestService
             return responseSucced;
         }
 
-        public async Task<bool> DeleteTeamAsync(int teamId)
+        public async Task<Boolean> DeleteTeamAsync(int teamId)
         {
             var uri = new Uri(string.Format(url + "Team/DeleteTeam/{0}", teamId));
             Boolean responseSucced = false;
@@ -101,7 +101,7 @@ namespace AppGeoFit.DataAccesLayer.Data.TeamRestService
             return responseSucced;
         }
 
-        public async Task<bool> UpdateTeamAsync(Team team)
+        public async Task<Boolean> UpdateTeamAsync(Team team)
         {
             var uri = new Uri(string.Format(url + "Team/UpdateTeam"));
             Boolean responseSucced = false;
@@ -126,12 +126,20 @@ namespace AppGeoFit.DataAccesLayer.Data.TeamRestService
             return responseSucced;
         }
 
-        public async Task<bool> AddPlayer(int teamId, int playerId, bool captain)
+        public async Task<Boolean> AddPlayer(int teamId, int playerId, bool captain)
         {
-            var uri = new Uri(string.Format(url + "Team/AddPlayer/{0}/{1}/{2}", teamId,playerId,captain));
+            var uri = new Uri(string.Format(url + "Team/AddPlayer"));
             Boolean responseSucced = false;
 
-            HttpResponseMessage response = client.GetAsync(uri).Result;
+            Joined joined = new Joined();
+            joined.TeamID = teamId;
+            joined.PlayerID = playerId;
+            joined.Captain = captain;
+
+            var json = JsonConvert.SerializeObject(joined);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = client.PostAsync(uri, content).Result;
 
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -148,6 +156,37 @@ namespace AppGeoFit.DataAccesLayer.Data.TeamRestService
             {
                 string responseAsString = await response.Content.ReadAsStringAsync();
 
+                responseSucced = JsonConvert.DeserializeObject<Boolean>(responseAsString);
+            }
+            return responseSucced;
+        }
+
+        public async Task<Boolean> RemovePlayer(int teamId, int playerId, bool captain)
+        {
+            var uri = new Uri(string.Format(url + "Team/RemovePlayer"));
+            Boolean responseSucced = false;
+
+            Joined joined = new Joined();
+            joined.TeamID = teamId;
+            joined.PlayerID = playerId;
+            joined.Captain = captain;
+
+            var json = JsonConvert.SerializeObject(joined);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = client.PostAsync(uri, content).Result;
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {               
+                throw new NotJoinedException(response.ReasonPhrase);            
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
                 responseSucced = JsonConvert.DeserializeObject<Boolean>(responseAsString);
             }
             return responseSucced;
@@ -201,6 +240,30 @@ namespace AppGeoFit.DataAccesLayer.Data.TeamRestService
 
             return responseSucced;
 
+        }
+
+        public async Task<Player> GetCaptainAsync(int teamId)
+        {
+            Player responseAsPlayer = new Player();
+            var uri = new Uri(string.Format(url + "Team/GetCaptain/{0}", teamId));
+            HttpResponseMessage response;
+
+            response = client.GetAsync(uri).Result;
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new TeamNotFoundException(response.ReasonPhrase);
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+                responseAsPlayer = JsonConvert.DeserializeObject<Player>(responseAsString);
+            }
+
+            return responseAsPlayer;
         }
     }
 }

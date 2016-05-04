@@ -16,8 +16,6 @@ namespace AppGeoFit.Droid.Screens
 {
     public class Screen : Activity
     {
-        public Screen() { }
-
         public AlertDialog BotonAlert(string title, string message, string positiveButton, string negativeButton, Context cntx)
         {
             // BOTON ALERT

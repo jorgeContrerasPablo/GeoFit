@@ -16,7 +16,7 @@ using System.Threading.Tasks;
 
 namespace AppGeoFit.Droid
 {
-    [Activity(Label = "AppGeoFit", Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class EditPlayer : Screen
     {
         AppSession appSession;
@@ -45,38 +45,22 @@ namespace AppGeoFit.Droid
             email_et.Text = player.PlayerMail;
             
             Spinner spinnerFavoriteSport_et = FindViewById<Spinner>(Resource.Id.Edit_SpinnerFavoriteSport);
-            ICollection<Sport> sports = teamManager.GetSports().Result;
+            ICollection<Sport> sports = appSession.getSports();
 
-            List<String> sportsNames = new List<String>();
-
-            //Recojemos la lista de Sports y creamos una lista con los nombres para el spinner
-            var n = 0;
-            var positionSpinner = 0;
-            while (n < sports.Count)
-            {
-                if (n == 0)
-                    sportsNames.Add("");
-                sportsNames.Add(sports.ElementAt<Sport>(n).SportName);
-                //Hacemos estas comprobaciones, para poder poner en el spinner el deporte
-                //favorito actual
-                if (player.FavoriteSportID != null)
-                { 
-                    if (sports.ElementAt<Sport>(n).SportName.Equals(player.Sport.SportName))
-                    {
-                        positionSpinner = n+1;
-                    }
-                }
-                n++;
-            }
-            
+            // Creamos una lista con un elemento en blanco al principio.
+            List<Sport> sportLS = sports.ToList();
+            Sport sportBlank = new Sport();
+            sportBlank.SportName = "";
+            sportBlank.SportID = 0;
+            sportLS.Insert(0, sportBlank);
 
             //Spinner control
             spinnerFavoriteSport_et.ItemSelected += (o, e) =>
             {
-                if (sportsNames.ElementAt<String>(e.Position) != "")
+                if (sportLS.ElementAt<Sport>(e.Position).SportName != "")
                 {
-                    player.FavoriteSportID = sports.ElementAt<Sport>(e.Position - 1).SportID;
-                    player.Sport = sports.ElementAt<Sport>(e.Position - 1);
+                    player.FavoriteSportID = sportLS.ElementAt<Sport>(e.Position).SportID;
+                    player.Sport = sportLS.ElementAt<Sport>(e.Position);
                 }
                 else
                 {
@@ -84,12 +68,12 @@ namespace AppGeoFit.Droid
                     player.Sport = null;
                 }
             };
-            var adapter = new ArrayAdapter<String>(
-                    this, Android.Resource.Layout.SimpleSpinnerItem, sportsNames);
+                    
+            var adapter = new ArrayAdapter<Sport>(
+                this, Android.Resource.Layout.SimpleSpinnerItem, sportLS);
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             spinnerFavoriteSport_et.Adapter = adapter;
-            spinnerFavoriteSport_et.SetSelection(positionSpinner);
-
+            spinnerFavoriteSport_et.SetSelection(player.Sport != null ? sportLS.FindIndex(s => s.SportName == player.Sport.SportName) : 0);
 
             // TODO EDIT PASSWORD
             Button acept_bn = FindViewById<Button>(Resource.Id.Edit_AceptButton);

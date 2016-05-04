@@ -28,7 +28,7 @@ namespace AppGeoFit.DataAccesLayer.Models
         public int? PlaceID { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FeedBack> FeedBacks { get; set; }
+        public ICollection<FeedBack> FeedBacks { get; set; }
 
         public virtual Place Place { get; set; }
 
@@ -37,6 +37,6 @@ namespace AppGeoFit.DataAccesLayer.Models
         public virtual Team Team1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Player> Players { get; set; }
+        public ICollection<Player> Players { get; set; }
     }
 }

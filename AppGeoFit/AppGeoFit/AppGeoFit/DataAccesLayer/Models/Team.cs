@@ -29,13 +29,13 @@ namespace AppGeoFit.DataAccesLayer.Models
         public int SportID { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FeedBack> FeedBacks { get; set; }
+        public ICollection<FeedBack> FeedBacks { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Game> Games { get; set; }
+        public ICollection<Game> Games { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Game> Games1 { get; set; }
+        public ICollection<Game> Games1 { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public virtual ICollection<Joined> Joineds { get; set; }
@@ -45,6 +45,16 @@ namespace AppGeoFit.DataAccesLayer.Models
         public virtual Sport Sport { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Place> Places { get; set; }
+        public ICollection<Place> Places { get; set; }
+
+        
+        public override String ToString()
+            {
+                return TeamName;
+            }
+        public override int GetHashCode()
+        {
+            return TeamID;
+        }
     }
 }

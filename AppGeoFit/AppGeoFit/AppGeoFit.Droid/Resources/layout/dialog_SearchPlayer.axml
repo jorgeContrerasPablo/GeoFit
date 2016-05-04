@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="Find new player"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/D_SPlayer_textView1"
+        android:gravity="center"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="20dp" />
+    <AutoCompleteTextView
+        android:inputType="textPersonName"
+        android:id="@+id/D_SPlayer_playerToFind"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:layout_marginRight="40dp"
+        android:layout_marginLeft="40dp"
+        android:layout_marginTop="20dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <Button
+            android:text="Add"
+            android:id="@+id/D_SPlayer_addButton"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="30.0dp"
+            android:layout_marginRight="25.5dp" />
+        <Button
+            android:text="Cancel"
+            android:id="@+id/D_SPlayer_cancelButton"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="1"
+            android:layout_marginRight="30.0dp"
+            android:layout_marginLeft="25.5dp" />
+    </LinearLayout>
+</LinearLayout>

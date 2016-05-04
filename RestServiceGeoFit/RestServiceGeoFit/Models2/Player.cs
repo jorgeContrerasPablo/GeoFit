@@ -51,16 +51,16 @@ namespace RestServiceGeoFit.Models2
         public bool PlayerSesion { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<FeedBack> FeedBacks { get; set; }
+        public ICollection<FeedBack> FeedBacks { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Joined> Joineds { get; set; }
+        public ICollection<Joined> Joineds { get; set; }
 
         public virtual Photo Photo { get; set; }
 
         public virtual Sport Sport { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
-        public virtual ICollection<Game> Games { get; set; }
+        public ICollection<Game> Games { get; set; }
     }
 }

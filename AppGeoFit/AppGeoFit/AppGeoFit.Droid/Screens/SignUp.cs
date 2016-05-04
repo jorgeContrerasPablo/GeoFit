@@ -45,7 +45,7 @@ namespace AppGeoFit.Droid.Screens
             EditText email_et = FindViewById<EditText>(Resource.Id.SignUp_Email);
             
             Spinner spinnerFavoriteSport_et = FindViewById<Spinner>(Resource.Id.SignUp_SpinnerFavoriteSport);
-            ICollection<Sport> sports = teamManager.GetSports().Result;
+            ICollection<Sport> sports = appSession.getSports();
 
             List<String> sportsNames = new List<String>();
 

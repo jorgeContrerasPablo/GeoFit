@@ -13,7 +13,7 @@ using Android.Content.PM;
 
 namespace AppGeoFit.Droid.Screens
 {
-    [Activity(Label = "AppGeoFit", Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+   [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class ColorPicker : Screen
     {
         readonly List<ColorItem> colorItems = new List<ColorItem>();
@@ -62,7 +62,14 @@ namespace AppGeoFit.Droid.Screens
                         StartActivity(mainActivity);
                     };
         }
-    }    
+
+        public override void OnBackPressed()
+        {
+            var mainActivity = new Intent(this, typeof(CreateTeam));
+            mainActivity.SetFlags(ActivityFlags.ClearTop);
+            StartActivity(mainActivity);
+        }
+}
 
     public class ColorAdapter : BaseAdapter<ColorItem>
     {

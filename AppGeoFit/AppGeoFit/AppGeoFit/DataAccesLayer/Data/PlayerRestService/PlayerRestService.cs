@@ -8,6 +8,8 @@ using System.Net;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using System.Net.Http;
 using AppGeoFit.DataAccesLayer.Models;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 
 [assembly: Dependency(typeof(AppGeoFit.DataAccesLayer.Data.PlayerRestService.PlayerRestService))]
 namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
@@ -48,6 +50,32 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
             }
             
             return responseAsPlayer;
+        }
+
+        public async Task<ICollection<Player>> GetAllAsync()
+        {
+            ICollection<Player> responseListPlayers = new Collection<Player>();
+            var uri = new Uri(string.Format(url + "Players2/GetAll"));
+            HttpResponseMessage response;
+
+
+            response = client.GetAsync(uri).Result;
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new PlayerNotFoundException(response.ReasonPhrase);
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+
+                responseListPlayers = JsonConvert.DeserializeObject<ICollection<Player>>(responseAsString);
+            }
+
+            return responseListPlayers;
         }
 
         public async Task<int> CreatePlayerAsync(Player player)
@@ -220,7 +248,7 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
             }
         }
 
-        public async Task<int> FindCaptainOnSports(int playerId, int sportId)
+        public async Task<int> FindCaptainOnSportsAsync(int playerId, int sportId)
         {
             int responseSucced = 0;
             Uri uri = new Uri(string.Format(url + "Players2/FindCaptainOnSports/{0}/{1}", playerId, sportId));
@@ -243,6 +271,55 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
 
             return responseSucced;
 
+        }
+
+        public async Task<ICollection<Team>> FindTeamsJoinedAsync(int playerId, int sportId)
+        {
+            ICollection<Team> responseTeams = new Collection<Team>();
+            Uri uri = new Uri(string.Format(url + "Players2/FindTeamsJoined/{0}/{1}", playerId, sportId));
+
+            HttpResponseMessage response = client.GetAsync(uri).Result;
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new NotTeamJoinedOnSportException(response.ReasonPhrase);
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+                responseTeams = JsonConvert.DeserializeObject<ICollection<Team>>(responseAsString);
+            }
+
+            return responseTeams;
+
+        }
+
+        public async Task<Player> FindPlayerOnTeamAsync(string playerNick, int teamId)
+        {
+            Player responsePlayer = new Player();
+            Uri uri = new Uri(string.Format(url + "Players2/FindPlayerOnTeam/{0}/{1}", playerNick, teamId));
+
+            HttpResponseMessage response = client.GetAsync(uri).Result;
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new NotFoundPlayerOnTeamException(response.ReasonPhrase);
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+                responsePlayer = JsonConvert.DeserializeObject<Player>(responseAsString);
+            }
+
+            return responsePlayer;
         }
     }
 }

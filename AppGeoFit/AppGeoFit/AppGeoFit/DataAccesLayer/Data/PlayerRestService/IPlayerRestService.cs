@@ -10,6 +10,7 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
     {
         string url { get; set; }
         Task <Player> GetPlayerAsync(int PlayerId);
+        Task<ICollection<Player>> GetAllAsync();
         Task <int> CreatePlayerAsync(Player player);
         Task <Boolean> DeletePlayerAsync(int PlayerId);
         Task <Boolean> UpdatePlayerAsync(Player player);
@@ -17,6 +18,8 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
         Task<int> FindPlayerByNickAsync(string nickOrMail);
         void Session(int playerId);
         void OutSession(int playerId);
-        Task<int> FindCaptainOnSports(int playerId, int sportId);
+        Task<int> FindCaptainOnSportsAsync(int playerId, int sportId);
+        Task<ICollection<Team>> FindTeamsJoinedAsync(int playerId, int sportId);
+        Task<Player> FindPlayerOnTeamAsync(string playerNick, int teamId);
     }
 }

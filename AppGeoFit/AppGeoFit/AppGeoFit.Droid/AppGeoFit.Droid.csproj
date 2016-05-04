@@ -196,6 +196,15 @@
     <AndroidResource Include="Resources\layout\ColorElement.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\MainToolbar.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\ElementPlayerList.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\dialog_SearchPlayer.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Drawable\Icon.png" />
@@ -219,10 +228,23 @@
     <AndroidResource Include="Resources\drawable-hdpi\Trash.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\Trash.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\Trash.png" />
+    <AndroidResource Include="Resources\Drawable\Captain.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Captain.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Captain.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Captain.png" />
+    <AndroidResource Include="Resources\Drawable\Plus.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Plus.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Plus.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Plus.png" />
+    <AndroidResource Include="Resources\Menu\principalMenu.xml" />
+    <AndroidResource Include="Resources\values\styles.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\SimpleToolbar.xml" />
+    <AndroidResource Include="Resources\Menu\MenuPlayerList.xml" />
+    <AndroidResource Include="Resources\Menu\MenuPlayerListNoC.xml" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Resources\values\" />
-  </ItemGroup>
+  <ItemGroup />
   <ItemGroup>
     <Analyzer Include="..\..\packages\SonarAnalyzer.CSharp.1.11.0\analyzers\SonarAnalyzer.CSharp.dll" />
     <Analyzer Include="..\..\packages\SonarAnalyzer.CSharp.1.11.0\analyzers\SonarAnalyzer.dll" />

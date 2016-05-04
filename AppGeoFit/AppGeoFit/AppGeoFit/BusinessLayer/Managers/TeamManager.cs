@@ -6,6 +6,8 @@ using AppGeoFit.DataAccesLayer.Data.TeamRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Models;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -51,7 +53,7 @@ namespace AppGeoFit.BusinessLayer.Managers
             }
             try
             {
-                playerRecived = playerRestService.FindCaptainOnSports(player.PlayerId, team.SportID).Result;
+                playerRecived = playerRestService.FindCaptainOnSportsAsync(player.PlayerId, team.SportID).Result;
                 throw new DuplicateCaptainException("");
             }
             catch (AggregateException aex)
@@ -89,11 +91,55 @@ namespace AppGeoFit.BusinessLayer.Managers
             return teamRestService.UpdateTeamAsync(team);
         }
 
-        public Task<Boolean> AddPlayer(int teamId, int playerId, bool captain)
+        public Task<Boolean> AddPlayer(string playerNick, Team team)
         {
-            return teamRestService.AddPlayer(teamId, playerId, captain);
+            Player playerToAdd = new Player();
+            //Comprobamos que el equipo no está completo ya.
+            if (team.Joineds.Count >= team.Sport.NumPlayers)
+            {
+                throw new MaxPlayerOnTeamException("The Team: " + team.TeamName + " is full.");
+            }
+            //Buscamos el jugador en el equipo, si existe lanzamos una excepción.
+            try
+            {
+                playerToAdd = playerRestService.FindPlayerOnTeamAsync(playerNick, team.TeamID).Result;
+                throw new DuplicatePlayerOnTeamException("The player: "+playerNick+" is already joined at this team.");
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is NotFoundPlayerOnTeamException)
+                    {
+                        //TODO ARREGLAR ESTO
+                        playerToAdd = playerRestService.GetPlayerAsync(playerRestService.FindPlayerByNickAsync(playerNick).Result).Result;
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return teamRestService.AddPlayer(team.TeamID, playerToAdd.PlayerId, false);
         }
 
+        public Task<Boolean> RemovePlayer(int teamId, int playerId)
+        {
+            Player playerToRemove = new Player();
+            Player captain = teamRestService.GetCaptainAsync(teamId).Result;
+            Team team = teamRestService.GetTeamAsync(teamId).Result;
+            // Comprobación capitán, anzamos excepcion, pues deberemos elegir otro.
+            // Comprobación ultimo jugador, borraremos el equipo.
+            if(playerId == captain.PlayerId)
+            {
+                if (team.Joineds.Count == 1)
+                    throw new OnlyOnePlayerException("You are the last player on the team: " + team.TeamName + ". You want to remove it?");
+                else
+                    throw new CaptainRemoveException("You are the captain. You need to chose other captain.");
+            }
+            //Eliminamos el jugador del equipo.
+            return teamRestService.RemovePlayer(teamId, playerId, false);
+
+            
+        }
         public Task<ICollection<Sport>> GetSports()
         {
             return teamRestService.GetSports();
@@ -102,6 +148,42 @@ namespace AppGeoFit.BusinessLayer.Managers
         public Task<int> FindTeamByNameOnSports(string teamId, int sportId)
         {
             return teamRestService.FindTeamByNameOnSports(teamId, sportId);
+        }
+
+        public Task<Player> GetCaptainAsync(int teamId)
+        {
+            return teamRestService.GetCaptainAsync(teamId);
+        }
+
+        public Player UpdateCaptain(int captainId, int newCaptainId, int teamId)
+        {
+            List<Joined> joineds = new List<Joined>();
+            Team team = new Team();
+            try
+            {
+                team = teamRestService.GetTeamAsync(teamId).Result;
+                joineds = team.Joineds.ToList();
+                var id = playerRestService.FindCaptainOnSportsAsync(newCaptainId, team.SportID).Result;                
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is CaptainNotFoundException)
+                    {
+                        Player captian = joineds.ElementAt(joineds.FindIndex(j => j.PlayerID == captainId)).Player;
+                        teamRestService.RemovePlayer(team.TeamID, captian.PlayerId, true);
+                        Player newCaptian = joineds.ElementAt(joineds.FindIndex(j => j.PlayerID == newCaptainId)).Player;
+                        teamRestService.RemovePlayer(team.TeamID, newCaptian.PlayerId, false);
+                        teamRestService.AddPlayer(team.TeamID, captian.PlayerId, false);
+                        teamRestService.AddPlayer(team.TeamID, newCaptian.PlayerId, true);
+                        return joineds.ElementAt(joineds.FindIndex(j => j.PlayerID == newCaptainId)).Player;
+                    }
+                    if (ex is Exception)
+                        throw new Exception(ex.Message);
+                }
+            }
+            throw new AlreadyCaptainOnSport("The player: " + joineds.ElementAt(joineds.FindIndex(j => j.PlayerID == captainId)).Player.PlayerNick + " is already a captian on this sport.");
         }
     }
 }

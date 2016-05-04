@@ -1,6 +1,7 @@
 ﻿using RestServiceGeoFit.Models2;
 using System;
 using System.Collections.Generic;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
@@ -93,32 +94,48 @@ namespace RestServiceGeoFit.Controllers
             return BuildSuccesResult(HttpStatusCode.OK, true);
         }
 
-        [System.Web.Http.HttpGet]
-        public HttpResponseMessage AddPlayer(int parameter1, int parameter2, bool parameter3)
+        [System.Web.Http.HttpPost]
+        public HttpResponseMessage AddPlayer([Bind(Include = "PlayerID, TeamID, Captain")] Joined joined)
         {
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 //   playerManager = new PlayerManager(test);
             }
-            Team team = db.Teams.Find(parameter1);
+            Team team = db.Teams.Find(joined.TeamID);
             if (team == null)
             {
-                return BuildErrorResult(HttpStatusCode.NotFound, "Team with id: " + parameter1 + " don't exists.");
+                return BuildErrorResult(HttpStatusCode.NotFound, "Team : " + team.TeamName + " don't exists.");
             }
-            Player player = db.Players.Find(parameter2);
+            Player player = db.Players.Find(joined.PlayerID);
             if (player == null)
             {
-                return BuildErrorResult(HttpStatusCode.NotFound, "Player with id: " + parameter2 + " don't exists.");
+                return BuildErrorResult(HttpStatusCode.NotFound, "Player " + player.PlayerName + " don't exists.");
             }
-            Joined joined = new Joined();
-            joined.TeamID = parameter1;
-            joined.PlayerID = parameter2;
-            joined.Captain = parameter3;
             joined.Player = player;
             joined.Team = team;
             team.Joineds.Add(joined);
             //player.Joineds.Add(joined);
+            db.SaveChanges();
+            return BuildSuccesResult(HttpStatusCode.OK, true);
+        }
+
+        [System.Web.Http.HttpPost]
+        public HttpResponseMessage RemovePlayer([Bind(Include = "PlayerID, TeamID, Captain")] Joined joined)
+        {
+            // Acces Data Base Test according to request
+            if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                //   playerManager = new PlayerManager(test);
+            }
+
+            Joined joinedDb = db.Joineds.Find(joined.PlayerID,joined.TeamID);
+            if (joinedDb == null)
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "Player : " + joinedDb.Player.PlayerNick + " dosen't join on team: "+joinedDb.Team.TeamName+".");
+            }
+            Team teamJ = db.Teams.Find(joinedDb.Team.TeamID);
+            teamJ.Joineds.Remove(joinedDb);
             db.SaveChanges();
             return BuildSuccesResult(HttpStatusCode.OK, true);
         }
@@ -153,6 +170,29 @@ namespace RestServiceGeoFit.Controllers
             }
             return BuildSuccesResult(HttpStatusCode.OK, team.TeamID);
         }
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage GetCaptain(string parameter1)
+        {
+            if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                //  playerManager = new PlayerManager(test);
+            }
+            var TeamId = new SqlParameter("@TeamId", parameter1);
+            string nativeSQLQuery = @"SELECT PlayerID, Password, PlayerNick, PlayerName, LastName, PhoneNum, PlayerMail, PhotoID, Level, MedOnTime, FavoriteSportID, PlayerSesion " +
+                                    "FROM GeoFitDB.dbo.Player " +
+                                    "WHERE PlayerID = (SELECT PlayerID " +
+                                                       "FROM GeoFitDB.dbo.Joined " +
+                                                       "WHERE TeamID = @TeamId AND Captain = 1);";
+            var player = db.Players.SqlQuery(nativeSQLQuery, TeamId).FirstOrDefault<Player>();
+            if (player == null)
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "Team with id: " +
+                    parameter1 + " not has captain.");
+            }
+            return BuildSuccesResult(HttpStatusCode.OK, player);
+        }
+
 
     }
 }

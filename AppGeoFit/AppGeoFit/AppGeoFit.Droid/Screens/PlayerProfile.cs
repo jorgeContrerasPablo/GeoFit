@@ -68,7 +68,7 @@ namespace AppGeoFit.Droid.Screens
             buttonTrash.Click += (o, e) =>
             {
                 Screen screen = new Screen();
-                baDelete = screen.BotonAlert("Alert", "Are you sure? Do you want to delete your account?", "OK", "Cancel", Activity);
+                baDelete = screen.BotonAlert("Alert", "Are you sure? Do you want to delete your account?", "OK", "Cancel", Context);
                 baDelete.Show();
                 baDeletePositiveButton = baDelete.GetButton((int)DialogButtonType.Positive);
                 baDeleteNegativeButton = baDelete.GetButton((int)DialogButtonType.Negative);

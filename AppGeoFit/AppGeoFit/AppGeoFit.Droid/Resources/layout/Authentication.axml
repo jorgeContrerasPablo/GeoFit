@@ -5,6 +5,9 @@
     android:layout_height="match_parent"
     android:minWidth="25px"
     android:minHeight="25px">
+    <include
+        layout="@layout/SimpleToolbar"
+        android:layout_height="wrap_content" />
     <TextView
         android:text="Welcome To Geofit"
         android:textAppearance="?android:attr/textAppearanceLarge"
