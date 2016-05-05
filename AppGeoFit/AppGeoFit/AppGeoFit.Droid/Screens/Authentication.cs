@@ -16,7 +16,7 @@ using System.Linq;
 
 namespace AppGeoFit.Droid.Screens
 {
-    [Activity(Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
     public class Authentication : Screen
     {
         AppSession appSession;
@@ -167,6 +167,13 @@ namespace AppGeoFit.Droid.Screens
                  password.SetError("", null);
                  password.SetError("Password is required", errorPassword);
              }
+
+
+          #if DEBUG
+  [assembly: Application(Debuggable=true)]
+  #else
+  [assembly: Application(Debuggable=false)]
+  #endif
          }*/
     }
 }

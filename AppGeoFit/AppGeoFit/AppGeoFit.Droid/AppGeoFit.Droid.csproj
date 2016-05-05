@@ -55,12 +55,13 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
+    <DefineConstants>DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <AndroidUseSharedRuntime>False</AndroidUseSharedRuntime>
     <AndroidLinkMode>None</AndroidLinkMode>
-    <AndroidLinkSkip />
+    <AndroidLinkSkip>
+    </AndroidLinkSkip>
     <EmbedAssembliesIntoApk>True</EmbedAssembliesIntoApk>
     <BundleAssemblies>False</BundleAssemblies>
     <AndroidCreatePackagePerAbi>False</AndroidCreatePackagePerAbi>
@@ -73,8 +74,9 @@
     <AndroidEnableMultiDex>False</AndroidEnableMultiDex>
     <EnableProguard>False</EnableProguard>
     <DevInstrumentationEnabled>False</DevInstrumentationEnabled>
-    <DebugSymbols>true</DebugSymbols>
+    <DebugSymbols>False</DebugSymbols>
     <CodeAnalysisRuleSet>AppGeoFit.Droid-1.ruleset</CodeAnalysisRuleSet>
+    <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="DevOne.Security.Cryptography.BCrypt, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -152,6 +154,7 @@
     <Compile Include="Screens\MainActivity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Screens\Screen.cs" />
+    <Compile Include="Screens\SelectIp.cs" />
     <Compile Include="Screens\SignUp.cs" />
     <Compile Include="Screens\Team.cs" />
   </ItemGroup>
@@ -236,18 +239,18 @@
     <AndroidResource Include="Resources\drawable-hdpi\Plus.png" />
     <AndroidResource Include="Resources\drawable-xhdpi\Plus.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\Plus.png" />
-    <AndroidResource Include="Resources\Menu\principalMenu.xml" />
+    <AndroidResource Include="Resources\menu\principalMenu.xml" />
     <AndroidResource Include="Resources\values\styles.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\SimpleToolbar.xml" />
-    <AndroidResource Include="Resources\Menu\MenuPlayerList.xml" />
-    <AndroidResource Include="Resources\Menu\MenuPlayerListNoC.xml" />
+    <AndroidResource Include="Resources\menu\MenuPlayerList.xml" />
+    <AndroidResource Include="Resources\menu\MenuPlayerListNoC.xml" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>
-    <Analyzer Include="..\..\packages\SonarAnalyzer.CSharp.1.11.0\analyzers\SonarAnalyzer.CSharp.dll" />
-    <Analyzer Include="..\..\packages\SonarAnalyzer.CSharp.1.11.0\analyzers\SonarAnalyzer.dll" />
+    <Analyzer Include="..\..\packages\SonarAnalyzer.CSharp.1.10.0\analyzers\SonarAnalyzer.CSharp.dll" />
+    <Analyzer Include="..\..\packages\SonarAnalyzer.CSharp.1.10.0\analyzers\SonarAnalyzer.dll" />
     <Analyzer Include="..\..\packages\SonarLint.1.9.0\analyzers\SonarLint.CSharp.dll" />
     <Analyzer Include="..\..\packages\SonarLint.1.9.0\analyzers\SonarLint.dll" />
   </ItemGroup>
