@@ -20,10 +20,9 @@ using AppGeoFit.BusinessLayer.Exceptions;
 namespace AppGeoFit.Droid.Screens
 {
     [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class CreateTeam : Screen
+    public class Screen_CreateTeam : Screen
     {
-        AppSession appSession;
-        
+        AppSession appSession;        
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -33,11 +32,16 @@ namespace AppGeoFit.Droid.Screens
             appSession = new AppSession(ApplicationContext);
             TeamManager teamManager = new TeamManager(false);
             string colorCode = Intent.GetStringExtra("ColorCode") ?? "#ffffff";
-
+            string teamName = Intent.GetStringExtra("teamName") ?? "";            
+          
             Button aceptButton = FindViewById<Button>(Resource.Id.CreateTeam_AceptButton);
             Button cancelButton = FindViewById<Button>(Resource.Id.CreateTeam_CancelButton);
             Button selectColor = FindViewById<Button>(Resource.Id.CreateTeam_ColorButton);
             EditText teamNameET = FindViewById<EditText>(Resource.Id.CreateTeam_Name);
+            //Controlamos que hemos escrito el nombre del equipo, antes
+            //de darle un color.
+            if (teamName != "")
+                teamNameET.Text = teamName;
             Spinner spinnerSports = FindViewById<Spinner>(Resource.Id.CreateTeam_SpinnerSport);
             ImageView colorView = FindViewById<ImageView>(Resource.Id.CreateTeam_imageColor);
             colorView.SetBackgroundColor(Android.Graphics.Color.ParseColor(colorCode));
@@ -72,16 +76,23 @@ namespace AppGeoFit.Droid.Screens
                     try
                     {
                         teamManager.CreateTeam(team, appSession.getPlayer());
-                        Toast.MakeText(ApplicationContext, "Your Team has been create correctly", ToastLength.Short).Show();
-                        Finish(); //StartActivity(typeof(MainActivity));
+                        Toast.MakeText(ApplicationContext, 
+                            "Your Team has been create correctly", ToastLength.Short).Show();
+                        //Creamos intent y le asignamos el fragment 
+                        //que debe abrir y después finalizamos la actual activity
+                        //con el flag cleartop.
+                        var mainActivity = new Intent(ApplicationContext, typeof(FragmentActivity_MainActivity));
+                        mainActivity.PutExtra("toOpen", "TabTeam");
+                        mainActivity.SetFlags(ActivityFlags.ClearTop);                        
+                        StartActivity(mainActivity);
                     }
                     catch (DuplicateTeamNameException exN)
                     {
                         okName = IsValid(teamNameET, exN.Message, errorD, false);
                     }
-                    catch (DuplicateCaptainException)
+                    catch (AlreadyCaptainOnSport ex)
                     {
-                        Toast.MakeText(this, "Player :" + appSession.getPlayer().PlayerName + " is al ready captain on sport: "+ sportName + ".", ToastLength.Long).Show();
+                        Toast.MakeText(this, ex.Message, ToastLength.Long).Show();
                     }
                     catch (Exception ex)
                     {
@@ -90,8 +101,13 @@ namespace AppGeoFit.Droid.Screens
                 }
             };
 
-            cancelButton.Click += (o,e) => Finish();//StartActivity(typeof(MainActivity));
-            selectColor.Click += (o, e) => StartActivity(typeof(ColorPicker));
+            cancelButton.Click += (o,e) => Finish();
+            selectColor.Click += (o, e) =>
+            {
+                var colorPicker = new Intent(ApplicationContext, typeof(Screen_ColorPicker));
+                colorPicker.PutExtra("teamName", teamNameET.Text);
+                StartActivity(colorPicker);
+            };
         }
 
     }

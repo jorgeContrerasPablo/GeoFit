@@ -16,10 +16,11 @@ using AppGeoFit.BusinessLayer.Exceptions;
 using Android.Graphics.Drawables;
 using Android.Support.V4.Content;
 using AppGeoFit.DataAccesLayer.Data.TeamRestService.Exceptions;
+using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 
 namespace AppGeoFit.Droid.Screens
 {
-    public class Team : Fragment
+    public class Fragment_Team : Fragment
     {
         Player captain = new Player();
         ListView playerList;
@@ -43,12 +44,17 @@ namespace AppGeoFit.Droid.Screens
 
             ImageButton createTeamB = view.FindViewById<ImageButton>(Resource.Id.Team_createTeamB);
             playerList = view.FindViewById<ListView>(Resource.Id.Team_playerListView);
+            //Añadimos el boton addPlayer al final de la lista de jugadores.
+            LinearLayout footerView = (LinearLayout)inflater.Inflate(Resource.Layout.buttonFooterPlayerList, null, false);
+            playerList.AddFooterView(footerView);
+
             TextView teamNameT = view.FindViewById<TextView>(Resource.Id.Team_teamName);
             TextView captainNameT = view.FindViewById<TextView>(Resource.Id.Team_captainName);
             ImageButton addPlayerButton = view.FindViewById<ImageButton>(Resource.Id.Team_addPlayerButton);
             ImageButton delteTeamButon = view.FindViewById<ImageButton>(Resource.Id.Team_deleteTeamButton);
             ImageButton editTeamButton = view.FindViewById<ImageButton>(Resource.Id.Team_editTeamButton);
             Spinner spinnerTeams = view.FindViewById<Spinner>(Resource.Id.Team_spinnerTeams);
+            ImageView colorView = view.FindViewById<ImageView>(Resource.Id.Team_imageColor);
 
             //Se crea el icono exclamation_error
             errorD = ContextCompat.GetDrawable(Context, Resource.Drawable.exclamation_error);
@@ -59,9 +65,7 @@ namespace AppGeoFit.Droid.Screens
             actualPlayer = appSession.getPlayer();
 
             //Actualizamos el spinner al principio.
-            UpdateTeams(view);
-
-            
+            UpdateTeams(view);          
 
             spinnerFavoriteSport_et.ItemSelected += (o, e) =>
             {
@@ -73,6 +77,7 @@ namespace AppGeoFit.Droid.Screens
                 LPlayersOnTeam.Clear();
                 teamNameT.Text = spinnerTeams.GetItemAtPosition(eT.Position).ToString();
                 actualTeam = Teams.ElementAt(Teams.FindIndex(t => t.TeamName == spinnerTeams.SelectedItem.ToString()));
+                colorView.SetBackgroundColor(Android.Graphics.Color.ParseColor(actualTeam.ColorTeam));
                 captain = actualTeam.Joineds.ElementAt(actualTeam.Joineds.ToList().
                                 FindIndex(j => (j.Captain) && (j.TeamID == spinnerTeams.SelectedItem.GetHashCode()))).Player;
                 captainNameT.Text = captain.PlayerNick;
@@ -93,7 +98,21 @@ namespace AppGeoFit.Droid.Screens
                 UpdatePlayersList(view);
             };
 
-            createTeamB.Click += (o, e) => Activity.StartActivity(typeof(CreateTeam));
+            editTeamButton.Click += (o, e) =>
+            {
+                 var mainActivity = new Intent(Context, typeof(Screen_EditTeam));
+                 mainActivity.PutExtra("teamId", actualTeam.TeamID);
+                 Activity.StartActivity(mainActivity);
+            };
+            createTeamB.Click += (o, e) => Activity.StartActivity(typeof(Screen_CreateTeam));
+            delteTeamButon.Click += (o, e) =>
+             {
+                 //TODO MENSAJE DE ASEGURAR
+                 teamManager.DeleteTeam(actualTeam.TeamID);
+                 Toast.MakeText(Context, "Team: " + actualTeam.TeamName +
+                    " has been deleted correctly", ToastLength.Long).Show();
+                 UpdateTeams(view);
+             };
 
             AlertDialog.Builder builder = new AlertDialog.Builder(Context);
             string playerNickSelected = string.Empty;
@@ -133,6 +152,10 @@ namespace AppGeoFit.Droid.Screens
                     {
                         IsValid(AutocompleteView, ex.Message, errorD, false);
                     }
+                    catch (PlayerNotFoundException ex)
+                    {
+                        IsValid(AutocompleteView, ex.Message, errorD, false);
+                    }                        
                     catch (Exception ex)
                     {
                         BotonAlert("Alert", ex.Message, "OK", "Cancel", Context).Show();
@@ -257,6 +280,9 @@ namespace AppGeoFit.Droid.Screens
             Button baDeleteNegativeButton;
             var info = (AdapterView.AdapterContextMenuInfo)item.MenuInfo;
             Player player = adapterLPlayers.GetItem(info.Position);
+            AlertDialog.Builder builder = new AlertDialog.Builder(Context);
+            View dialogView;
+            AlertDialog ad;
             switch (item.ItemId)
             {
                 case Resource.Id.CtxLstDelete:
@@ -292,55 +318,64 @@ namespace AppGeoFit.Droid.Screens
                             baDelete.Cancel();
                             AlertDialog aDialog_CaptainRemove = BotonAlert("Alert", ex.Message, "OK", "Cancel", Context);
                             aDialog_CaptainRemove.Show();
-                            Button aDialog_CaptainRemovePositiveButton = aDialog_CaptainRemove.GetButton((int)DialogButtonType.Positive);
-                            AlertDialog.Builder builder = new AlertDialog.Builder(Context);
+                            Button aDialog_CaptainRemovePositiveButton = aDialog_CaptainRemove.GetButton((int)DialogButtonType.Positive);                            
                             string playerNickSelected = string.Empty;
                             aDialog_CaptainRemovePositiveButton.Click += (oDOP, eDOP) =>
                             {
-                                View dialogView = LayoutInflater.FromContext(Context).Inflate(Resource.Layout.dialog_SearchPlayer, null);
+                                dialogView = LayoutInflater.FromContext(Context).Inflate(Resource.Layout.dialog_SearchPlayer, null);
                                 builder.SetView(dialogView);
-
                                 AutoCompleteTextView AutocompleteView = dialogView.FindViewById<AutoCompleteTextView>(Resource.Id.D_SPlayer_playerToFind);
-                                List<Player> lplayersSelectCaptain = new List<Player>();
-                                lplayersSelectCaptain = LPlayersOnTeam;
+                                List<Player> lplayersSelectCaptain = LPlayersOnTeam;
 
                                 //Eliminamos el capitan actual de la lista
                                 lplayersSelectCaptain.RemoveAt(LPlayersOnTeam.FindIndex(p => p.PlayerNick == captain.PlayerNick));
                                 var adapterAutoComplete = new PlayerArrayAdapter(Context, lplayersSelectCaptain);
 
                                 AutocompleteView.Adapter = adapterAutoComplete;
-                                AlertDialog ad = builder.Create();
+                                ad = builder.Create();
                                 ad.Show();
                                 Button addButton = dialogView.FindViewById<Button>(Resource.Id.D_SPlayer_addButton);
 
                                 Player playerSelected = new Player();
+                                bool invalidPlayer = false;
                                 AutocompleteView.AfterTextChanged += (so, se) =>
                                 {
-                                    playerNickSelected = AutocompleteView.Text;
+                                    invalidPlayer = false;
+                                    playerNickSelected = AutocompleteView.Text;                     
                                     int position = lplayersSelectCaptain.FindIndex(p => p.PlayerNick == playerNickSelected);
-                                    if(position != -1)
+                                    if (position != -1)
                                         playerSelected = lplayersSelectCaptain.ElementAt(position);
+                                    else
+                                        invalidPlayer = true;
+                                        
                                 };
 
                                 addButton.Click += (oadd, eadd) =>
                                 {
                                     aDialog_CaptainRemove.Cancel();
-                                    try
+                                    if (invalidPlayer)
                                     {
-                                        captain = teamManager.UpdateCaptain(captain.PlayerId,playerSelected.PlayerId,actualTeam.TeamID);
-                                        Toast.MakeText(Context, "Player: " + playerNickSelected + " is the new captain of : "+actualTeam.TeamName+".", ToastLength.Long).Show();
-                                        teamManager.RemovePlayer(actualTeam.TeamID, player.PlayerId);
-                                        ad.Cancel();
-                                        UpdateTeams(view);
+                                        IsValid(AutocompleteView, "Player: "+playerNickSelected+" don't exist on this team", errorD, false);
                                     }
-                                    catch (AlreadyCaptainOnSport e)
-                                    {                                        
-                                        IsValid(AutocompleteView, e.Message, errorD, false);
-                                       // Toast.MakeText(this.Context, "SelectOtherCaptain", ToastLength.Long).Show();
-                                    }
-                                    catch (Exception e)
+                                    else
                                     {
-                                        BotonAlert("Alert", e.Message, "OK", "Cancel", Context).Show();
+                                        try
+                                        {
+                                            captain = teamManager.UpdateCaptain(captain.PlayerId, playerSelected.PlayerId, actualTeam.TeamID);
+                                            Toast.MakeText(Context, "Player: " + playerNickSelected + " is the new captain of : " + actualTeam.TeamName + ".", ToastLength.Long).Show();
+                                            teamManager.RemovePlayer(actualTeam.TeamID, player.PlayerId);
+                                            ad.Cancel();
+                                            UpdateTeams(view);
+                                        }
+                                        catch (AlreadyCaptainOnSport e)
+                                        {
+                                            IsValid(AutocompleteView, e.Message, errorD, false);
+                                            // Toast.MakeText(this.Context, "SelectOtherCaptain", ToastLength.Long).Show();
+                                        }
+                                        catch (Exception e)
+                                        {
+                                            BotonAlert("Alert", e.Message, "OK", "Cancel", Context).Show();
+                                        }
                                     }
                                 };
                                 
@@ -357,6 +392,16 @@ namespace AppGeoFit.Droid.Screens
                     };
                     return true;
                 case Resource.Id.CtxLstProfile:
+                    dialogView = LayoutInflater.FromContext(Context).Inflate(Resource.Layout.PlayerProfile, null);
+                    dialogView.FindViewById<ImageButton>(Resource.Id.imageButtonEdit).Visibility = ViewStates.Invisible;
+                    dialogView.FindViewById<ImageButton>(Resource.Id.imageButtonDelete).Visibility = ViewStates.Invisible;
+                    dialogView.FindViewById<TextView>(Resource.Id.LastName).Visibility = ViewStates.Invisible;
+                    dialogView.FindViewById<TextView>(Resource.Id.PhoneNumber).Visibility = ViewStates.Invisible;
+                    dialogView.FindViewById<TextView>(Resource.Id.LabelLastName).Visibility = ViewStates.Invisible;
+                    dialogView.FindViewById<TextView>(Resource.Id.LabelPhoneNumber).Visibility = ViewStates.Invisible;
+                    builder.SetView(dialogView);
+                    ad = builder.Create();
+                    ad.Show();
                     return true;
                 default:
                     return base.OnContextItemSelected(item);

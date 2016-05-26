@@ -15,7 +15,7 @@ using Android.Support.V4.App;
 
 namespace AppGeoFit.Droid.Screens
 {
-    public class PlayerProfile : Fragment
+    public class Fragment_PlayerProfile : Fragment
     {
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container,Bundle bundle)
@@ -54,7 +54,7 @@ namespace AppGeoFit.Droid.Screens
             /*Drawable edit = ContextCompat.GetDrawable(this, Resource.Drawable.Edit);
             edit.SetBounds(0, 0, edit.IntrinsicWidth, edit.IntrinsicHeight);
             buttonEdit.SetImageDrawable(edit);*/
-            buttonEdit.Click += (o, e) => Activity.StartActivity(typeof(EditPlayer));
+            buttonEdit.Click += (o, e) => Activity.StartActivity(typeof(Screen_EditPlayer));
 
             //Button Trash
             ImageButton buttonTrash = view.FindViewById<ImageButton>(Resource.Id.imageButtonDelete);
@@ -76,7 +76,7 @@ namespace AppGeoFit.Droid.Screens
                 {
                     playerManager.DeletePlayer(player.PlayerId);
                     appSession.deletePlayer();
-                    Activity.StartActivity(typeof(Authentication));
+                    Activity.StartActivity(typeof(Screen_Authentication));
                     Activity.Finish();
                 };
             };           

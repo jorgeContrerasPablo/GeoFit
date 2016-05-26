@@ -7,8 +7,8 @@ namespace RestServiceGeoFit.Models2
 
     public partial class AppGeoFitDBContext : DbContext
     {
-        public AppGeoFitDBContext()
-            : base("name=AppGeoFitDBContext")
+        public AppGeoFitDBContext(string stringConnectionDB)
+            : base(stringConnectionDB)
         {
             //Configuration.ProxyCreationEnabled = false;
             //Configuration.LazyLoadingEnabled = false;

@@ -16,8 +16,8 @@ using System.Linq;
 
 namespace AppGeoFit.Droid.Screens
 {
-    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class Authentication : Screen
+    [Activity(Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    public class Screen_Authentication : Activity
     {
         AppSession appSession;
 
@@ -38,7 +38,7 @@ namespace AppGeoFit.Droid.Screens
                 if (!appSession.getPlayer().PlayerSesion)
                 {
                     appSession.updateSession(true);
-                    StartActivity(typeof(MainActivity));
+                    StartActivity(typeof(FragmentActivity_MainActivity));
                 }
             }
 
@@ -84,14 +84,14 @@ namespace AppGeoFit.Droid.Screens
                     if (!error)
                     {
                         appSession.setPlayer(player);
-                        StartActivity(typeof(MainActivity));
+                        StartActivity(typeof(FragmentActivity_MainActivity));
                     }
                 }
             };
             #endregion
 
             //Sign Up Button
-            signUpLink.Click += (o, e) => StartActivity(typeof(SignUp));
+            signUpLink.Click += (o, e) => StartActivity(typeof(Screen_SignUp));
 
             // Change IP Debug Button
             changeIpLink.Click += (o, e) =>
@@ -123,9 +123,30 @@ namespace AppGeoFit.Droid.Screens
             };            
         }
 
-        protected override void OnPause()
+        public bool IsRequired(EditText editText, string message, Drawable error)
         {
-            base.OnPause();
+            if (editText.Text.ToString().Length == 0)
+            {
+                editText.SetError(message, error);
+                return true;
+            }
+            else {
+                editText.SetError(String.Empty, null);
+                editText.Error = null;
+                return false;
+            }
+        }
+
+        public AlertDialog BotonAlert(string title, string message, string positiveButton, string negativeButton, Context cntx)
+        {
+            // BOTON ALERT
+            AlertDialog.Builder builder = new AlertDialog.Builder(cntx);
+            builder.SetTitle(title);
+            builder.SetMessage(message);
+            builder.SetPositiveButton(positiveButton, (EventHandler<DialogClickEventArgs>)null);
+            builder.SetNegativeButton(negativeButton, (EventHandler<DialogClickEventArgs>)null);
+
+            return builder.Create();
         }
 
         /*emailOrNickT.AfterTextChanged += (sender, e) =>

@@ -82,13 +82,13 @@ namespace AppGeoFit.Droid.Screens
                     foreach (var ex in aex.Flatten().InnerExceptions)
                     {
                         appSession.deletePlayer();
-                        StartActivity(typeof(Authentication));
+                        StartActivity(typeof(Screen_Authentication));
                     }
                 }
                 if (appSession.getPlayer().PlayerSesion)
                 {
                     appSession.deletePlayer();
-                    StartActivity(typeof(Authentication));
+                    StartActivity(typeof(Screen_Authentication));
                 }
                 playerManager.Session(appSession.getPlayer().PlayerId);
                 appSession.updateSession(true);

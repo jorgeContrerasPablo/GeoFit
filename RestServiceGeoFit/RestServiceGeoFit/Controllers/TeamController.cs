@@ -12,8 +12,7 @@ namespace RestServiceGeoFit.Controllers
 {
     public class TeamController : BaseApiController
     {
-        static readonly bool test = true;
-        private readonly AppGeoFitDBContext db = new AppGeoFitDBContext();
+        private AppGeoFitDBContext db = new AppGeoFitDBContext("name=AppGeoFitDBContext");
 
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetTeam(int parameter1)
@@ -22,7 +21,7 @@ namespace RestServiceGeoFit.Controllers
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
-                //playerManager = new PlayerManager(test);
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
 
             team = db.Teams.Find(parameter1);
@@ -41,7 +40,7 @@ namespace RestServiceGeoFit.Controllers
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
-                //playerManager = new PlayerManager(test);
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
             if (ModelState.IsValid)
             {
@@ -62,7 +61,7 @@ namespace RestServiceGeoFit.Controllers
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
-                //   playerManager = new PlayerManager(test);
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
             Team Team = db.Teams.Find(parameter1);
             if (Team == null)
@@ -81,7 +80,7 @@ namespace RestServiceGeoFit.Controllers
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
-                //   playerManager = new PlayerManager(test);
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
             if (ModelState.IsValid)
             {
@@ -100,7 +99,7 @@ namespace RestServiceGeoFit.Controllers
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
-                //   playerManager = new PlayerManager(test);
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
             Team team = db.Teams.Find(joined.TeamID);
             if (team == null)
@@ -126,16 +125,14 @@ namespace RestServiceGeoFit.Controllers
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
-                //   playerManager = new PlayerManager(test);
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
-
             Joined joinedDb = db.Joineds.Find(joined.PlayerID,joined.TeamID);
             if (joinedDb == null)
             {
                 return BuildErrorResult(HttpStatusCode.NotFound, "Player : " + joinedDb.Player.PlayerNick + " dosen't join on team: "+joinedDb.Team.TeamName+".");
             }
-            Team teamJ = db.Teams.Find(joinedDb.Team.TeamID);
-            teamJ.Joineds.Remove(joinedDb);
+            db.Joineds.Remove(joinedDb);
             db.SaveChanges();
             return BuildSuccesResult(HttpStatusCode.OK, true);
         }
@@ -161,7 +158,7 @@ namespace RestServiceGeoFit.Controllers
         {
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
-                //  playerManager = new PlayerManager(test);
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
             Team team = db.Teams.Where(p => p.TeamName == parameter1 && p.SportID == parameter2).FirstOrDefault<Team>();
             if (team == null)
@@ -176,7 +173,7 @@ namespace RestServiceGeoFit.Controllers
         {
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
-                //  playerManager = new PlayerManager(test);
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
             var TeamId = new SqlParameter("@TeamId", parameter1);
             string nativeSQLQuery = @"SELECT PlayerID, Password, PlayerNick, PlayerName, LastName, PhoneNum, PlayerMail, PhotoID, Level, MedOnTime, FavoriteSportID, PlayerSesion " +

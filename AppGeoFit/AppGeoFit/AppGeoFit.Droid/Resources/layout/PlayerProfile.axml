@@ -15,24 +15,31 @@
         android:layout_height="wrap_content"
         android:id="@+id/relativeLayout1"
         android:layout_weight="1">
-        <ImageButton
-            android:src="@drawable/Edit"
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:minWidth="25px"
+            android:minHeight="25px"
             android:layout_width="match_parent"
-            android:layout_height="36.7dp"
-            android:id="@+id/imageButtonEdit"
-            android:layout_marginTop="8.3dp"
-            android:layout_marginRight="17.7dp"
-            android:layout_marginLeft="19.0dp" />
+            android:layout_height="wrap_content"
+            android:id="@+id/RelativeLayoutButtonEdit">
+            <ImageButton
+                android:src="@drawable/Edit"
+                android:id="@+id/imageButtonEdit"
+                android:layout_centerInParent="true"
+                android:layout_width="39.0dp"
+                android:layout_height="39.7dp"
+                android:layout_marginTop="8.3dp" />
+        </RelativeLayout>
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/LabelName"
-            android:layout_below="@id/imageButtonEdit"
+            android:layout_below="@id/RelativeLayoutButtonEdit"
             android:gravity="center"
             android:layout_marginBottom="16dp"
-            android:layout_marginTop="22.0dp" />
+            android:layout_marginTop="10.0dp" />
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Last Name"
@@ -95,24 +102,31 @@
         android:layout_height="wrap_content"
         android:id="@+id/relativeLayout2"
         android:layout_weight="1">
-        <ImageButton
-            android:src="@drawable/Trash"
+        <RelativeLayout
+            android:orientation="horizontal"
+            android:minWidth="25px"
+            android:minHeight="25px"
             android:layout_width="match_parent"
-            android:layout_height="36.7dp"
-            android:id="@+id/imageButtonDelete"
-            android:layout_marginTop="8.3dp"
-            android:layout_marginRight="17.7dp"
-            android:layout_marginLeft="19.0dp" />
+            android:layout_height="wrap_content"
+            android:id="@+id/RelativeLayoutButtonDelete">
+            <ImageButton
+                android:src="@drawable/Trash"
+                android:id="@+id/imageButtonDelete"
+                android:layout_centerInParent="true"
+                android:layout_width="39.0dp"
+                android:layout_height="39.7dp"
+                android:layout_marginTop="8.3dp" />
+        </RelativeLayout>
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="Name"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:id="@+id/Name"
-            android:layout_below="@+id/imageButtonDelete"
+            android:layout_below="@+id/RelativeLayoutButtonDelete"
             android:gravity="center"
             android:layout_marginBottom="16dp"
-            android:layout_marginTop="22.0dp" />
+            android:layout_marginTop="10.0dp" />
         <TextView
             android:textAppearance="?android:attr/textAppearanceMedium"
             android:text="LastName"

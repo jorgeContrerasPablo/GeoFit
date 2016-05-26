@@ -20,7 +20,7 @@ using System.Linq;
 namespace AppGeoFit.Droid.Screens
 {
 	[Activity (Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-	public class MainActivity : FragmentActivity
+	public class FragmentActivity_MainActivity : FragmentActivity
 	{
         AppSession appSession;
         private FragmentTabHost mTabHost;
@@ -33,15 +33,18 @@ namespace AppGeoFit.Droid.Screens
             appSession = new AppSession(ApplicationContext);
             TeamManager teamManager = new TeamManager(false);
             Player player = appSession.getPlayer();
+            string tabTag = Intent.GetStringExtra("toOpen") ?? "TabProfile";
 
             // Init TabHost
             mTabHost = FindViewById<FragmentTabHost>(Android.Resource.Id.TabHost);
             mTabHost.Setup(this, SupportFragmentManager, Android.Resource.Id.TabContent);
 
             mTabHost.AddTab(mTabHost.NewTabSpec("TabProfile").SetIndicator("Player Profile"),
-                Java.Lang.Class.FromType(typeof(PlayerProfile)), null);
+                Java.Lang.Class.FromType(typeof(Fragment_PlayerProfile)), null);
             mTabHost.AddTab(mTabHost.NewTabSpec("TabTeam").SetIndicator("Team"),
-                Java.Lang.Class.FromType(typeof(Team)), null);
+                Java.Lang.Class.FromType(typeof(Fragment_Team)), null);
+
+            mTabHost.SetCurrentTabByTag(tabTag);
 
             List<Sport> sportL = appSession.getSports().ToList();
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbarPrincipal);
@@ -103,12 +106,11 @@ namespace AppGeoFit.Droid.Screens
 
         protected override void OnDestroy()
         {
-            PlayerManager playerManager = new PlayerManager(false);
+           /* PlayerManager playerManager = new PlayerManager(false);
             appSession = new AppSession(ApplicationContext);
             playerManager.OutSession(appSession.getPlayer().PlayerId);
-            appSession.deletePlayer();
+            appSession.deletePlayer();*/
             base.OnDestroy();
-            //Finish();
 
         }
 
@@ -128,13 +130,13 @@ namespace AppGeoFit.Droid.Screens
                     foreach (var ex in aex.Flatten().InnerExceptions)
                     {
                         appSession.deletePlayer();
-                        StartActivity(typeof(Authentication));
+                        StartActivity(typeof(Screen_Authentication));
                     }
                 }
                 if (appSession.getPlayer().PlayerSesion)
                 {
                     appSession.deletePlayer();
-                    StartActivity(typeof(Authentication));
+                    StartActivity(typeof(Screen_Authentication));
                 }
                 playerManager.Session(appSession.getPlayer().PlayerId);
                 appSession.updateSession(true);

@@ -1,8 +1,6 @@
 ﻿using System;
-using NUnit.Framework;
-using Xamarin.Forms;
 using AppGeoFit.BusinessLayer.Managers;
-
+using NUnit.Framework;
 
 namespace UnitTestAppGeoFit
 {
@@ -11,7 +9,7 @@ namespace UnitTestAppGeoFit
     {
         PlayerManager playerManager;
 
-       [SetUp]
+        [SetUp]
         public void Setup() {
             playerManager = new PlayerManager(true);
         }

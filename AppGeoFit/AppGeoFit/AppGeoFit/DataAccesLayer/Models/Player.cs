@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-//using System.ComponentModel.DataAnnotations;
 
 namespace AppGeoFit.DataAccesLayer.Models
 {
@@ -57,6 +56,26 @@ namespace AppGeoFit.DataAccesLayer.Models
         public override String ToString()
         {
             return PlayerNick;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var player = obj as Player;
+
+            if (player == null)
+            {
+                return false;
+            }
+            return PlayerId == player.PlayerId 
+                && Password.Equals(player.Password)
+                && PlayerNick.Equals(player.PlayerNick)
+                && PlayerName.Equals(player.PlayerName)
+                && PhoneNum == player.PhoneNum
+                && PlayerMail.Equals(player.PlayerMail)
+                && FavoriteSportID == player.FavoriteSportID
+                && Level == player.Level
+                && MedOnTime == player.MedOnTime;
+            
         }
 
     }

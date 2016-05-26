@@ -17,7 +17,7 @@ using System.Threading.Tasks;
 namespace AppGeoFit.Droid
 {
     [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class EditPlayer : Screen
+    public class Screen_EditPlayer : Screen
     {
         AppSession appSession;
 
@@ -29,7 +29,6 @@ namespace AppGeoFit.Droid
             SetContentView(Resource.Layout.EditPlayer);
 
             PlayerManager playerManager = new PlayerManager(false);
-            TeamManager teamManager = new TeamManager(false);
             Player player = appSession.getPlayer();
 
             //Recuperamos elementos

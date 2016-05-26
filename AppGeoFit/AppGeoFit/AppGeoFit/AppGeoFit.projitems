@@ -9,15 +9,31 @@
     <Import_RootNamespace>AppGeoFit</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\AlreadyCaptainOnSport.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\CaptainRemoveException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\DuplicateCaptainException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\DuplicatePlayerMailException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\DuplicatePlayerNickException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\DuplicatePlayerOnTeamException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\DuplicateTeamNameException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\MaxPlayerOnTeamException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\OnlyOnePlayerException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\PasswordIncorrectException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\PlayerAlreadyConnectedException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\PlayerManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\TeamManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\Exceptions\CaptainNotFoundException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\Exceptions\NotFoundPlayerOnTeamException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\Exceptions\NotTeamJoinedOnSportException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\Exceptions\PlayerNotFoundException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\IPlayerRestService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\PlayerRestService\PlayerRestService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\TeamRestService\Exceptions\NotJoinedException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\TeamRestService\Exceptions\SportsNotFoundException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\TeamRestService\Exceptions\TeamNotFoundException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\TeamRestService\ITeamRestService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\TeamRestService\TeamRestService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\FeedBack.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\Game.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Models\Joined.cs" />

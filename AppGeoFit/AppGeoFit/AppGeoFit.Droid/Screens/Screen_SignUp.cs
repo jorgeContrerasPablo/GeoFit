@@ -21,7 +21,7 @@ using AppGeoFit.DataAccesLayer.Models;
 namespace AppGeoFit.Droid.Screens
 {
     [Activity(Label = "AppGeoFit", Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class SignUp : Screen
+    public class Screen_SignUp : Screen
     {
         AppSession appSession;
         protected override void OnCreate(Bundle bundle)
@@ -100,6 +100,7 @@ namespace AppGeoFit.Droid.Screens
 
             acept_bn.Click += (o, e) =>
             {
+                //Comprobación de campos vacíos.
                 okN = IsRequired(name_et, "Name is required", errorD);
                 okPass = IsRequired(password_et, "Password is required", errorD);
                 okRpassR = IsRequired(repeatePassword_et, "Repeate password", errorD);
@@ -107,8 +108,9 @@ namespace AppGeoFit.Droid.Screens
                 okP = IsRequired(phoneNumber_et, "Phone is required", errorD);
                 okE = IsRequired(email_et, "Email is required", errorD);
 
+                //Comprobación si es valido el campo.
                 okmail = IsValid(email_et, "It's not a correct email", errorD, Android.Util.Patterns.EmailAddress.Matcher(email_et.Text.ToString()).Matches());
-                oknick = IsValid(nick_et, "Use only alphabets characters", errorD, Java.Util.Regex.Pattern.Compile("^[a-zA-Z ]+$").Matcher(nick_et.Text.ToString()).Matches());
+                oknick = IsValid(nick_et, "Use only alphabets characters and numbers", errorD, Java.Util.Regex.Pattern.Compile("^[0-9a-zA-Z]+$").Matcher(nick_et.Text.ToString()).Matches());
                 okphone = IsValid(phoneNumber_et, "It's not a correct phone", errorD, Android.Util.Patterns.Phone.Matcher(phoneNumber_et.Text.ToString()).Matches());
                 okRpassV = IsValid(repeatePassword_et, "Repeate the password correctly", errorD, password_et.Text.Equals(repeatePassword_et.Text));
 

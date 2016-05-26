@@ -54,7 +54,8 @@ namespace AppGeoFit.BusinessLayer.Managers
             try
             {
                 playerRecived = playerRestService.FindCaptainOnSportsAsync(player.PlayerId, team.SportID).Result;
-                throw new DuplicateCaptainException("");
+                //throw new DuplicateCaptainException("");
+                throw new AlreadyCaptainOnSport("The player: " + player.PlayerNick + " is already a captian on "+team.Sport.SportName+".");
             }
             catch (AggregateException aex)
             {
@@ -82,22 +83,95 @@ namespace AppGeoFit.BusinessLayer.Managers
         }
 
         public Task<Boolean> DeleteTeam(int teamId)
-        {
+        {            
             return teamRestService.DeleteTeamAsync(teamId);
         }
 
-        public Task<Boolean> UpdateTeam(Team team)
+        public Task<Boolean> UpdateTeam(Team team, Player player)
         {
-            return teamRestService.UpdateTeamAsync(team);
+            int teamRecivedId = 0;
+            int playerRecived = 0;
+            bool teamUpdate = false;
+            bool sameCaptain = false;
+            Player actualCaptain = teamRestService.GetCaptainAsync(team.TeamID).Result;
+            try
+            {
+                teamRecivedId = teamRestService.FindTeamByNameOnSports(team.TeamName, team.SportID).Result;
+                if (team.TeamID != teamRecivedId)
+                    throw new DuplicateTeamNameException("Team with name: " + team.TeamName + "already exists.");
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is TeamNotFoundException) { }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            try
+            {
+                playerRecived = playerRestService.FindCaptainOnSportsAsync(player.PlayerId, team.SportID).Result;
+                if (player.PlayerId != actualCaptain.PlayerId)
+                    throw new AlreadyCaptainOnSport("The player: " + player.PlayerNick + " is already a captian on " + team.Sport.SportName + ".");
+                else
+                    sameCaptain = true;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is CaptainNotFoundException) { }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            //Si mandamos le entidad Team con los Joineds actuales
+            //El dbContext intentará agregarlos. Por lo que hay que
+            //"Limpiarlos"
+            team.Joineds.Clear();
+            try
+            {
+                teamUpdate = teamRestService.UpdateTeamAsync(team).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is Exception)
+                        throw new Exception(ex.Message);
+                }
+            }
+            if (!sameCaptain)
+                UpdateCaptain(actualCaptain.PlayerId, player.PlayerId, team.TeamID);              
+            return new Task<Boolean>(() => true);
         }
 
         public Task<Boolean> AddPlayer(string playerNick, Team team)
         {
             Player playerToAdd = new Player();
             //Comprobamos que el equipo no está completo ya.
+            int playerIdFind = 0;
             if (team.Joineds.Count >= team.Sport.NumPlayers)
             {
                 throw new MaxPlayerOnTeamException("The Team: " + team.TeamName + " is full.");
+            }
+            //Comprobamos que exista el jugador.
+            try
+            {
+                playerIdFind = playerRestService.FindPlayerByNickAsync(playerNick).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is PlayerNotFoundException)
+                    {
+                        throw new PlayerNotFoundException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
             }
             //Buscamos el jugador en el equipo, si existe lanzamos una excepción.
             try
@@ -112,7 +186,7 @@ namespace AppGeoFit.BusinessLayer.Managers
                     if (ex is NotFoundPlayerOnTeamException)
                     {
                         //TODO ARREGLAR ESTO
-                        playerToAdd = playerRestService.GetPlayerAsync(playerRestService.FindPlayerByNickAsync(playerNick).Result).Result;
+                        playerToAdd = playerRestService.GetPlayerAsync(playerIdFind).Result;
                     }
                     else
                         throw new Exception(ex.Message);

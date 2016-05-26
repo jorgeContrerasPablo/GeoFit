@@ -13,8 +13,8 @@ using Android.Content.PM;
 
 namespace AppGeoFit.Droid.Screens
 {
-    [Activity(Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class SelectIp : Activity
+    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    public class Screen_SelectIp : Activity
     {        
         protected override void OnCreate(Bundle bundle)
         {
@@ -42,7 +42,7 @@ namespace AppGeoFit.Droid.Screens
                 {
                     Constants.RestUrl = ipTextChange.Text;
                     ad.Cancel();
-                    StartActivity(typeof(Authentication));                    
+                    StartActivity(typeof(Screen_Authentication));                    
                 }
             };
             ad.Show();

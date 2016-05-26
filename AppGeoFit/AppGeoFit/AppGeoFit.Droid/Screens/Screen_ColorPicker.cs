@@ -14,16 +14,20 @@ using Android.Content.PM;
 namespace AppGeoFit.Droid.Screens
 {
    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
-    public class ColorPicker : Screen
+    public class Screen_ColorPicker : Screen
     {
         readonly List<ColorItem> colorItems = new List<ColorItem>();
         ListView listView;
+        int teamId;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.ColorList);
             global::Xamarin.Forms.Forms.Init(this, bundle);
+
+            string teamName = Intent.GetStringExtra("teamName") ?? "";
+            int teamId = Intent.GetIntExtra("teamId",0);
 
             listView = FindViewById<ListView>(Resource.Id.ColorList_list);
 
@@ -56,8 +60,17 @@ namespace AppGeoFit.Droid.Screens
 
             listView.ItemClick += (o, e) => 
                     {
-                        var mainActivity = new Intent(this, typeof(CreateTeam));
-                        mainActivity.PutExtra("ColorCode", colorItems[e.Position].Code);                        
+                        //Comprobamos, si venimos de editTeam o de createTeam
+                        //y actuamos en consecuencia
+                        Type type = typeof(Screen_EditTeam);
+                        if (teamId == 0)
+                            type = typeof(Screen_CreateTeam);
+                        var mainActivity = new Intent(this, type);
+                        if (teamId == 0)
+                            mainActivity.PutExtra("teamName", teamName);                        
+                        else
+                            mainActivity.PutExtra("teamId", teamId);
+                        mainActivity.PutExtra("ColorCode", colorItems[e.Position].Code);
                         mainActivity.SetFlags(ActivityFlags.ClearTop);
                         StartActivity(mainActivity);
                     };
@@ -65,9 +78,12 @@ namespace AppGeoFit.Droid.Screens
 
         public override void OnBackPressed()
         {
-            var mainActivity = new Intent(this, typeof(CreateTeam));
+            Type type = typeof(Screen_EditTeam);
+            if (teamId == 0)
+                type = typeof(Screen_CreateTeam);
+            var mainActivity = new Intent(this, type);
             mainActivity.SetFlags(ActivityFlags.ClearTop);
-            StartActivity(mainActivity);
+            StartActivity(mainActivity);           
         }
 }
 
