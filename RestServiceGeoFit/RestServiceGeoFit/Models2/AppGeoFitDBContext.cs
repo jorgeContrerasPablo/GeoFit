@@ -22,6 +22,7 @@ namespace RestServiceGeoFit.Models2
         public virtual DbSet<Player> Players { get; set; }
         public virtual DbSet<Sport> Sports { get; set; }
         public virtual DbSet<Team> Teams { get; set; }
+        public virtual DbSet<Notice> Notices { get; set; }
 
         protected override void OnModelCreating(DbModelBuilder modelBuilder)
         {
@@ -88,6 +89,22 @@ namespace RestServiceGeoFit.Models2
 
             modelBuilder.Entity<Player>()
                 .Property(e => e.PlayerMail)
+                .IsUnicode(false);
+
+            modelBuilder.Entity<Player>()
+                .HasMany(e => e.NoticesMessege)
+                .WithRequired(e => e.Messenger)
+                .HasForeignKey(e => e.MessengerID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Player>()
+                .HasMany(e => e.NoticesRecive)
+                .WithRequired(e => e.Receiver)
+                .HasForeignKey(e => e.ReceiverID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Notice>()
+                .Property(e => e.Type)
                 .IsUnicode(false);
 
             modelBuilder.Entity<Sport>()

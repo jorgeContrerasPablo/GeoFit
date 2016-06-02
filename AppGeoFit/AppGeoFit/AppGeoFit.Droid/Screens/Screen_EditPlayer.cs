@@ -13,22 +13,25 @@ using AppGeoFit.DataAccesLayer.Models;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using AppGeoFit.BusinessLayer.Managers.PlayerManager;
+using Xamarin.Forms;
 
 namespace AppGeoFit.Droid
 {
-    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait)]
     public class Screen_EditPlayer : Screen
     {
         AppSession appSession;
+        IPlayerManager playerManager
+            = Xamarin.Forms.DependencyService.Get<IPlayerManager>().InitiateServices(false);
 
         protected override void OnCreate(Bundle bundle)
         {
             appSession = new AppSession(this.ApplicationContext);
             base.OnCreate(bundle);
-            global::Xamarin.Forms.Forms.Init(this, bundle);
+            Forms.Init(this, bundle);
             SetContentView(Resource.Layout.EditPlayer);
 
-            PlayerManager playerManager = new PlayerManager(false);
             Player player = appSession.getPlayer();
 
             //Recuperamos elementos
@@ -75,8 +78,8 @@ namespace AppGeoFit.Droid
             spinnerFavoriteSport_et.SetSelection(player.Sport != null ? sportLS.FindIndex(s => s.SportName == player.Sport.SportName) : 0);
 
             // TODO EDIT PASSWORD
-            Button acept_bn = FindViewById<Button>(Resource.Id.Edit_AceptButton);
-            Button cancel_bn = FindViewById<Button>(Resource.Id.Edit_CancelButton);
+            Android.Widget.Button acept_bn = FindViewById<Android.Widget.Button>(Resource.Id.Edit_AceptButton);
+            Android.Widget.Button cancel_bn = FindViewById<Android.Widget.Button>(Resource.Id.Edit_CancelButton);
             cancel_bn.Click += (o, e) => Finish(); //StartActivity(typeof(MainActivity));
 
             //Se crea el icono exclamation_error
@@ -146,7 +149,6 @@ namespace AppGeoFit.Droid
 
         protected override void OnPause()
         {
-            PlayerManager playerManager = new PlayerManager(false);
             AppSession appSession = new AppSession(this.ApplicationContext);
 
             if (appSession.getPlayer() != null)

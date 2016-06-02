@@ -63,12 +63,12 @@ namespace RestServiceGeoFit.Controllers
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
-            Team Team = db.Teams.Find(parameter1);
-            if (Team == null)
+            Team team = db.Teams.Find(parameter1);
+            if (team == null)
             {
                 return BuildErrorResult(HttpStatusCode.NotFound, "Team with id: " + parameter1 + " don't exists.");
             }
-            db.Teams.Remove(Team);
+            db.Teams.Remove(team);
             db.SaveChanges();
 
             return BuildSuccesResult(HttpStatusCode.OK, true);

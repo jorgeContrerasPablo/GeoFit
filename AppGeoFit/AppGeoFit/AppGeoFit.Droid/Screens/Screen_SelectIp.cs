@@ -13,7 +13,7 @@ using Android.Content.PM;
 
 namespace AppGeoFit.Droid.Screens
 {
-    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait)]
     public class Screen_SelectIp : Activity
     {        
         protected override void OnCreate(Bundle bundle)

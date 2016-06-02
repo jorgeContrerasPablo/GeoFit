@@ -1,15 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 using Android.Support.V4.App;
 using Android.Content;
 using Android.OS;
-using Android.Runtime;
 using Android.Views;
 using Android.Widget;
-using AppGeoFit.BusinessLayer.Managers;
 using AppGeoFit.DataAccesLayer.Models;
 using Android.Support.V7.App;
 using AppGeoFit.BusinessLayer.Exceptions;
@@ -17,6 +14,11 @@ using Android.Graphics.Drawables;
 using Android.Support.V4.Content;
 using AppGeoFit.DataAccesLayer.Data.TeamRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
+using AppGeoFit.BusinessLayer.Managers.PlayerManager;
+using AppGeoFit.BusinessLayer.Managers.TeamManager;
+using Android.Graphics;
+using Xamarin.Forms.Platform.Android;
+using AppGeoFit.BusinessLayer.Managers.NoticeManager;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -25,11 +27,12 @@ namespace AppGeoFit.Droid.Screens
         Player captain = new Player();
         ListView playerList;
         Player actualPlayer = new Player();
-        readonly TeamManager teamManager = new TeamManager(false);
-        readonly PlayerManager playerManager = new PlayerManager(false);
-        List<DataAccesLayer.Models.Team> Teams;
+        ITeamManager teamManager;
+        IPlayerManager playerManager;
+        List<Team> Teams;
         List<Player> LPlayersOnTeam = new List<Player>();
-        DataAccesLayer.Models.Team actualTeam = new DataAccesLayer.Models.Team();
+        Team actualTeam = new Team();
+        int actualSportId;
         PlayerArrayAdapter adapterLPlayers;
         View view;
         Drawable errorD;
@@ -39,7 +42,9 @@ namespace AppGeoFit.Droid.Screens
             base.OnCreateView(inflater, container, bundle);
             view = inflater.Inflate(Resource.Layout.Team, container, false);
 
-      
+            FragmentActivity_MainActivity myActivity = (FragmentActivity_MainActivity)Activity;
+            playerManager = myActivity.playerManager;
+            teamManager = myActivity.teamManager;
             AppSession appSession = new AppSession(Activity.ApplicationContext);
 
             ImageButton createTeamB = view.FindViewById<ImageButton>(Resource.Id.Team_createTeamB);
@@ -55,20 +60,21 @@ namespace AppGeoFit.Droid.Screens
             ImageButton editTeamButton = view.FindViewById<ImageButton>(Resource.Id.Team_editTeamButton);
             Spinner spinnerTeams = view.FindViewById<Spinner>(Resource.Id.Team_spinnerTeams);
             ImageView colorView = view.FindViewById<ImageView>(Resource.Id.Team_imageColor);
-
-            //Se crea el icono exclamation_error
-            errorD = ContextCompat.GetDrawable(Context, Resource.Drawable.exclamation_error);
-            errorD.SetBounds(0, 0, errorD.IntrinsicWidth, errorD.IntrinsicHeight);
-
             Spinner spinnerFavoriteSport_et = this.Activity.FindViewById<Spinner>(Resource.Id.Toolbar_spinnerSports);
+
+            //Se crea el icono exclamation_error.
+            errorD = ContextCompat.GetDrawable(Context, Resource.Drawable.exclamation_error);
+            errorD.SetBounds(0, 0, errorD.IntrinsicWidth, errorD.IntrinsicHeight);            
 
             actualPlayer = appSession.getPlayer();
 
-            //Actualizamos el spinner al principio.
+            //Actualizamos el spinnerTeams al principio.
             UpdateTeams(view);          
 
+            //Cada vez que cambiemos de deporte, deberemos actualizar los equipos.
             spinnerFavoriteSport_et.ItemSelected += (o, e) =>
             {
+                actualSportId = spinnerFavoriteSport_et.GetItemAtPosition(e.Position).GetHashCode();
                 UpdateTeams(view);
             };
             
@@ -81,6 +87,7 @@ namespace AppGeoFit.Droid.Screens
                 captain = actualTeam.Joineds.ElementAt(actualTeam.Joineds.ToList().
                                 FindIndex(j => (j.Captain) && (j.TeamID == spinnerTeams.SelectedItem.GetHashCode()))).Player;
                 captainNameT.Text = captain.PlayerNick;
+                //Mostraremos los botones editar, borrar y añadir a equipo, según seamos capitán o no.
                 if (captain != null)
                 {
                     if (captain.PlayerId != actualPlayer.PlayerId)
@@ -115,14 +122,15 @@ namespace AppGeoFit.Droid.Screens
              };
 
             AlertDialog.Builder builder = new AlertDialog.Builder(Context);
-            string playerNickSelected = string.Empty;
+            string playerNickSelected;
             addPlayerButton.Click += (o, e) =>
-            {               
+            {
+                playerNickSelected = string.Empty;
                 View dialogView = inflater.Inflate(Resource.Layout.dialog_SearchPlayer, null);
                 builder.SetView(dialogView);
 
                 AutoCompleteTextView AutocompleteView = dialogView.FindViewById<AutoCompleteTextView>(Resource.Id.D_SPlayer_playerToFind);
-                var adapterAutoComplete = new PlayerArrayAdapter(Context, playerManager.GetAll().Result.ToList());
+                var adapterAutoComplete = new PlayerArrayAdapter(Context, playerManager.GetAll().Result.ToList(), captain.PlayerId, actualSportId);
 
                 AutocompleteView.Adapter = adapterAutoComplete;
                 AlertDialog ad = builder.Create();
@@ -139,8 +147,8 @@ namespace AppGeoFit.Droid.Screens
                 {
                     try
                     {
-                        teamManager.AddPlayer(playerNickSelected, actualTeam);
-                        Toast.MakeText(Context, "Player: "+ playerNickSelected + " has been added correctly", ToastLength.Long).Show();
+                        teamManager.SendNoticeAddPlayer(playerNickSelected, actualTeam);
+                        Toast.MakeText(Context, "Player: "+ playerNickSelected + " has recived a petition", ToastLength.Long).Show();
                         ad.Cancel();
                         UpdatePlayersList(view);
                     }
@@ -182,7 +190,8 @@ namespace AppGeoFit.Droid.Screens
                 n++;
             }
             adapterLPlayers = new PlayerArrayAdapter(
-            view.Context, LPlayersOnTeam);
+            view.Context, LPlayersOnTeam,
+            captain.PlayerId, actualSportId);
             playerList.Adapter = adapterLPlayers;
             RegisterForContextMenu(playerList);
         }
@@ -197,6 +206,9 @@ namespace AppGeoFit.Droid.Screens
             ImageButton editTeamButton = view.FindViewById<ImageButton>(Resource.Id.Team_editTeamButton);
             Spinner spinnerTeams = view.FindViewById<Spinner>(Resource.Id.Team_spinnerTeams);
             Spinner spinnerFavoriteSport_et = this.Activity.FindViewById<Spinner>(Resource.Id.Toolbar_spinnerSports);
+            ImageView imageColor = view.FindViewById<ImageView>(Resource.Id.Team_imageColor);
+
+
 
             Teams = playerManager.
                FindTeamsJoined(actualPlayer.PlayerId,
@@ -212,6 +224,7 @@ namespace AppGeoFit.Droid.Screens
                 spinnerTeams.Visibility = ViewStates.Invisible;
                 captain = null;
                 playerList.Visibility = ViewStates.Invisible;
+                imageColor.Visibility = ViewStates.Invisible;
             }
             else
             {
@@ -221,6 +234,7 @@ namespace AppGeoFit.Droid.Screens
                 editTeamButton.Visibility = ViewStates.Visible;
                 spinnerTeams.Visibility = ViewStates.Visible;
                 playerList.Visibility = ViewStates.Visible;
+                imageColor.Visibility = ViewStates.Visible;
             }
             var adapterTeams = new ArrayAdapter<DataAccesLayer.Models.Team>(
                 view.Context, Android.Resource.Layout.SimpleSpinnerItem, Teams);
@@ -329,8 +343,8 @@ namespace AppGeoFit.Droid.Screens
 
                                 //Eliminamos el capitan actual de la lista
                                 lplayersSelectCaptain.RemoveAt(LPlayersOnTeam.FindIndex(p => p.PlayerNick == captain.PlayerNick));
-                                var adapterAutoComplete = new PlayerArrayAdapter(Context, lplayersSelectCaptain);
-
+                                var adapterAutoComplete = new PlayerArrayAdapter(Context, lplayersSelectCaptain, captain.PlayerId, actualSportId);
+                                //Rellenamos y creamos el autocompleteView
                                 AutocompleteView.Adapter = adapterAutoComplete;
                                 ad = builder.Create();
                                 ad.Show();
@@ -411,12 +425,20 @@ namespace AppGeoFit.Droid.Screens
 
     public class PlayerArrayAdapter : ArrayAdapter<Player>
     {
+        int captainId;
+        int sportId;
 
-        public PlayerArrayAdapter(Context context, List<Player> objects): base(context, 0, objects){}
+        public PlayerArrayAdapter(Context context, List<Player> objects, int captainId, int sportId): base(context, 0, objects)
+        {
+            this.captainId = captainId;
+            this.sportId = sportId;
+        }
 
         
         public override View GetView(int position, View convertView, ViewGroup parent)
         {
+            INoticeManager noticeManager
+           = Xamarin.Forms.DependencyService.Get<INoticeManager>().InitiateServices(false);
             //Obteniendo una instancia del inflater
             LayoutInflater inflater = (LayoutInflater)Context
                     .GetSystemService(Context.LayoutInflaterService);
@@ -436,9 +458,18 @@ namespace AppGeoFit.Droid.Screens
             //Obteniendo instancias de los text views
             TextView Nick = listItemView.FindViewById<TextView>(Resource.Id.ElementPlayerList_Nick);
             RatingBar RatingBar = (RatingBar)listItemView.FindViewById(Resource.Id.ElementPlayerList_RatingBar);
+            
 
             //Obteniendo instancia de la Tarea en la posición actual
             Player item = GetItem(position);
+
+            //TODO constant
+            //Si está pendiente de ser agregado, lo oscurecemos.
+            if (noticeManager.noticeIsPending(item.PlayerId, captainId, sportId, "Team add player"))
+            {
+                listItemView.SetBackgroundColor(Xamarin.Forms.Color.Default.ToAndroid());
+                listItemView.Background.SetColorFilter(Color.ParseColor("#80000000"), PorterDuff.Mode.Darken);
+            }
 
             Nick.Text = item.PlayerNick;
             RatingBar.Rating =(int)item.Level;

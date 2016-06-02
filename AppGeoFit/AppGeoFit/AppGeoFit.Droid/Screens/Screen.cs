@@ -5,15 +5,16 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
-using Android.OS;
-using Android.Runtime;
-using Android.Views;
 using Android.Widget;
 using Android.Graphics.Drawables;
 using AppGeoFit.BusinessLayer.Managers;
+using AppGeoFit.BusinessLayer.Managers.PlayerManager;
+using Xamarin.Forms;
+using Android.Content.PM;
 
 namespace AppGeoFit.Droid.Screens
 {
+    
     public class Screen : Activity
     {
         public AlertDialog BotonAlert(string title, string message, string positiveButton, string negativeButton, Context cntx)
@@ -69,7 +70,8 @@ namespace AppGeoFit.Droid.Screens
         protected override void OnRestart()
         {
             base.OnRestart();
-            PlayerManager playerManager = new PlayerManager(false);
+            IPlayerManager playerManager 
+                = DependencyService.Get<IPlayerManager>().InitiateServices(false);
             AppSession appSession = new AppSession(this.ApplicationContext);
             if (appSession.getPlayer() != null)
             {

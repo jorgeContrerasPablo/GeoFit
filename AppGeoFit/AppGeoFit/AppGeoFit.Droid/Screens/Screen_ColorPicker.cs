@@ -13,7 +13,7 @@ using Android.Content.PM;
 
 namespace AppGeoFit.Droid.Screens
 {
-   [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait)]
     public class Screen_ColorPicker : Screen
     {
         readonly List<ColorItem> colorItems = new List<ColorItem>();
@@ -27,7 +27,7 @@ namespace AppGeoFit.Droid.Screens
             global::Xamarin.Forms.Forms.Init(this, bundle);
 
             string teamName = Intent.GetStringExtra("teamName") ?? "";
-            int teamId = Intent.GetIntExtra("teamId",0);
+            teamId = Intent.GetIntExtra("teamId",0);
 
             listView = FindViewById<ListView>(Resource.Id.ColorList_list);
 

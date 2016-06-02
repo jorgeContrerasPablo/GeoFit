@@ -12,6 +12,7 @@ using Android.Content.PM;
 using AppGeoFit.DataAccesLayer.Models;
 using AppGeoFit.BusinessLayer.Managers;
 using Android.Support.V4.App;
+using AppGeoFit.BusinessLayer.Managers.PlayerManager;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -25,9 +26,9 @@ namespace AppGeoFit.Droid.Screens
             View view = inflater.Inflate(Resource.Layout.PlayerProfile, container, false);
 
             Player player;
-            PlayerManager playerManager = new PlayerManager(false);
             AppSession appSession = new AppSession(Activity.ApplicationContext);
-            //Player Profile Views
+            FragmentActivity_MainActivity myActivity = (FragmentActivity_MainActivity)Activity;
+            IPlayerManager playerManager = myActivity.playerManager;
             TextView NameT = view.FindViewById<TextView>(Resource.Id.Name);
             TextView NickT = view.FindViewById<TextView>(Resource.Id.Nick);
             TextView LastNameT = view.FindViewById<TextView>(Resource.Id.LastName);

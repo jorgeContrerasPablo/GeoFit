@@ -16,27 +16,34 @@ using Android.Graphics.Drawables;
 using Android.Support.V4.Content;
 using AppGeoFit.DataAccesLayer.Models;
 using AppGeoFit.BusinessLayer.Exceptions;
+using AppGeoFit.BusinessLayer.Managers.TeamManager;
+using Xamarin.Forms;
 
 namespace AppGeoFit.Droid.Screens
 {
-    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait)]
     public class Screen_CreateTeam : Screen
     {
-        AppSession appSession;        
+        AppSession appSession;
+        ITeamManager teamManager
+            = Xamarin.Forms.DependencyService.Get<ITeamManager>().InitiateServices(false);
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             SetContentView(Resource.Layout.CreateTeam);
-            appSession = new AppSession(ApplicationContext);
-            TeamManager teamManager = new TeamManager(false);
+
+            //Recuperamos la sesion
+            appSession = new AppSession(ApplicationContext);            
+
+            appSession.setSports(teamManager.GetSports().Result);
             string colorCode = Intent.GetStringExtra("ColorCode") ?? "#ffffff";
-            string teamName = Intent.GetStringExtra("teamName") ?? "";            
-          
-            Button aceptButton = FindViewById<Button>(Resource.Id.CreateTeam_AceptButton);
-            Button cancelButton = FindViewById<Button>(Resource.Id.CreateTeam_CancelButton);
-            Button selectColor = FindViewById<Button>(Resource.Id.CreateTeam_ColorButton);
+            string teamName = Intent.GetStringExtra("teamName") ?? "";
+
+            Android.Widget.Button aceptButton = FindViewById<Android.Widget.Button>(Resource.Id.CreateTeam_AceptButton);
+            Android.Widget.Button cancelButton = FindViewById<Android.Widget.Button>(Resource.Id.CreateTeam_CancelButton);
+            Android.Widget.Button selectColor = FindViewById<Android.Widget.Button>(Resource.Id.CreateTeam_ColorButton);
             EditText teamNameET = FindViewById<EditText>(Resource.Id.CreateTeam_Name);
             //Controlamos que hemos escrito el nombre del equipo, antes
             //de darle un color.

@@ -16,6 +16,9 @@ using AppGeoFit.DataAccesLayer.Models;
 using Android.Support.V4.App;
 using System.Collections.Generic;
 using System.Linq;
+using Xamarin.Forms;
+using AppGeoFit.BusinessLayer.Managers.PlayerManager;
+using AppGeoFit.BusinessLayer.Managers.TeamManager;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -24,14 +27,22 @@ namespace AppGeoFit.Droid.Screens
 	{
         AppSession appSession;
         private FragmentTabHost mTabHost;
+        //Inicializamos los servicios rest de los manager
+        //con la url específica de la BD no Test
+        public IPlayerManager playerManager { get; set; } 
+            = DependencyService.Get<IPlayerManager>().InitiateServices(false);
+        public ITeamManager teamManager { get; set; } 
+            = DependencyService.Get<ITeamManager>().InitiateServices(false);
 
         protected override void OnCreate(Bundle bundle)
         {
+
             base.OnCreate(bundle);
-            global::Xamarin.Forms.Forms.Init(this, bundle);
+            Forms.Init(this, bundle);
             SetContentView(Resource.Layout.MainActivity);
+                     
+            //Recuperamos la sesion
             appSession = new AppSession(ApplicationContext);
-            TeamManager teamManager = new TeamManager(false);
             Player player = appSession.getPlayer();
             string tabTag = Intent.GetStringExtra("toOpen") ?? "TabProfile";
 
@@ -92,7 +103,6 @@ namespace AppGeoFit.Droid.Screens
 
         protected override void OnPause()
         {
-            PlayerManager playerManager = new PlayerManager(false);
             appSession = new AppSession(ApplicationContext);
 
             if (appSession.getPlayer() != null)
@@ -117,7 +127,6 @@ namespace AppGeoFit.Droid.Screens
         protected override void OnRestart()
         {
             base.OnRestart();
-            PlayerManager playerManager = new PlayerManager(false);
             appSession = new AppSession(this.ApplicationContext);
             if (appSession.getPlayer() != null)
             {

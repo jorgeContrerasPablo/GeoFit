@@ -6,33 +6,38 @@ using Android.Content.PM;
 using Android.Graphics.Drawables;
 using Android.Support.V4.Content;
 using AppGeoFit.BusinessLayer.Managers;
-using Android.Views;
 using DevOne.Security.Cryptography.BCrypt;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Models;
 using Android.Content;
 using System.Collections.Generic;
 using System.Linq;
+using AppGeoFit.BusinessLayer.Managers.PlayerManager;
+using Android.Views;
+using AppGeoFit.BusinessLayer.Managers.TeamManager;
+
 
 namespace AppGeoFit.Droid.Screens
 {
-    [Activity(Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Icon = "@drawable/icon", MainLauncher = true, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait)]
     public class Screen_Authentication : Activity
     {
         AppSession appSession;
+        IPlayerManager playerManager 
+            = Xamarin.Forms.DependencyService.Get<IPlayerManager>().InitiateServices(false);
+        ITeamManager teamManager
+            = Xamarin.Forms.DependencyService.Get<ITeamManager>().InitiateServices(false);
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-            global::Xamarin.Forms.Forms.Init(this, bundle);
+            global::Xamarin.Forms.Forms.Init(this, bundle);      
+
+            appSession = new AppSession(ApplicationContext);
+            appSession.setSports(teamManager.GetSports().Result);
 
             // Comprobamos si el usuario aun tiene una sesion disponible para conectarse 
             // sin loguearse y que no esté ocupada por otro dispositivo
-            PlayerManager playerManager = new PlayerManager(false);          
-            appSession = new AppSession(ApplicationContext);
-            TeamManager teamManager = new TeamManager(false);
-            appSession.setSports(teamManager.GetSports().Result);
-
             if (appSession.getPlayer() != null)
             {
                 if (!appSession.getPlayer().PlayerSesion)

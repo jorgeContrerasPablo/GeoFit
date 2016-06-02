@@ -17,22 +17,24 @@ using Java.Util.Regex;
 using Android.OS;
 using AppGeoFit.BusinessLayer.Exceptions;
 using AppGeoFit.DataAccesLayer.Models;
+using AppGeoFit.BusinessLayer.Managers.PlayerManager;
+using Xamarin.Forms;
+using AppGeoFit.BusinessLayer.Managers.TeamManager;
 
 namespace AppGeoFit.Droid.Screens
 {
-    [Activity(Label = "AppGeoFit", Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation)]
+    [Activity(Icon = "@drawable/icon", MainLauncher = false, ConfigurationChanges = ConfigChanges.ScreenSize | ConfigChanges.Orientation, ScreenOrientation = ScreenOrientation.Portrait)]
     public class Screen_SignUp : Screen
     {
         AppSession appSession;
+        IPlayerManager playerManager
+           = Xamarin.Forms.DependencyService.Get<IPlayerManager>().InitiateServices(false);
         protected override void OnCreate(Bundle bundle)
         {
             appSession = new AppSession(this.ApplicationContext);
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             SetContentView(Resource.Layout.SignUp);
-
-            TeamManager teamManager = new TeamManager(false);
-            PlayerManager playerManager = new PlayerManager(false);
             Player player = new Player();
 
             //Recuperamos elementos
@@ -79,8 +81,8 @@ namespace AppGeoFit.Droid.Screens
             spinnerFavoriteSport_et.Adapter = adapter;
 
 
-            Button acept_bn = FindViewById<Button>(Resource.Id.SignUp_AceptButton);
-            Button cancel_bn = FindViewById<Button>(Resource.Id.SignUp_CancelButton);
+            Android.Widget.Button acept_bn = FindViewById<Android.Widget.Button>(Resource.Id.SignUp_AceptButton);
+            Android.Widget.Button cancel_bn = FindViewById<Android.Widget.Button>(Resource.Id.SignUp_CancelButton);
             cancel_bn.Click += (o, e) => Finish();//StartActivity(typeof(Authentication));
 
             //Se crea el icono exclamation_error
@@ -158,7 +160,6 @@ namespace AppGeoFit.Droid.Screens
 
         protected override void OnPause()
         {
-            PlayerManager playerManager = new PlayerManager(false);
             appSession = new AppSession(this.ApplicationContext);
 
             if (appSession.getPlayer() != null)
