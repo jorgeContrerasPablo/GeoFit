@@ -1,6 +1,7 @@
 ﻿using AppGeoFit.BusinessLayer.Exceptions;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
+using AppGeoFit.DataAccesLayer.Data.TeamRestService;
 using AppGeoFit.DataAccesLayer.Models;
 using DevOne.Security.Cryptography.BCrypt;
 using System;
@@ -13,25 +14,28 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
 {    
     public class PlayerManager : IPlayerManager
     {
-        IPlayerRestService restService;
+        IPlayerRestService playerRestService;
+        ITeamRestService teamRestService;
 
         public PlayerManager(){}
 
         public IPlayerManager InitiateServices(bool test)
         {
-            restService = DependencyService.Get<IPlayerRestService>();
-            restService.url = test ? Constants.RestUrlTest : Constants.RestUrl;
+            teamRestService = DependencyService.Get<ITeamRestService>();
+            teamRestService.url = test ? Constants.RestUrlTest : Constants.RestUrl;
+            playerRestService = DependencyService.Get<IPlayerRestService>();
+            playerRestService.url = test ? Constants.RestUrlTest : Constants.RestUrl;
             return this;
         }
 
         public Task<Player> GetPlayer(int playerId)
         {
-            return restService.GetPlayerAsync(playerId);
+            return playerRestService.GetPlayerAsync(playerId);
         }
 
         public Task<ICollection<Player>> GetAll()
         {
-            return restService.GetAllAsync();
+            return playerRestService.GetAllAsync();
         }
 
         public Task<int> CreatePlayer(Player player)
@@ -43,7 +47,7 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
             // Comprobamos mail duplicado
             try
             {
-                reciveIdEmail = restService.FindPlayerByMailAsync(finalEmail[0], finalEmail[1]).Result;
+                reciveIdEmail = playerRestService.FindPlayerByMailAsync(finalEmail[0], finalEmail[1]).Result;
                 throw new DuplicatePlayerMailException("Player with mail: " + player.PlayerMail + " already exists.");
 
             }
@@ -60,7 +64,7 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
             // Comprobamos nick duplicado
             try
             {
-                reciveIdNick = restService.FindPlayerByNickAsync(player.PlayerNick).Result;            
+                reciveIdNick = playerRestService.FindPlayerByNickAsync(player.PlayerNick).Result;            
                 throw new DuplicatePlayerNickException("Player with nick: " + player.PlayerNick + " already exists.");
 
             }
@@ -76,12 +80,12 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
             //Encriptacion de la contraseña
             player.Password = BCryptHelper.HashPassword(player.Password, BCryptHelper.GenerateSalt());
 
-            return restService.CreatePlayerAsync(player);
+            return playerRestService.CreatePlayerAsync(player);
         }
 
         public Task<Boolean> DeletePlayer(int playerId)
         {        
-            return restService.DeletePlayerAsync(playerId);
+            return playerRestService.DeletePlayerAsync(playerId);
         }
 
         public Task<Boolean> UpdatePlayer(Player player)
@@ -93,7 +97,7 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
             // Comprobamos mail duplicado
             try
             {
-                id_responseMail = restService.FindPlayerByMailAsync(finalEmail[0], finalEmail[1]).Result;
+                id_responseMail = playerRestService.FindPlayerByMailAsync(finalEmail[0], finalEmail[1]).Result;
                 if (id_responseMail != player.PlayerId)
                     throw new DuplicatePlayerMailException("Player with mail: " + player.PlayerMail + " already exists.");
 
@@ -110,7 +114,7 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
             // Comprobamos nick duplicado
             try
             {
-                id_responseNick = restService.FindPlayerByNickAsync(player.PlayerNick).Result;
+                id_responseNick = playerRestService.FindPlayerByNickAsync(player.PlayerNick).Result;
                 if (id_responseNick != player.PlayerId)
                     throw new DuplicatePlayerNickException("Player with nick: " + player.PlayerNick + " already exists.");
             }
@@ -123,7 +127,7 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
                 }
             }
 
-            return restService.UpdatePlayerAsync(player);
+            return playerRestService.UpdatePlayerAsync(player);
 
         }
 
@@ -136,9 +140,9 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
             {
                 if (finalEmail[1] != null)
                 {
-                    response = restService.FindPlayerByMailAsync(finalEmail[0], finalEmail[1]).Result;
+                    response = playerRestService.FindPlayerByMailAsync(finalEmail[0], finalEmail[1]).Result;
                 }
-                else response = restService.FindPlayerByNickAsync(finalEmail[0]).Result;
+                else response = playerRestService.FindPlayerByNickAsync(finalEmail[0]).Result;
             }
             catch (AggregateException aex)
             {
@@ -150,7 +154,7 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
                         throw new Exception(ex.Message);                    
                 }
             }
-            Player player = restService.GetPlayerAsync(response).Result;
+            Player player = playerRestService.GetPlayerAsync(response).Result;
             if (BCryptHelper.CheckPassword(password, player.Password))
             {
                 if (player.PlayerSesion)
@@ -161,7 +165,7 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
                 {
                     try
                     {
-                        restService.Session(player.PlayerId);
+                        playerRestService.Session(player.PlayerId);
                     }
                     catch (AggregateException aex)
                     {
@@ -184,30 +188,33 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
 
         public Task<int> FindPlayerByMail(string nickOrMail, string post)
         {
-            return restService.FindPlayerByMailAsync(nickOrMail, post);
+            return playerRestService.FindPlayerByMailAsync(nickOrMail, post);
         }
 
         public Task<int> FindPlayerByNick(string nickOrMail)
         {
-            return restService.FindPlayerByNickAsync(nickOrMail);
+            return playerRestService.FindPlayerByNickAsync(nickOrMail);
         }
 
         public Task<ICollection<Team>> FindTeamsJoined(int playerId, int sportId)
         {
-            return restService.FindTeamsJoinedAsync(playerId, sportId);
+            return playerRestService.FindTeamsJoinedAsync(playerId, sportId);
+        }
+
+        public Task<Team> FindTeamCaptainOnSport(int playerId, int SportId)
+        {
+            return teamRestService.GetTeamAsync(playerRestService.FindCaptainOnSportsAsync(playerId, SportId).Result);
         }
 
         public void Session(int playerId)
         {
-            restService.Session(playerId);
+            playerRestService.Session(playerId);
         }
 
         public void OutSession(int playerId)
         {
-            restService.OutSession(playerId);
+            playerRestService.OutSession(playerId);
         }
-
-
 
         // Funcion split, necesario para el parametro mail.
         string[] splitFunction (string playerMail)
@@ -237,6 +244,5 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
 
             return finalEmail;
         }
-        
     }
 }

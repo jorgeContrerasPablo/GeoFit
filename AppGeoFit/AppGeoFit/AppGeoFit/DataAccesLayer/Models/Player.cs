@@ -66,6 +66,11 @@ namespace AppGeoFit.DataAccesLayer.Models
             return PlayerNick;
         }
 
+        public override int GetHashCode()
+        {
+            return PlayerId;
+        }
+
         public override bool Equals(object obj)
         {
             var player = obj as Player;

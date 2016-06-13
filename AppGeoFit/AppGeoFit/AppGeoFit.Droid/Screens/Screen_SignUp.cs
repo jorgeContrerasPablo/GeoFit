@@ -27,13 +27,15 @@ namespace AppGeoFit.Droid.Screens
     public class Screen_SignUp : Screen
     {
         AppSession appSession;
-        IPlayerManager playerManager
-           = Xamarin.Forms.DependencyService.Get<IPlayerManager>().InitiateServices(false);
+        IPlayerManager playerManager;
         protected override void OnCreate(Bundle bundle)
         {
             appSession = new AppSession(this.ApplicationContext);
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
+
+            playerManager = DependencyService.Get<IPlayerManager>().InitiateServices(false);
+
             SetContentView(Resource.Layout.SignUp);
             Player player = new Player();
 

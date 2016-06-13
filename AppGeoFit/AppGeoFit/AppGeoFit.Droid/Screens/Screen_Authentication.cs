@@ -5,13 +5,8 @@ using Android.Widget;
 using Android.Content.PM;
 using Android.Graphics.Drawables;
 using Android.Support.V4.Content;
-using AppGeoFit.BusinessLayer.Managers;
-using DevOne.Security.Cryptography.BCrypt;
-using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Models;
 using Android.Content;
-using System.Collections.Generic;
-using System.Linq;
 using AppGeoFit.BusinessLayer.Managers.PlayerManager;
 using Android.Views;
 using AppGeoFit.BusinessLayer.Managers.TeamManager;
@@ -23,15 +18,16 @@ namespace AppGeoFit.Droid.Screens
     public class Screen_Authentication : Activity
     {
         AppSession appSession;
-        IPlayerManager playerManager 
-            = Xamarin.Forms.DependencyService.Get<IPlayerManager>().InitiateServices(false);
-        ITeamManager teamManager
-            = Xamarin.Forms.DependencyService.Get<ITeamManager>().InitiateServices(false);
+        IPlayerManager playerManager;
+        ITeamManager teamManager;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
-            global::Xamarin.Forms.Forms.Init(this, bundle);      
+            global::Xamarin.Forms.Forms.Init(this, bundle);
+
+            playerManager = Xamarin.Forms.DependencyService.Get<IPlayerManager>().InitiateServices(false);
+            teamManager = Xamarin.Forms.DependencyService.Get<ITeamManager>().InitiateServices(false);
 
             appSession = new AppSession(ApplicationContext);
             appSession.setSports(teamManager.GetSports().Result);

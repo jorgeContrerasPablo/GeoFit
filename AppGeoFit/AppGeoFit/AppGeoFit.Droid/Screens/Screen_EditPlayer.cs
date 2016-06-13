@@ -22,8 +22,7 @@ namespace AppGeoFit.Droid
     public class Screen_EditPlayer : Screen
     {
         AppSession appSession;
-        IPlayerManager playerManager
-            = Xamarin.Forms.DependencyService.Get<IPlayerManager>().InitiateServices(false);
+        IPlayerManager playerManager;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -31,6 +30,8 @@ namespace AppGeoFit.Droid
             base.OnCreate(bundle);
             Forms.Init(this, bundle);
             SetContentView(Resource.Layout.EditPlayer);
+
+            playerManager = DependencyService.Get<IPlayerManager>().InitiateServices(false);
 
             Player player = appSession.getPlayer();
 

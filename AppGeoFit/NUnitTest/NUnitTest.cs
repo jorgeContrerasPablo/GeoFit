@@ -22,7 +22,9 @@ namespace NUnitTest
         public void Setup()
         {
             //Necesario para poder usar el assembly con xamarin.forms.
-            var platformServicesProperty = typeof(Device).GetProperty("PlatformServices", System.Reflection.BindingFlags.Static | System.Reflection.BindingFlags.NonPublic);
+            var platformServicesProperty = typeof(Device)
+                .GetProperty("PlatformServices", System.Reflection.BindingFlags.Static 
+                | System.Reflection.BindingFlags.NonPublic);
             platformServicesProperty.SetValue(null, new PlatformServicesMock());
             playerManager = new PlayerManager(); 
             playerManager.InitiateServices(true);

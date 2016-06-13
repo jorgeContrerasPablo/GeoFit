@@ -169,7 +169,7 @@ namespace RestServiceGeoFit.Controllers
         }
 
         [System.Web.Http.HttpGet]
-        public HttpResponseMessage GetCaptain(string parameter1)
+        public HttpResponseMessage GetCaptain(int parameter1)
         {
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -190,6 +190,32 @@ namespace RestServiceGeoFit.Controllers
             return BuildSuccesResult(HttpStatusCode.OK, player);
         }
 
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage GetAllPlayersPendingToAdd(int parameter1, int parameter2, string parameter3)
+        {
+            if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+            }
 
+            var messengerId = new SqlParameter("@MessengerId", parameter1);
+            var sportId = new SqlParameter("@SportId", parameter2);
+            var type = new SqlParameter("@type", parameter3);
+            string nativeSQLQuery = @"SELECT PlayerID, Password, PlayerNick, PlayerName, LastName," +
+                                    " PhoneNum, PlayerMail, PhotoID, Level, MedOnTime, FavoriteSportID, PlayerSesion " +
+                                    "FROM GeoFitDB.dbo.Player " + 
+                                    "WHERE PlayerID IN (SELECT ReceiverID "+ 
+                                                        "FROM GeoFitDB.dbo.Notice "+
+                                                        "WHERE MessengerID = @MessengerId AND " +
+                                                        "SportID = @SportId AND Type = @type "+
+                                                        "AND Accepted IS NULL)";
+            var listPlayersPending = db.Players.SqlQuery(nativeSQLQuery, messengerId, sportId, type);
+            if (listPlayersPending == null)
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "This team dosen't have" +
+                                        " any pending player to add.");
+            }
+            return BuildSuccesResult(HttpStatusCode.OK, listPlayersPending);
+        }
     }
 }

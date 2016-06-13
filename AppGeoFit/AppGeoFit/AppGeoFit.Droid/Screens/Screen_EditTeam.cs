@@ -25,14 +25,16 @@ namespace AppGeoFit.Droid.Screens
     public class Screen_EditTeam : Screen
     {
         AppSession appSession;
-        ITeamManager teamManager
-           = Xamarin.Forms.DependencyService.Get<ITeamManager>().InitiateServices(false);
+        ITeamManager teamManager;
 
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
             SetContentView(Resource.Layout.EditTeam);
+
+            teamManager = DependencyService.Get<ITeamManager>().InitiateServices(false);
+
 
             //Recuperamos la sesion
             appSession = new AppSession(ApplicationContext);

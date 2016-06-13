@@ -29,13 +29,15 @@ namespace AppGeoFit.Droid.Screens
         Player actualPlayer = new Player();
         ITeamManager teamManager;
         IPlayerManager playerManager;
-        List<Team> Teams;
+        INoticeManager noticeManager;
+        List<Team> Teams = new List<Team>();
         List<Player> LPlayersOnTeam = new List<Player>();
         Team actualTeam = new Team();
         int actualSportId;
         PlayerArrayAdapter adapterLPlayers;
         View view;
         Drawable errorD;
+        LinearLayout footerView;
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle)
         {
@@ -45,6 +47,7 @@ namespace AppGeoFit.Droid.Screens
             FragmentActivity_MainActivity myActivity = (FragmentActivity_MainActivity)Activity;
             playerManager = myActivity.playerManager;
             teamManager = myActivity.teamManager;
+            noticeManager = myActivity.noticeManager;
             AppSession appSession = new AppSession(Activity.ApplicationContext);
 
             ImageButton createTeamB = view.FindViewById<ImageButton>(Resource.Id.Team_createTeamB);
@@ -52,7 +55,7 @@ namespace AppGeoFit.Droid.Screens
             //Añadimos el boton addPlayer al final de la lista de jugadores.
             LinearLayout footerView = (LinearLayout)inflater.Inflate(Resource.Layout.buttonFooterPlayerList, null, false);
             playerList.AddFooterView(footerView);
-
+            //Recuperamos los elementos de la vista(layouts)
             TextView teamNameT = view.FindViewById<TextView>(Resource.Id.Team_teamName);
             TextView captainNameT = view.FindViewById<TextView>(Resource.Id.Team_captainName);
             ImageButton addPlayerButton = view.FindViewById<ImageButton>(Resource.Id.Team_addPlayerButton);
@@ -65,11 +68,15 @@ namespace AppGeoFit.Droid.Screens
             //Se crea el icono exclamation_error.
             errorD = ContextCompat.GetDrawable(Context, Resource.Drawable.exclamation_error);
             errorD.SetBounds(0, 0, errorD.IntrinsicWidth, errorD.IntrinsicHeight);            
-
+            //Jugador de la session.
             actualPlayer = appSession.getPlayer();
-
             //Actualizamos el spinnerTeams al principio.
-            UpdateTeams(view);          
+            UpdateTeams(view);
+            //Recuparamos el deporte actual
+            actualSportId = spinnerFavoriteSport_et.SelectedItem.GetHashCode();
+            //Recuperamos el equipo actual
+            if (Teams.Count != 0)
+                actualTeam = Teams.ElementAt( Teams.FindIndex(t => t.TeamName == spinnerTeams.SelectedItem.ToString()));
 
             //Cada vez que cambiemos de deporte, deberemos actualizar los equipos.
             spinnerFavoriteSport_et.ItemSelected += (o, e) =>
@@ -92,12 +99,12 @@ namespace AppGeoFit.Droid.Screens
                 {
                     if (captain.PlayerId != actualPlayer.PlayerId)
                     {
-                        addPlayerButton.Visibility = ViewStates.Invisible;
+                        playerList.RemoveFooterView(footerView);
                         delteTeamButon.Visibility = ViewStates.Invisible;
                         editTeamButton.Visibility = ViewStates.Invisible;
                     }
                     else {
-                        addPlayerButton.Visibility = ViewStates.Visible;
+                        playerList.AddFooterView(footerView);
                         delteTeamButon.Visibility = ViewStates.Visible;
                         editTeamButton.Visibility = ViewStates.Visible;
                     }
@@ -163,7 +170,11 @@ namespace AppGeoFit.Droid.Screens
                     catch (PlayerNotFoundException ex)
                     {
                         IsValid(AutocompleteView, ex.Message, errorD, false);
-                    }                        
+                    }
+                    catch (DuplicateNoticeException ex)
+                    {
+                        IsValid(AutocompleteView, ex.Message, errorD, false);
+                    }
                     catch (Exception ex)
                     {
                         BotonAlert("Alert", ex.Message, "OK", "Cancel", Context).Show();
@@ -179,16 +190,31 @@ namespace AppGeoFit.Droid.Screens
         }
         private void UpdatePlayersList(View view)
         {
-            LPlayersOnTeam.Clear();
             Spinner spinnerTeams = view.FindViewById<Spinner>(Resource.Id.Team_spinnerTeams);
-            var n = 0;
+            List<Player> LPlayersPending = new List<Player>();
+            try
+            {
+                LPlayersPending = teamManager.GetAllPlayersPendingToAdd(captain.PlayerId, actualSportId, Constants.TEAM_ADD_PLAYER).Result.ToList();
+            }
+            catch (NotPendingPlayersToAddException)
+            {
+                LPlayersPending.Clear();
+            }
+            LPlayersOnTeam.Clear();            
+            //Recuperamos el equipo actual seleccionado
             actualTeam = Teams.ElementAt(Teams.FindIndex(t => t.TeamName == spinnerTeams.SelectedItem.ToString()));
+            //Recuperamos el equipo de base de datos por si ha sufrido alguna alta o baja.
             var updateTeam = teamManager.GetTeam(actualTeam.TeamID).Result;
+            var n = 0;
             while (n < updateTeam.Joineds.Count)
             {
                 LPlayersOnTeam.Add(updateTeam.Joineds.ElementAt(n).Player);
                 n++;
             }
+            if(LPlayersPending.Count != 0 && actualPlayer.PlayerId == captain.PlayerId)
+            {
+                LPlayersOnTeam.AddRange(LPlayersPending);
+            }            
             adapterLPlayers = new PlayerArrayAdapter(
             view.Context, LPlayersOnTeam,
             captain.PlayerId, actualSportId);
@@ -218,7 +244,7 @@ namespace AppGeoFit.Droid.Screens
             {
                 teamNameT.Text = "";
                 captainNameT.Text = "";
-                addPlayerButton.Visibility = ViewStates.Invisible;
+                //addPlayerButton.Visibility = ViewStates.Invisible;
                 delteTeamButon.Visibility = ViewStates.Invisible;
                 editTeamButton.Visibility = ViewStates.Invisible;
                 spinnerTeams.Visibility = ViewStates.Invisible;
@@ -229,7 +255,6 @@ namespace AppGeoFit.Droid.Screens
             else
             {
                 spinnerTeams.Visibility = ViewStates.Visible;
-                addPlayerButton.Visibility = ViewStates.Visible;
                 delteTeamButon.Visibility = ViewStates.Visible;
                 editTeamButton.Visibility = ViewStates.Visible;
                 spinnerTeams.Visibility = ViewStates.Visible;
@@ -275,16 +300,22 @@ namespace AppGeoFit.Droid.Screens
             menu.SetHeaderTitle(
                 playerList.Adapter.GetItem(info.Position).ToString());
 
-            //Inflamos un menu con delete solo si el jugador es capitan, o sea el mismo.
-            if (captain.PlayerId != actualPlayer.PlayerId)
-            {
-                if(actualPlayer.PlayerNick.Equals(playerList.Adapter.GetItem(info.Position).ToString()))
-                    inflater.Inflate(Resource.Menu.MenuPlayerList, menu);
-                else
-                    inflater.Inflate(Resource.Menu.MenuPlayerListNoC, menu);
-            }  
+            int idplayer = playerList.Adapter.GetItem(info.Position).GetHashCode();
+            //Solo inflamos un menu, si no estan pendientes
+            if (noticeManager.NoticeIsPending(idplayer, captain.PlayerId, actualSportId, Constants.TEAM_ADD_PLAYER)){}
             else
-                inflater.Inflate(Resource.Menu.MenuPlayerList, menu);
+            {
+                //Inflamos un menu con delete solo si el jugador es capitan, o sea el mismo.
+                if (captain.PlayerId != actualPlayer.PlayerId)
+                {
+                    if (actualPlayer.PlayerNick.Equals(playerList.Adapter.GetItem(info.Position).ToString()))
+                        inflater.Inflate(Resource.Menu.MenuPlayerList, menu);
+                    else
+                        inflater.Inflate(Resource.Menu.MenuPlayerListNoC, menu);
+                }
+                else
+                    inflater.Inflate(Resource.Menu.MenuPlayerList, menu);
+            }
         }
 
         public override bool OnContextItemSelected(IMenuItem item)
@@ -462,10 +493,9 @@ namespace AppGeoFit.Droid.Screens
 
             //Obteniendo instancia de la Tarea en la posición actual
             Player item = GetItem(position);
-
-            //TODO constant
+            
             //Si está pendiente de ser agregado, lo oscurecemos.
-            if (noticeManager.noticeIsPending(item.PlayerId, captainId, sportId, "Team add player"))
+            if (noticeManager.NoticeIsPending(item.PlayerId, captainId, sportId, Constants.TEAM_ADD_PLAYER))
             {
                 listItemView.SetBackgroundColor(Xamarin.Forms.Color.Default.ToAndroid());
                 listItemView.Background.SetColorFilter(Color.ParseColor("#80000000"), PorterDuff.Mode.Darken);

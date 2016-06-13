@@ -103,7 +103,7 @@
         android:minWidth="25px"
         android:minHeight="25px"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="match_parent"
         android:id="@+id/relativeLayout2"
         android:layout_marginTop="27.3dp">
         <ListView
@@ -117,8 +117,8 @@
             android:minWidth="25px"
             android:minHeight="25px"
             android:id="@+id/Team_playerListView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
             android:layout_below="@+id/Team_gamesListView"
             android:layout_marginTop="27.3dp" />
     </RelativeLayout>

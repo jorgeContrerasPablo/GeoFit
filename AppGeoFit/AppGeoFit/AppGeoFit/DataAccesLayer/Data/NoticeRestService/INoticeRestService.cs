@@ -15,5 +15,7 @@ namespace AppGeoFit.DataAccesLayer.Data.NoticeRestService
         Task<Boolean> DeleteNoticeAsync(int noticeId);
         Task<Boolean> UpdateNoticeAsync(Notice notice);
         Task<int> FindNoticeAsync(int receiverId, int messengerId, int sportId, string type);
+        Task<ICollection<Notice>> GetAllPendingNotice(int PlayerId);
+        Task<bool> NoticeIsPending(int receiverId, int messengerId, int sportId, string type);
     }
 }

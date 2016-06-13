@@ -85,6 +85,8 @@ namespace RestServiceGeoFit.Controllers
             }
             if (ModelState.IsValid)
             {
+                notice.Messenger = null;
+                notice.Receiver = null;
                 db.Entry(notice).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
             }
@@ -109,5 +111,44 @@ namespace RestServiceGeoFit.Controllers
             }
             return BuildSuccesResult(HttpStatusCode.OK, notice.NoticeID);
         }
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage NoticeIsPending(int parameter1, int parameter2, int parameter3, string parameter4)
+        {
+            if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+            }
+            Notice notice = db.Notices.Where(n => n.ReceiverID == parameter1 && n.MessengerID == parameter2
+            && n.SportID == parameter3 && n.Type == parameter4 && n.Accepted == null).FirstOrDefault<Notice>();
+
+            if (notice == null)
+            {
+                return BuildSuccesResult(HttpStatusCode.OK, false);
+            }
+            return BuildSuccesResult(HttpStatusCode.OK, true);
+        }
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage GetAllPendingNotice(int parameter1)
+        {
+            // Acces Data Base Test according to request
+            if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+            }
+            var noticeL = db.Notices.Where(n => n.ReceiverID == parameter1 && n.Accepted == null);
+            /*string nativeSQLQuery = @"SELECT PlayerID, Password, PlayerNick, PlayerName, LastName," +
+                                    " PhoneNum, PlayerMail, PhotoID, Level, MedOnTime, FavoriteSportID, PlayerSesion " +
+                                    "FROM GeoFitDB.dbo.Player ";
+            var players = db.Players.SqlQuery(nativeSQLQuery);*/
+
+            if (!noticeL.Any())
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "There aren't any pending notice to this player.");
+            }
+            return BuildSuccesResult(HttpStatusCode.OK, noticeL);
+        }
+
     }
 }

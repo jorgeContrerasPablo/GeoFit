@@ -228,7 +228,7 @@ namespace RestServiceGeoFit.Controllers
                 return BuildErrorResult(HttpStatusCode.NotFound, "Player with name: " +
                     parameter1 + " is not a captain on sportId " + parameter2 + ".");
             }
-            return BuildSuccesResult(HttpStatusCode.OK, joined.PlayerID);
+            return BuildSuccesResult(HttpStatusCode.OK, joined.TeamID);
         }
 
         [System.Web.Http.HttpGet]

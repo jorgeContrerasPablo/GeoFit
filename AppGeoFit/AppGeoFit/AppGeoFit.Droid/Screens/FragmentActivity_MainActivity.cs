@@ -19,6 +19,8 @@ using System.Linq;
 using Xamarin.Forms;
 using AppGeoFit.BusinessLayer.Managers.PlayerManager;
 using AppGeoFit.BusinessLayer.Managers.TeamManager;
+using AppGeoFit.BusinessLayer.Managers.NoticeManager;
+using AppGeoFit.DataAccesLayer.Data.NoticeRestService.Exceptions;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -29,10 +31,10 @@ namespace AppGeoFit.Droid.Screens
         private FragmentTabHost mTabHost;
         //Inicializamos los servicios rest de los manager
         //con la url específica de la BD no Test
-        public IPlayerManager playerManager { get; set; } 
-            = DependencyService.Get<IPlayerManager>().InitiateServices(false);
-        public ITeamManager teamManager { get; set; } 
-            = DependencyService.Get<ITeamManager>().InitiateServices(false);
+        public IPlayerManager playerManager { get; set; }            
+        public ITeamManager teamManager { get; set; }
+        public INoticeManager noticeManager { get; set; }
+        Player player;
 
         protected override void OnCreate(Bundle bundle)
         {
@@ -40,7 +42,10 @@ namespace AppGeoFit.Droid.Screens
             base.OnCreate(bundle);
             Forms.Init(this, bundle);
             SetContentView(Resource.Layout.MainActivity);
-                     
+
+            playerManager = DependencyService.Get<IPlayerManager>().InitiateServices(false);
+            teamManager = DependencyService.Get<ITeamManager>().InitiateServices(false);
+            noticeManager = DependencyService.Get<INoticeManager>().InitiateServices(false);
             //Recuperamos la sesion
             appSession = new AppSession(ApplicationContext);
             Player player = appSession.getPlayer();
@@ -60,6 +65,15 @@ namespace AppGeoFit.Droid.Screens
             List<Sport> sportL = appSession.getSports().ToList();
             var toolbar = FindViewById<Toolbar>(Resource.Id.toolbarPrincipal);
             Spinner spinnerFavoriteSport_et = FindViewById<Spinner>(Resource.Id.Toolbar_spinnerSports);
+
+            //Mostramos las peticiones pendientes si es que las hay.
+            List<Notice> pendingNotice = new List<Notice>();
+            try
+            {
+                pendingNotice = noticeManager.GetAllPendingNotice(player.PlayerId).ToList();
+                ShowNotice(pendingNotice);
+            }
+            catch (NotPendingNoticeException ex){}
 
             var adapter = new ArrayAdapter<Sport>(
                 this, Android.Resource.Layout.SimpleSpinnerItem, sportL);
@@ -88,6 +102,43 @@ namespace AppGeoFit.Droid.Screens
             tabH.AddTab(spec);*/
 
         }
+        void ShowNotice(List<Notice> pendingNotice)
+        { 
+            AlertDialog noticeAD;
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.SetTitle("New message");
+            builder.SetPositiveButton("Acept", (EventHandler<DialogClickEventArgs>)null);
+            builder.SetNegativeButton("Deny", (EventHandler<DialogClickEventArgs>)null);
+
+            //Por cada mensaje crearemos un alertDialog personalizado.
+            foreach (Notice notice in pendingNotice)
+            {
+                switch (notice.Type)
+                {
+                    case Constants.TEAM_ADD_PLAYER:
+                        builder.SetMessage("Team captain: "+notice.Messenger.PlayerNick+" want's add you to her/his team.");
+                        noticeAD = builder.Create();
+                        noticeAD.Show();
+                        noticeAD.GetButton((int)DialogButtonType.Positive).Click += (oDb, eDb) =>
+                        {
+                            teamManager.AddPlayer(notice.ReceiverID, playerManager.FindTeamCaptainOnSport(notice.MessengerID, notice.SportID).Result.TeamID);
+                            notice.Accepted = true;
+                            noticeManager.UpdateNotice(notice);
+                            noticeAD.Cancel();
+                        };
+                        noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
+                        {
+                            notice.Accepted = false;
+                            noticeManager.UpdateNotice(notice);
+                            noticeAD.Cancel();
+                        };
+                            break;
+                    default:
+                        break;
+                }                
+            }            
+        }
+
 
         public override bool OnCreateOptionsMenu(IMenu menu)
         {

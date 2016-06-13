@@ -265,5 +265,30 @@ namespace AppGeoFit.DataAccesLayer.Data.TeamRestService
 
             return responseAsPlayer;
         }
+
+        public async Task<ICollection<Player>> GetAllPlayersPendingToAdd(int messengerId, int sportId, string type)
+        {
+            ICollection<Player> responseListPlayers = new Collection<Player>();
+            var uri = new Uri(string.Format(url + "Team/GetAllPlayersPendingToAdd/{0}/{1}/{2}", messengerId, sportId, type));
+            HttpResponseMessage response;
+
+            response = client.GetAsync(uri).Result;
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new NotPendingPlayersToAddException(response.ReasonPhrase);
+            }
+            if(response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+
+                responseListPlayers = JsonConvert.DeserializeObject<ICollection<Player>>(responseAsString);
+            }
+
+            return responseListPlayers;
+        }
     }
 }

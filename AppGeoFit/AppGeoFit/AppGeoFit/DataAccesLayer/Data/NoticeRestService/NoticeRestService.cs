@@ -8,6 +8,7 @@ using Xamarin.Forms;
 using System.Net;
 using Newtonsoft.Json;
 using AppGeoFit.DataAccesLayer.Data.NoticeRestService.Exceptions;
+using System.Collections.ObjectModel;
 
 [assembly: Dependency(typeof(AppGeoFit.DataAccesLayer.Data.NoticeRestService.NoticeRestService))]
 namespace AppGeoFit.DataAccesLayer.Data.NoticeRestService
@@ -145,6 +146,48 @@ namespace AppGeoFit.DataAccesLayer.Data.NoticeRestService
             }
 
             return responseSucced;
+        }
+
+        public async Task<bool> NoticeIsPending(int receiverId, int messengerId, int sportId, string type)
+        {
+            bool responseSucced = false;
+            Uri uri = new Uri(string.Format(url + "Notice/NoticeIsPending/{0}/{1}/{2}/{3}", receiverId, messengerId, sportId, type));
+
+            HttpResponseMessage response = client.GetAsync(uri).Result;
+
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+                responseSucced = JsonConvert.DeserializeObject<bool>(responseAsString);
+            }
+            return responseSucced;
+        }
+
+        public async Task<ICollection<Notice>> GetAllPendingNotice(int PlayerId)
+        {
+            ICollection<Notice> responseListNotice = new Collection<Notice>();
+            var uri = new Uri(string.Format(url + "Notice/GetAllPendingNotice/{0}", PlayerId));
+            HttpResponseMessage response = client.GetAsync(uri).Result;
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new NotPendingNoticeException(response.ReasonPhrase);
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+                responseListNotice = JsonConvert.DeserializeObject<ICollection<Notice>>(responseAsString);
+            }
+
+            return responseListNotice;
         }
     }
 }

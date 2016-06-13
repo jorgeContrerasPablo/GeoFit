@@ -19,6 +19,7 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
         Task<int> FindPlayerByMail(string nickOrMail, string post);
         Task<int> FindPlayerByNick(string nickOrMail);
         Task<ICollection<Team>> FindTeamsJoined(int playerId, int sportId);
+        Task<Team> FindTeamCaptainOnSport(int playerId, int SportId);
         void Session(int playerId);
         void OutSession(int playerId);
     }

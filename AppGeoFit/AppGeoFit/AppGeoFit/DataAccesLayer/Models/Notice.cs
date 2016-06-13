@@ -23,6 +23,5 @@ namespace AppGeoFit.DataAccesLayer.Models
         public virtual Player Receiver { get; set; }
 
         public virtual Sport Sport { get; set; }
-
     }
 }
