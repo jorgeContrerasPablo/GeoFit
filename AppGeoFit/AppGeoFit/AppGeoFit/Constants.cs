@@ -7,7 +7,8 @@ namespace AppGeoFit
     public static class Constants
     {
         // URL of REST service
-        public readonly static string RestUrl = "http://192.168.1.38:51830/api/";
+        public static string RestUrl = "http://192.168.1.38:51830/api/";
+        public static string RestUrlTest = "http://192.168.1.38:51830/apiTest/";
         // Credentials that are hard coded into the REST service
         //TODO
         // public static string Username = "Xamarin";
