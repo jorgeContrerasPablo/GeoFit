@@ -1,130 +1,125 @@
 <?xml version="1.0" encoding="utf-8"?>
-<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:minWidth="25px"
     android:fillViewport="true"
-    android:minHeight="25px">
+    android:layout_height="wrap_content">
     <LinearLayout
-        android:orientation="vertical"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-        <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <ImageButton
+            android:src="@drawable/Trash"
+            android:layout_width="39.0dp"
+            android:layout_height="39.7dp"
+            android:id="@+id/Team_deleteTeamButton"
+            android:layout_weight="0"
+            android:layout_marginTop="7.7dp"
+            android:layout_marginLeft="7.7dp" />
+        <RelativeLayout
             android:orientation="horizontal"
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/RelativeLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:layout_marginBottom="26.3dp">
+            <TextView
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceLarge"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/Team_teamName"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="6.0dp"
+                android:gravity="center" />
+            <TextView
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/Team_captainName"
+                android:layout_below="@+id/Team_teamName"
+                android:layout_alignParentLeft="true"
+                android:layout_marginTop="17.3dp"
+                android:gravity="center" />
+            <ImageView
+                android:layout_width="35dp"
+                android:layout_height="35dp"
+                android:id="@+id/Team_imageColor"
+                android:layout_below="@+id/Team_captainName"
+                android:layout_alignParentLeft="true"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:gravity="center" />
+        </RelativeLayout>
+        <RelativeLayout
             android:minWidth="25px"
             android:minHeight="25px"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:id="@+id/linearLayout1">
+            android:id="@+id/RelativeLayout2"
+            android:layout_weight="3">
             <ImageButton
-                android:src="@drawable/Trash"
-                android:layout_width="39.0dp"
-                android:layout_height="39.7dp"
-                android:id="@+id/Team_deleteTeamButton"
-                android:layout_weight="0"
-                android:layout_marginTop="7.7dp"
-                android:layout_marginLeft="7.7dp" />
-            <RelativeLayout
-                android:orientation="horizontal"
-                android:minWidth="25px"
-                android:minHeight="25px"
-                android:id="@+id/RelativeLayout1"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:layout_marginBottom="26.3dp">
-                <TextView
-                    android:text=""
-                    android:textAppearance="?android:attr/textAppearanceLarge"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Team_teamName"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginTop="6.0dp"
-                    android:gravity="center" />
-                <TextView
-                    android:text=""
-                    android:textAppearance="?android:attr/textAppearanceSmall"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:id="@+id/Team_captainName"
-                    android:layout_below="@+id/Team_teamName"
-                    android:layout_alignParentLeft="true"
-                    android:layout_marginTop="17.3dp"
-                    android:gravity="center" />
-            </RelativeLayout>
-            <RelativeLayout
-                android:minWidth="25px"
-                android:minHeight="25px"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:id="@+id/RelativeLayout2"
-                android:layout_weight="3">
-                <ImageButton
-                    android:src="@drawable/Edit"
-                    android:layout_width="match_parent"
-                    android:layout_height="38.7dp"
-                    android:id="@+id/Team_editTeamButton"
-                    android:layout_toRightOf="@id/Team_teamName"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="10.3dp"
-                    android:layout_marginRight="7.7dp" />
-                <ImageButton
-                    android:src="@drawable/Captain"
-                    android:id="@+id/Team_createTeamB"
-                    android:layout_width="match_parent"
-                    android:layout_height="43.7dp"
-                    android:layout_below="@+id/Team_editTeamButton"
-                    android:layout_toRightOf="@+id/Team_captainName"
-                    android:layout_alignParentRight="true"
-                    android:layout_marginBottom="18.3dp"
-                    android:layout_marginRight="8.3dp"
-                    android:layout_marginLeft="4.7dp" />
-            </RelativeLayout>
-        </LinearLayout>
-        <LinearLayout
-            android:orientation="horizontal"
-            android:minWidth="25px"
-            android:minHeight="25px"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/linearLayout2">
-            <Spinner
-                android:id="@+id/Team_spinnerTeams"
-                android:gravity="center"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent" />
-        </LinearLayout>
-        <RelativeLayout
-            android:minWidth="25px"
-            android:minHeight="25px"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:id="@+id/relativeLayout2"
-            android:layout_marginTop="27.3dp">
-            <ListView
-                android:minWidth="25px"
-                android:minHeight="25px"
-                android:id="@+id/Team_gamesListView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="27.3dp" />
-            <ListView
-                android:minWidth="25px"
-                android:minHeight="25px"
-                android:id="@+id/Team_playerListView"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_below="@+id/Team_gamesListView"
-                android:layout_marginTop="27.3dp" />
+                android:src="@drawable/Edit"
+                android:layout_width="match_parent"
+                android:layout_height="38.7dp"
+                android:id="@+id/Team_editTeamButton"
+                android:layout_toRightOf="@id/Team_teamName"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="10.3dp"
+                android:layout_marginRight="7.7dp" />
             <ImageButton
-                android:src="@drawable/Plus"
-                android:id="@+id/Team_addPlayerButton"
-                android:layout_width="46.3dp"
-                android:layout_height="46.3dp"
-                android:layout_below="@+id/Team_playerListView"
-                android:layout_alignParentRight="true" />
+                android:src="@drawable/Captain"
+                android:id="@+id/Team_createTeamB"
+                android:layout_width="match_parent"
+                android:layout_height="43.7dp"
+                android:layout_below="@+id/Team_editTeamButton"
+                android:layout_toRightOf="@+id/Team_captainName"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="18.3dp"
+                android:layout_marginRight="8.3dp"
+                android:layout_marginLeft="4.7dp" />
         </RelativeLayout>
     </LinearLayout>
-</ScrollView>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout2">
+        <Spinner
+            android:id="@+id/Team_spinnerTeams"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent" />
+    </LinearLayout>
+    <RelativeLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/relativeLayout2"
+        android:layout_marginTop="27.3dp">
+        <ListView
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/Team_gamesListView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="27.3dp" />
+        <ListView
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/Team_playerListView"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@+id/Team_gamesListView"
+            android:layout_marginTop="27.3dp" />
+    </RelativeLayout>
+</LinearLayout>

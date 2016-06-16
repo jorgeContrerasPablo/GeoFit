@@ -18,7 +18,7 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
     {
         public string url  { get; set; }
         readonly HttpClient client;
-
+        
         public PlayerRestService()
             {
                 client = new HttpClient();
@@ -106,7 +106,7 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
 
         }
 
-        public async Task<Boolean> DeletePlayerAsync(int PlayerId)
+        public async Task<bool> DeletePlayerAsync(int PlayerId)
         {
             var uri = new Uri(string.Format(url + "Players2/DeletePlayer/{0}", PlayerId));
             Boolean responseSucced = false;
@@ -122,14 +122,14 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
             {
                 string responseAsString = await response.Content.ReadAsStringAsync();
 
-                responseSucced = JsonConvert.DeserializeObject<Boolean>(responseAsString);
+                responseSucced = JsonConvert.DeserializeObject<bool>(responseAsString);
             }
 
             return responseSucced;
 
         }
 
-        public async Task<Boolean> UpdatePlayerAsync(Player player)
+        public async Task<bool> UpdatePlayerAsync(Player player)
         {
             var uri = new Uri(string.Format(url + "Players2/UpdatePlayer"));
             Boolean responseSucced = false;
@@ -148,7 +148,7 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
             {
                 string responseAsString = await response.Content.ReadAsStringAsync();
 
-                responseSucced = JsonConvert.DeserializeObject<Boolean>(responseAsString);
+                responseSucced = JsonConvert.DeserializeObject<bool>(responseAsString);
             }
 
             return responseSucced;

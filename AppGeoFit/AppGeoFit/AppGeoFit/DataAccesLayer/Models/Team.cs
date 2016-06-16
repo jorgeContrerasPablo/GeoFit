@@ -56,5 +56,21 @@ namespace AppGeoFit.DataAccesLayer.Models
         {
             return TeamID;
         }
+
+        public override bool Equals(object obj)
+        {
+            var team = obj as Team;
+
+            if (team == null)
+            {
+                return false;
+            }
+            return TeamID == team.TeamID
+                && TeamName.Equals(team.TeamName)
+                && ColorTeam.Equals(team.ColorTeam)
+                && Level == team.Level
+                && SportID == team.SportID;
+
+    }
     }
 }

@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-//using System.ComponentModel.DataAnnotations;
 
 namespace AppGeoFit.DataAccesLayer.Models
 {
@@ -14,6 +13,8 @@ namespace AppGeoFit.DataAccesLayer.Models
             FeedBacks = new HashSet<FeedBack>();
             Joineds = new HashSet<Joined>();
             Games = new HashSet<Game>();
+            NoticesMessege = new HashSet<Notice>();
+            NoticesRecive = new HashSet<Notice>();
         }
 
         public int PlayerId { get; set; }
@@ -53,10 +54,41 @@ namespace AppGeoFit.DataAccesLayer.Models
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<Game> Games { get; set; }
 
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<Notice> NoticesMessege { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<Notice> NoticesRecive { get; set; }
+
 
         public override String ToString()
         {
             return PlayerNick;
+        }
+
+        public override int GetHashCode()
+        {
+            return PlayerId;
+        }
+
+        public override bool Equals(object obj)
+        {
+            var player = obj as Player;
+
+            if (player == null)
+            {
+                return false;
+            }
+            return PlayerId == player.PlayerId 
+                && Password.Equals(player.Password)
+                && PlayerNick.Equals(player.PlayerNick)
+                && PlayerName.Equals(player.PlayerName)
+                && PhoneNum == player.PhoneNum
+                && PlayerMail.Equals(player.PlayerMail)
+                && FavoriteSportID == player.FavoriteSportID
+                && Level == player.Level
+                && MedOnTime == player.MedOnTime;
+            
         }
 
     }

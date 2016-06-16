@@ -9,10 +9,10 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
     public interface IPlayerRestService
     {
         string url { get; set; }
-        Task <Player> GetPlayerAsync(int PlayerId);
+        Task <Player> GetPlayerAsync(int playerId);
         Task<ICollection<Player>> GetAllAsync();
         Task <int> CreatePlayerAsync(Player player);
-        Task <Boolean> DeletePlayerAsync(int PlayerId);
+        Task <Boolean> DeletePlayerAsync(int playerId);
         Task <Boolean> UpdatePlayerAsync(Player player);
         Task <int> FindPlayerByMailAsync(string nickOrMail, string post);
         Task<int> FindPlayerByNickAsync(string nickOrMail);
