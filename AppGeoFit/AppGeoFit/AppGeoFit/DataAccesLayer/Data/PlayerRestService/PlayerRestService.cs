@@ -57,8 +57,7 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
             ICollection<Player> responseListPlayers = new Collection<Player>();
             var uri = new Uri(string.Format(url + "Players2/GetAll"));
             HttpResponseMessage response;
-
-
+            
             response = client.GetAsync(uri).Result;
             if (response.StatusCode == HttpStatusCode.NotFound)
             {

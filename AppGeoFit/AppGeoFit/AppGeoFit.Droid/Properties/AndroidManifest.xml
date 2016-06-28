@@ -1,10 +1,15 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.xamarin.appgeofit" android:versionCode="1" android:versionName="1.0" android:installLocation="auto">
-	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="23" />
+	<uses-sdk android:minSdkVersion="19" android:targetSdkVersion="22" />
 	<uses-permission android:name="android.permission.INTERNET" />
 	<application android:label="GeoFit" android:icon="@drawable/Icon" android:theme="@style/Theme.AppCompat"></application>
 	<CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
 	<RunCodeAnalysis>false</RunCodeAnalysis>
 	<Rebuild>false</Rebuild>
 	<build>none</build>
+	<!-- <configuration>
+    <startup>
+      <supportedRuntime version="v2.0.50727"/>
+    </startup>
+  </configuration>-->
 </manifest>

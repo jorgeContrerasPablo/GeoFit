@@ -103,6 +103,12 @@ namespace RestServiceGeoFit.Models2
                 .HasForeignKey(e => e.ReceiverID)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<Player>()
+                .HasMany(e => e.GamesCreated)
+                .WithRequired(e => e.Creator)
+                .HasForeignKey(e => e.CreatorID)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Notice>()
                 .Property(e => e.Type)
                 .IsUnicode(false);

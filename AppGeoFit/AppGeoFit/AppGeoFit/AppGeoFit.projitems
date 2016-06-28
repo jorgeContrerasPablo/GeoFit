@@ -21,6 +21,9 @@
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\OnlyOnePlayerException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\PasswordIncorrectException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\PlayerAlreadyConnectedException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Exceptions\WrongTimeException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\GameManager\GameManager.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\GameManager\IGameManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\NoticeManager\INoticeManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\NoticeManager\NoticeManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\PlayerManager\IPlayerManager.cs" />
@@ -28,6 +31,11 @@
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\TeamManager\ITeamManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)BusinessLayer\Managers\TeamManager\TeamManager.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Constants.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\GameRestService\Exceptions\GameNotFoundException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\GameRestService\Exceptions\GameOnTimeAndPlaceException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\GameRestService\Exceptions\GameOnTimeException.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\GameRestService\GameRestService.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\GameRestService\IGameRestService.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\NoticeRestService\Exceptions\NoticeNotFoundException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\NoticeRestService\Exceptions\NotPendingNoticeException.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)DataAccesLayer\Data\NoticeRestService\INoticeRestService.cs" />

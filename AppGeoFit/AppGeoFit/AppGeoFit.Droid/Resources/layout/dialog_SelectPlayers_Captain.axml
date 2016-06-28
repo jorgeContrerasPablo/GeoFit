@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:minWidth="25px"
+    android:minHeight="25px"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:id="@+id/relativeLayout1">
+    <TextView
+        android:text="Select players"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="43.7dp"
+        android:gravity="center"
+        android:id="@+id/SelectPlayers_Captain_Text"
+        android:layout_marginBottom="37.0dp" />
+    <ListView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:id="@+id/SelectPlayers_Captain_playerListView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/SelectPlayers_Captain_Text"
+        android:layout_marginTop="27.3dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/SelectPlayers_Captain_playerListView"
+        android:gravity="center"
+        android:id="@+id/linearLayout2">
+        <Button
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Acept"
+            android:id="@+id/SelectPlayers_Captain_AceptButton"
+            android:layout_width="wrap_content"
+            android:layout_height="37.0dp" />
+    </LinearLayout>
+</RelativeLayout>

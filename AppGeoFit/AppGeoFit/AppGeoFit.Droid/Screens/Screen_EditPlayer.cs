@@ -147,18 +147,5 @@ namespace AppGeoFit.Droid
         {
             await Task.Delay(ms);
         }
-
-        protected override void OnPause()
-        {
-            AppSession appSession = new AppSession(this.ApplicationContext);
-
-            if (appSession.getPlayer() != null)
-            {
-                playerManager.OutSession(appSession.getPlayer().PlayerId);
-                appSession.updateSession(false);
-            }
-            base.OnPause();
-
-        }
     }
 }

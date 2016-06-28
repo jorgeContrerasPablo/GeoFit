@@ -119,9 +119,9 @@ namespace AppGeoFit.Droid.Screens
                         Constants.RestUrl = ipTextChange.Text;
                         ad.Cancel();
                     }
-                };              
+                };
                 ad.Show();
-            };            
+            };
         }
 
         public bool IsRequired(EditText editText, string message, Drawable error)
@@ -196,6 +196,6 @@ namespace AppGeoFit.Droid.Screens
   #else
   [assembly: Application(Debuggable=false)]
   #endif
-         }*/
+         */
     }
 }
