@@ -10,7 +10,8 @@ using Android.Content;
 using AppGeoFit.BusinessLayer.Managers.PlayerManager;
 using Android.Views;
 using AppGeoFit.BusinessLayer.Managers.TeamManager;
-
+using System.Collections.Generic;
+using AppGeoFit.DataAccesLayer.Data.TeamRestService.Exceptions;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -30,8 +31,18 @@ namespace AppGeoFit.Droid.Screens
             teamManager = Xamarin.Forms.DependencyService.Get<ITeamManager>().InitiateServices(false);
 
             appSession = new AppSession(ApplicationContext);
-            appSession.setSports(teamManager.GetSports().Result);
-
+            bool errorConnection = false;
+            List<Sport> sportList = new List<Sport>();
+            try
+            {
+                sportList = teamManager.GetSports();
+            }
+            catch (Exception)
+            {
+                BotonAlert("Alert", "There are problems with server connection, please try again in few minutes", "OK", "Cancel", this).Show();
+                errorConnection = true;
+            }
+            appSession.setSports(sportList);
             // Comprobamos si el usuario aun tiene una sesion disponible para conectarse 
             // sin loguearse y que no esté ocupada por otro dispositivo
             if (appSession.getPlayer() != null)
@@ -41,87 +52,91 @@ namespace AppGeoFit.Droid.Screens
                     appSession.updateSession(true);
                     StartActivity(typeof(FragmentActivity_MainActivity));
                 }
+            }            
+
+            if (!errorConnection)
+            {
+                SetContentView(Resource.Layout.Authentication);
+                var toolbar = FindViewById<Toolbar>(Resource.Id.toolbarPrincipal);
+                SetActionBar(toolbar);
+                ActionBar.Title = "GeoFit";
+
+                //Recuperamos elementos
+                EditText emailOrNickT = FindViewById<EditText>(Resource.Id.NickOrEmailText);
+                EditText password = FindViewById<EditText>(Resource.Id.passwordText);
+                Button signInB = FindViewById<Button>(Resource.Id.SignInButton);
+                TextView signUpLink = FindViewById<TextView>(Resource.Id.SignUpTextL);
+                TextView changeIpLink = FindViewById<TextView>(Resource.Id.ChangeIpTextL);
+
+                //Se crea el icono exclamation_error
+                Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
+                errorD.SetBounds(0, 0, errorD.IntrinsicWidth, errorD.IntrinsicHeight);
+
+                #region ButtonSignin
+                bool okE;
+                bool okP;
+                bool error;
+                Player player = new Player();
+
+                signInB.Click += (o, e) =>
+                {
+                    okE = IsRequired(emailOrNickT, "Name is required", errorD);
+                    okP = IsRequired(password, "password is required", errorD);
+
+                    if (!okE && !okP)
+                    {
+                        error = false;
+                        try
+                        {
+                            player = playerManager.Authentication(emailOrNickT.Text, password.Text);
+                        }
+                        catch (Exception ex)
+                        {
+                            BotonAlert("Alert", ex.Message, "OK", "Cancel", this).Show();
+                            error = true;
+                        }
+                        if (!error)
+                        {
+                            appSession.setPlayer(player);
+                            StartActivity(typeof(FragmentActivity_MainActivity));
+                        }
+                    }
+                };
+                #endregion
+
+                //Sign Up Button
+                signUpLink.Click += (o, e) => StartActivity(typeof(Screen_SignUp));
+
+                // Change IP Debug Button
+                changeIpLink.Click += (o, e) =>
+                {
+                    AlertDialog.Builder builder = new AlertDialog.Builder(this);
+
+                    // Get the layout inflater
+                    LayoutInflater inflater = LayoutInflater;
+
+                    View dialogView = inflater.Inflate(Resource.Layout.dialog_ip, null);
+                    // Inflate and set the layout for the dialog
+                    // Pass null as the parent view because its going in the dialog layout
+                    builder.SetView(dialogView);
+
+                    TextView ipText = dialogView.FindViewById<TextView>(Resource.Id.actualIp);
+                    ipText.Text = Constants.RestUrl;
+                    EditText ipTextChange = dialogView.FindViewById<EditText>(Resource.Id.editIp);
+                    Button okButton = dialogView.FindViewById<Button>(Resource.Id.buttonChangeIp);
+                    AlertDialog ad = builder.Create();
+                    okButton.Click += (i, p) =>
+                    {
+                        if (ipTextChange.Text != "")
+                        {
+                            Constants.RestUrl = ipTextChange.Text;
+                            ad.Cancel();
+                        }
+                    };
+                    ad.Show();
+                };
             }
-
-            SetContentView(Resource.Layout.Authentication);
-            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbarPrincipal);
-            SetActionBar(toolbar);
-            ActionBar.Title = "GeoFit";
-
-            //Recuperamos elementos
-            EditText emailOrNickT = FindViewById<EditText>(Resource.Id.NickOrEmailText);
-            EditText password = FindViewById<EditText>(Resource.Id.passwordText);
-            Button signInB = FindViewById<Button>(Resource.Id.SignInButton);
-            TextView signUpLink = FindViewById<TextView>(Resource.Id.SignUpTextL);
-            TextView changeIpLink = FindViewById<TextView>(Resource.Id.ChangeIpTextL);
-
-            //Se crea el icono exclamation_error
-            Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
-            errorD.SetBounds(0, 0, errorD.IntrinsicWidth, errorD.IntrinsicHeight);
-
-            #region ButtonSignin
-            bool okE;
-            bool okP;
-            bool error;
-            Player player = new Player();
-
-            signInB.Click += (o, e) =>
-            {
-                okE = IsRequired(emailOrNickT, "Name is required", errorD);
-                okP = IsRequired(password, "password is required", errorD);
-
-                if (!okE && !okP)
-                {
-                    error = false;
-                    try
-                    {
-                        player = playerManager.Authentication(emailOrNickT.Text, password.Text);
-                    }
-                    catch (Exception ex)
-                    {
-                        BotonAlert("Alert", ex.Message, "OK", "Cancel", this).Show();
-                        error = true;
-                    }
-                    if (!error)
-                    {
-                        appSession.setPlayer(player);
-                        StartActivity(typeof(FragmentActivity_MainActivity));
-                    }
-                }
-            };
-            #endregion
-
-            //Sign Up Button
-            signUpLink.Click += (o, e) => StartActivity(typeof(Screen_SignUp));
-
-            // Change IP Debug Button
-            changeIpLink.Click += (o, e) =>
-            {
-                AlertDialog.Builder builder = new AlertDialog.Builder(this);
-
-                // Get the layout inflater
-                LayoutInflater inflater = LayoutInflater;
-
-                View dialogView = inflater.Inflate(Resource.Layout.dialog_ip, null);
-                // Inflate and set the layout for the dialog
-                // Pass null as the parent view because its going in the dialog layout
-                builder.SetView(dialogView);
-
-                TextView ipText = dialogView.FindViewById<TextView>(Resource.Id.actualIp);
-                ipText.Text = Constants.RestUrl;
-                EditText ipTextChange = dialogView.FindViewById<EditText>(Resource.Id.editIp);
-                Button okButton = dialogView.FindViewById<Button>(Resource.Id.buttonChangeIp);
-                AlertDialog ad = builder.Create();
-                okButton.Click += (i, p) =>
-                {
-                    if (ipTextChange.Text != "")
-                    {
-                        Constants.RestUrl = ipTextChange.Text;
-                        ad.Cancel();
-                    }
-                };              
-                ad.Show();
-            };            
+           
         }
 
         public bool IsRequired(EditText editText, string message, Drawable error)
@@ -196,6 +211,6 @@ namespace AppGeoFit.Droid.Screens
   #else
   [assembly: Application(Debuggable=false)]
   #endif
-         }*/
+         */
     }
 }

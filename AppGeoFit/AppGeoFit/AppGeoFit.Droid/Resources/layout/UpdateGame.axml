@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="Update game"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="43.7dp"
+        android:gravity="center"
+        android:id="@+id/CreateGame_text" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/UpdateGame_relativeLayout1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Select a day"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/UpdateGame_LabelDay"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Select an hour"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/UpdateGame_LabelHour"
+                android:layout_below="@+id/UpdateGame_LabelDay"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Select place"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/UpdateGame_LabelPlace"
+                android:layout_below="@+id/UpdateGame_LabelHour"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/UpdateGame_relativeLayout2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1">
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:inputType="date"
+                android:hint="dd/mm/yyyy"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/UpdateGame_Date"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:textColor="#4785F4" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:inputType="date"
+                android:hint="hh:mm"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/UpdateGame_Time"
+                android:layout_below="@+id/UpdateGame_Date"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp"
+                android:textColor="#4785F4" />
+            <Spinner
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/UpdateGame_SpinnerDuration"
+                android:layout_below="@+id/UpdateGame_Time"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout2">
+        <Button
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Acept"
+            android:id="@+id/UpdateGame_AceptButton"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+        <Button
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:text="Cancel"
+            android:id="@+id/UpdateGame_CancelButton"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1" />
+    </LinearLayout>
+</LinearLayout>

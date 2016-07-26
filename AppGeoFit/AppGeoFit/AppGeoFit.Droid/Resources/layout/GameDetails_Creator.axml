@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:id="@+id/relativeLayout1"
+            android:gravity="center"
+            android:layout_weight="1">
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:minWidth="25px"
+                android:minHeight="25px"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/RelativeLayoutButtonDelete">
+                <ImageButton
+                    android:src="@drawable/Trash"
+                    android:id="@+id/GameDetails_Creator_DeleteGameB"
+                    android:layout_centerInParent="true"
+                    android:layout_width="39.0dp"
+                    android:layout_height="39.7dp"
+                    android:layout_marginTop="8.3dp" />
+            </RelativeLayout>
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Start date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/GameDetails_Creator_StartDateL"
+                android:layout_below="@+id/RelativeLayoutButtonDelete"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="End date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/GameDetails_Creator_EndDateL"
+                android:layout_below="@+id/GameDetails_Creator_StartDateL"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Number of players"
+                android:id="@+id/GameDetails_Creator_NumPlayersL"
+                android:layout_below="@+id/GameDetails_Creator_EndDateL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Location"
+                android:id="@+id/GameDetails_Creator_LocationL"
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/GameDetails_Creator_NumPlayersL"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Home team"
+                android:id="@+id/GameDetails_Creator_HomeTeamL"
+                android:layout_below="@+id/GameDetails_Creator_LocationL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Away team"
+                android:id="@+id/GameDetails_Creator_AwayTeamL"
+                android:layout_below="@+id/GameDetails_Creator_HomeTeamL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Creator"
+                android:id="@+id/GameDetails_Creator_CreatorL"
+                android:layout_below="@+id/GameDetails_Creator_AwayTeamL"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/relativeLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="26.0dp"
+            android:layout_weight="1">
+            <RelativeLayout
+                android:orientation="horizontal"
+                android:minWidth="25px"
+                android:minHeight="25px"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/RelativeLayoutButtonEdit">
+                <ImageButton
+                    android:src="@drawable/Edit"
+                    android:id="@+id/GameDetails_Creator_EditGameB"
+                    android:layout_centerInParent="true"
+                    android:layout_width="39.0dp"
+                    android:layout_height="39.7dp"
+                    android:layout_marginTop="8.3dp" />
+            </RelativeLayout>
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Start date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/GameDetails_Creator_StartDate"
+                android:layout_below="@+id/RelativeLayoutButtonEdit"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="End date"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/GameDetails_Creator_EndDate"
+                android:layout_below="@+id/GameDetails_Creator_StartDate"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Number of players"
+                android:id="@+id/GameDetails_Creator_NumPlayers"
+                android:layout_below="@+id/GameDetails_Creator_EndDate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Location"
+                android:id="@+id/GameDetails_Creator_Location"
+                android:layout_width="wrap_content"
+                android:layout_below="@+id/GameDetails_Creator_NumPlayers"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Home team"
+                android:id="@+id/GameDetails_Creator_HomeTeam"
+                android:layout_below="@+id/GameDetails_Creator_Location"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Away team"
+                android:id="@+id/GameDetails_Creator_AwayTeam"
+                android:layout_below="@+id/GameDetails_Creator_HomeTeam"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="Creator"
+                android:id="@+id/GameDetails_Creator_Creator"
+                android:layout_below="@+id/GameDetails_Creator_AwayTeam"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:layout_marginTop="7.0dp"
+                android:layout_marginLeft="11.0dp" />
+        </RelativeLayout>
+    </LinearLayout>
+    <ImageButton
+        android:src="@drawable/Out"
+        android:layout_width="51.5dp"
+        android:layout_height="54.0dp"
+        android:id="@+id/GameDetails_Creator_LeaveB"
+        android:layout_marginTop="24.0dp"
+        android:layout_marginLeft="41.5dp" />
+    <ListView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/GameDetails_Creator_PlayerList"
+        android:layout_marginTop="7.0dp" />
+</LinearLayout>

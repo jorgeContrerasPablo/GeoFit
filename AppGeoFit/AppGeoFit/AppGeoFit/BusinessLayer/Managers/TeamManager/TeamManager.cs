@@ -93,9 +93,22 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
             return teamRestService.AddPlayer(teamCreated, player.PlayerId, true);
         }
 
-        public Task<Boolean> DeleteTeam(int teamId)
-        {            
-            return teamRestService.DeleteTeamAsync(teamId);
+        public bool DeleteTeam(int teamId)        {            
+
+            bool isDelete = false;
+            try
+            {
+                isDelete = teamRestService.DeleteTeamAsync(teamId).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+            return isDelete;
+
         }
 
         public Task<Boolean> UpdateTeam(Team team, Player player)
@@ -258,14 +271,31 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
 
             
         }
-        public Task<ICollection<Sport>> GetSports()
+        public List<Sport> GetSports()
         {
-            return teamRestService.GetSports();
+            List<Sport> sportList = new List<Sport>();
+            try
+            {
+                sportList = teamRestService.GetSports().Result.ToList();
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is SportsNotFoundException)
+                    {
+                        throw new SportsNotFoundException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return sportList;
         }
 
-        public Task<int> FindTeamByNameOnSports(string teamId, int sportId)
+        public Task<int> FindTeamByNameOnSports(string teamName, int sportId)
         {
-            return teamRestService.FindTeamByNameOnSports(teamId, sportId);
+            return teamRestService.FindTeamByNameOnSports(teamName, sportId);
         }
 
         public Task<Player> GetCaptainAsync(int teamId)
@@ -301,7 +331,7 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
                         throw new Exception(ex.Message);
                 }
             }
-            throw new AlreadyCaptainOnSport("The player: " + joineds.ElementAt(joineds.FindIndex(j => j.PlayerID == captainId)).Player.PlayerNick + " is already a captian on this sport.");
+            throw new AlreadyCaptainOnSport("The player: " + joineds.ElementAt(joineds.FindIndex(j => j.PlayerID == captainId)).Player.PlayerNick + " is already a captian for this sport.");
         }
 
         public Task<ICollection<Player>> GetAllPlayersPendingToAdd(int messengerId, int sportId, string type)

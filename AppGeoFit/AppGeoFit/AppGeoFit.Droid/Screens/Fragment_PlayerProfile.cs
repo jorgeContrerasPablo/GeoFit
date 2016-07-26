@@ -62,7 +62,7 @@ namespace AppGeoFit.Droid.Screens
             /*Drawable trash = ContextCompat.GetDrawable(this, Resource.Drawable.Trash);
             trash.SetBounds(0, 0, trash.IntrinsicWidth, trash.IntrinsicHeight);
             buttonTrash.SetImageDrawable(trash);*/
-            Android.App.AlertDialog baDelete;
+           Android.App.AlertDialog baDelete;
             Button baDeletePositiveButton;
             Button baDeleteNegativeButton;
 

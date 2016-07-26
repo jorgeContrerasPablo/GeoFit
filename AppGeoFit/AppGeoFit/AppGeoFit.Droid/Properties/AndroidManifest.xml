@@ -7,4 +7,9 @@
 	<RunCodeAnalysis>false</RunCodeAnalysis>
 	<Rebuild>false</Rebuild>
 	<build>none</build>
+	<!-- <configuration>
+    <startup>
+      <supportedRuntime version="v2.0.50727"/>
+    </startup>
+  </configuration>-->
 </manifest>

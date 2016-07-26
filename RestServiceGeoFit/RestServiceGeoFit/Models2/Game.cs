@@ -24,11 +24,19 @@ namespace RestServiceGeoFit.Models2
 
         public int PlayersNum { get; set; }
 
-        public int Team1ID { get; set; }
+        public DbGeography Coordinates { get; set; }
 
-        public int Team2ID { get; set; }
+        public int? Team1ID { get; set; }
+
+        public int? Team2ID { get; set; }
 
         public int? PlaceID { get; set; }
+
+        [Required]
+        public int CreatorID { get; set; }
+
+        [Required]
+        public int SportId { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<FeedBack> FeedBacks { get; set; }
@@ -38,6 +46,10 @@ namespace RestServiceGeoFit.Models2
         public virtual Team Team { get; set; }
 
         public virtual Team Team1 { get; set; }
+
+        public virtual Player Creator { get; set; }
+
+        public virtual Sport Sport { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<Player> Players { get; set; }

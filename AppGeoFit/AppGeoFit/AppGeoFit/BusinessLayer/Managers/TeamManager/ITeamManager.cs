@@ -11,12 +11,12 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
         ITeamManager InitiateServices(bool test);
         Task<Team> GetTeam(int teamId);
         Task<bool> CreateTeam(Team team, Player player);
-        Task<Boolean> DeleteTeam(int teamId);
+        bool DeleteTeam(int teamId);
         Task<Boolean> UpdateTeam(Team team, Player player);
         Task<Boolean> AddPlayer(int teamId, int playerId);
         Task<Boolean> RemovePlayer(int teamId, int playerId);
-        Task<ICollection<Sport>> GetSports();
-        Task<int> FindTeamByNameOnSports(string teamId, int sportId);
+        List<Sport> GetSports();
+        Task<int> FindTeamByNameOnSports(string teamName, int sportId);
         Task<Player> GetCaptainAsync(int teamId);
         Player UpdateCaptain(int captainId, int newCaptainId, int teamId);
         Task<int> SendNoticeAddPlayer(string playerNick, Team team);

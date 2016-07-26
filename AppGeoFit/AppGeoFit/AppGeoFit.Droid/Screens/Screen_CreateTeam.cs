@@ -38,7 +38,7 @@ namespace AppGeoFit.Droid.Screens
             //Recuperamos la sesion
             appSession = new AppSession(ApplicationContext);            
 
-            appSession.setSports(teamManager.GetSports().Result);
+            appSession.setSports(teamManager.GetSports());
             string colorCode = Intent.GetStringExtra("ColorCode") ?? "#ffffff";
             string teamName = Intent.GetStringExtra("teamName") ?? "";
 
@@ -66,7 +66,7 @@ namespace AppGeoFit.Droid.Screens
                                     {
                                             sportName = sports.ElementAt<Sport>(e.Position).SportName;
                                             team.SportID = sports.ElementAt<Sport>(e.Position).SportID;
-                                            //team.Sport = sports.ElementAt<Sport>(e.Position);                                        
+                                            team.Sport = sports.ElementAt<Sport>(e.Position);                                        
                                     };
             var adapter = new ArrayAdapter<Sport>(
                     this, Android.Resource.Layout.SimpleSpinnerItem, sports.ToList());

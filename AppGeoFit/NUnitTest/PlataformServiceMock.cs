@@ -8,32 +8,13 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Xamarin.Forms;
+using Xamarin.Forms.Internals;
 
 namespace NUnitTest
 {
     public class PlatformServicesMock : IPlatformServices
     {
         void IPlatformServices.BeginInvokeOnMainThread(Action action)
-        {
-            throw new NotImplementedException();
-        }
-        ITimer IPlatformServices.CreateTimer(Action<object> callback)
-        {
-            throw new NotImplementedException();
-        }
-        ITimer IPlatformServices.CreateTimer(Action<object> callback, object state, int dueTime, int period)
-        {
-            throw new NotImplementedException();
-        }
-        ITimer IPlatformServices.CreateTimer(Action<object> callback, object state, long dueTime, long period)
-        {
-            throw new NotImplementedException();
-        }
-        ITimer IPlatformServices.CreateTimer(Action<object> callback, object state, TimeSpan dueTime, TimeSpan period)
-        {
-            throw new NotImplementedException();
-        }
-        ITimer IPlatformServices.CreateTimer(Action<object> callback, object state, uint dueTime, uint period)
         {
             throw new NotImplementedException();
         }
@@ -68,6 +49,56 @@ namespace NUnitTest
         }
 
         double IPlatformServices.GetNamedSize(NamedSize size, Type targetElementType, bool useOldSizes)
+        {
+            throw new NotImplementedException();
+        }
+
+        ITimer CreateTimer(Action<object> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        ITimer CreateTimer(Action<object> callback, object state, int dueTime, int period)
+        {
+            throw new NotImplementedException();
+        }
+
+        ITimer CreateTimer(Action<object> callback, object state, long dueTime, long period)
+        {
+            throw new NotImplementedException();
+        }
+
+        ITimer CreateTimer(Action<object> callback, object state, TimeSpan dueTime, TimeSpan period)
+        {
+            throw new NotImplementedException();
+        }
+
+        ITimer CreateTimer(Action<object> callback, object state, uint dueTime, uint period)
+        {
+            throw new NotImplementedException();
+        }
+
+        ITimer IPlatformServices.CreateTimer(Action<object> callback)
+        {
+            throw new NotImplementedException();
+        }
+
+        ITimer IPlatformServices.CreateTimer(Action<object> callback, object state, int dueTime, int period)
+        {
+            throw new NotImplementedException();
+        }
+
+        ITimer IPlatformServices.CreateTimer(Action<object> callback, object state, long dueTime, long period)
+        {
+            throw new NotImplementedException();
+        }
+
+        ITimer IPlatformServices.CreateTimer(Action<object> callback, object state, TimeSpan dueTime, TimeSpan period)
+        {
+            throw new NotImplementedException();
+        }
+
+        ITimer IPlatformServices.CreateTimer(Action<object> callback, object state, uint dueTime, uint period)
         {
             throw new NotImplementedException();
         }

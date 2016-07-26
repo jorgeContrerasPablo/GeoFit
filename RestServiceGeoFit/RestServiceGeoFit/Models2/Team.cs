@@ -36,6 +36,8 @@ namespace RestServiceGeoFit.Models2
         [Required]
         public int SportID { get; set; }
 
+ 
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public  ICollection<FeedBack> FeedBacks { get; set; }
 

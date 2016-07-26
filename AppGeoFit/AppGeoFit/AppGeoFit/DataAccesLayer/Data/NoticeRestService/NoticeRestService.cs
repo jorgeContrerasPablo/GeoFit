@@ -13,7 +13,7 @@ using System.Collections.ObjectModel;
 [assembly: Dependency(typeof(AppGeoFit.DataAccesLayer.Data.NoticeRestService.NoticeRestService))]
 namespace AppGeoFit.DataAccesLayer.Data.NoticeRestService
 {
-    class NoticeRestService : INoticeRestService
+    public class NoticeRestService : INoticeRestService
     {
         public string url { get; set; }
         readonly HttpClient client;

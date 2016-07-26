@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout1"
+        android:layout_marginLeft="4.5dp">
+        <TextView
+            android:text="Start Date"
+            android:id="@+id/ElementGameL_StartDateL"
+            android:layout_width="67.0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3.5dp"
+            android:layout_marginLeft="4.5dp" />
+        <TextView
+            android:id="@+id/ElementGameL_StartDate"
+            android:layout_below="@+id/ElementGameL_StartDateL"
+            android:hint="dd/mm/yyyy hh:mm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout2"
+        android:layout_marginLeft="12.5dp">
+        <TextView
+            android:text="End Date"
+            android:id="@+id/ElementGameL_EndDateL"
+            android:layout_width="67.0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="3.5dp"
+            android:layout_marginLeft="4.5dp" />
+        <TextView
+            android:id="@+id/ElementGameL_EndDate"
+            android:layout_below="@+id/ElementGameL_EndDateL"
+            android:hint="dd/mm/yyyy hh:mm"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </RelativeLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <TextView
+            android:id="@+id/ElementGameL_NumPlayers"
+            android:hint="x/n"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="37.0dp" />
+    </LinearLayout>
+</LinearLayout>

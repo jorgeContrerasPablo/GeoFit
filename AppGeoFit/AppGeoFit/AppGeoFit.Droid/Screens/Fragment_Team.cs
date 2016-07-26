@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-
 using Android.Support.V4.App;
 using Android.Content;
 using Android.OS;
@@ -16,9 +15,8 @@ using AppGeoFit.DataAccesLayer.Data.TeamRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.BusinessLayer.Managers.PlayerManager;
 using AppGeoFit.BusinessLayer.Managers.TeamManager;
-using Android.Graphics;
-using Xamarin.Forms.Platform.Android;
 using AppGeoFit.BusinessLayer.Managers.NoticeManager;
+using AppGeoFit.Droid.Adapters;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -119,13 +117,41 @@ namespace AppGeoFit.Droid.Screens
                  Activity.StartActivity(mainActivity);
             };
             createTeamB.Click += (o, e) => Activity.StartActivity(typeof(Screen_CreateTeam));
+            AlertDialog baDelete;
+            Button baDeletePositiveButton;
+            Button baDeleteNegativeButton;
             delteTeamButon.Click += (o, e) =>
              {
-                 //TODO MENSAJE DE ASEGURAR
-                 teamManager.DeleteTeam(actualTeam.TeamID);
-                 Toast.MakeText(Context, "Team: " + actualTeam.TeamName +
-                    " has been deleted correctly", ToastLength.Long).Show();
-                 UpdateTeams(view);
+                 baDelete = BotonAlert("Alert", "Do you want to delete this team?", "OK", "Cancel", Context);
+                 baDelete.Show();
+                 baDeletePositiveButton = baDelete.GetButton((int)DialogButtonType.Positive);
+                 baDeleteNegativeButton = baDelete.GetButton((int)DialogButtonType.Negative);
+                 baDeletePositiveButton.Click += (oDb, eDb) =>
+                 //Comprobacion , esta seguro ?
+                 baDeletePositiveButton.Click += (oPB, ePB) =>
+                 {
+                     bool isDelete = false;
+                     try
+                     {
+                         isDelete = teamManager.DeleteTeam(actualTeam.TeamID);
+                     }
+                     catch (Exception ex)
+                     {
+                         Toast.MakeText(Activity.ApplicationContext,
+                             ex.Message, ToastLength.Short).Show();
+                     }
+                     if (isDelete)
+                     {
+                         Toast.MakeText(Context, "Team: " + actualTeam.TeamName +
+                                        " has been deleted correctly", ToastLength.Long).Show();
+                         UpdateTeams(view);                         
+                     }
+                     baDelete.Cancel();
+                 };
+                 baDeleteNegativeButton.Click += (oNB, eNB) =>
+                 {
+                     baDelete.Cancel();
+                 };
              };
 
             AlertDialog.Builder builder = new AlertDialog.Builder(Context);
@@ -137,7 +163,7 @@ namespace AppGeoFit.Droid.Screens
                 builder.SetView(dialogView);
 
                 AutoCompleteTextView AutocompleteView = dialogView.FindViewById<AutoCompleteTextView>(Resource.Id.D_SPlayer_playerToFind);
-                var adapterAutoComplete = new PlayerArrayAdapter(Context, playerManager.GetAll().Result.ToList(), captain.PlayerId, actualSportId);
+                var adapterAutoComplete = new PlayerArrayAdapter(Context, playerManager.GetAll().Result.ToList(), captain.PlayerId, actualSportId, false, null, true);
 
                 AutocompleteView.Adapter = adapterAutoComplete;
                 AlertDialog ad = builder.Create();
@@ -217,7 +243,7 @@ namespace AppGeoFit.Droid.Screens
             }            
             adapterLPlayers = new PlayerArrayAdapter(
             view.Context, LPlayersOnTeam,
-            captain.PlayerId, actualSportId);
+            captain.PlayerId, actualSportId, false, null, true);
             playerList.Adapter = adapterLPlayers;
             RegisterForContextMenu(playerList);
         }
@@ -261,7 +287,7 @@ namespace AppGeoFit.Droid.Screens
                 playerList.Visibility = ViewStates.Visible;
                 imageColor.Visibility = ViewStates.Visible;
             }
-            var adapterTeams = new ArrayAdapter<DataAccesLayer.Models.Team>(
+            var adapterTeams = new ArrayAdapter<Team>(
                 view.Context, Android.Resource.Layout.SimpleSpinnerItem, Teams);
             adapterTeams.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             spinnerTeams.Adapter = adapterTeams;
@@ -374,7 +400,7 @@ namespace AppGeoFit.Droid.Screens
 
                                 //Eliminamos el capitan actual de la lista
                                 lplayersSelectCaptain.RemoveAt(LPlayersOnTeam.FindIndex(p => p.PlayerNick == captain.PlayerNick));
-                                var adapterAutoComplete = new PlayerArrayAdapter(Context, lplayersSelectCaptain, captain.PlayerId, actualSportId);
+                                var adapterAutoComplete = new PlayerArrayAdapter(Context, lplayersSelectCaptain, captain.PlayerId, actualSportId, false, null, true);
                                 //Rellenamos y creamos el autocompleteView
                                 AutocompleteView.Adapter = adapterAutoComplete;
                                 ad = builder.Create();
@@ -436,14 +462,13 @@ namespace AppGeoFit.Droid.Screens
                         }
                     };
                     return true;
-                case Resource.Id.CtxLstProfile:
-                    dialogView = LayoutInflater.FromContext(Context).Inflate(Resource.Layout.PlayerProfile, null);
-                    dialogView.FindViewById<ImageButton>(Resource.Id.imageButtonEdit).Visibility = ViewStates.Invisible;
-                    dialogView.FindViewById<ImageButton>(Resource.Id.imageButtonDelete).Visibility = ViewStates.Invisible;
-                    dialogView.FindViewById<TextView>(Resource.Id.LastName).Visibility = ViewStates.Invisible;
-                    dialogView.FindViewById<TextView>(Resource.Id.PhoneNumber).Visibility = ViewStates.Invisible;
-                    dialogView.FindViewById<TextView>(Resource.Id.LabelLastName).Visibility = ViewStates.Invisible;
-                    dialogView.FindViewById<TextView>(Resource.Id.LabelPhoneNumber).Visibility = ViewStates.Invisible;
+                case Resource.Id.CtxLstProfile:                
+                    dialogView = LayoutInflater.FromContext(Context).Inflate(Resource.Layout.PlayerDetails, null);                   
+                    dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_Name).Text = player.PlayerName;
+                    dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_Nick).Text = player.PlayerNick;
+                    dialogView.FindViewById<RatingBar>(Resource.Id.PlayerDetails_ratingBar).Rating = (int)player.Level;
+                    dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_MedOnTime).Text = player.MedOnTime.ToString();
+                    dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_Email).Text = player.PlayerMail;
                     builder.SetView(dialogView);
                     ad = builder.Create();
                     ad.Show();
@@ -452,60 +477,5 @@ namespace AppGeoFit.Droid.Screens
                     return base.OnContextItemSelected(item);
             }
         }
-    }
-
-    public class PlayerArrayAdapter : ArrayAdapter<Player>
-    {
-        int captainId;
-        int sportId;
-
-        public PlayerArrayAdapter(Context context, List<Player> objects, int captainId, int sportId): base(context, 0, objects)
-        {
-            this.captainId = captainId;
-            this.sportId = sportId;
-        }
-
-        
-        public override View GetView(int position, View convertView, ViewGroup parent)
-        {
-            INoticeManager noticeManager
-           = Xamarin.Forms.DependencyService.Get<INoticeManager>().InitiateServices(false);
-            //Obteniendo una instancia del inflater
-            LayoutInflater inflater = (LayoutInflater)Context
-                    .GetSystemService(Context.LayoutInflaterService);
-
-            //Salvando la referencia del View de la fila
-            View listItemView = convertView;
-
-            //Comprobando si el View no existe
-            if (null == convertView)
-            {
-                //Si no existe, entonces inflarlo con two_line_list_item.xml
-                listItemView = inflater.Inflate(
-                        Resource.Layout.ElementPlayerList,
-                        parent,
-                        false);
-            }
-            //Obteniendo instancias de los text views
-            TextView Nick = listItemView.FindViewById<TextView>(Resource.Id.ElementPlayerList_Nick);
-            RatingBar RatingBar = (RatingBar)listItemView.FindViewById(Resource.Id.ElementPlayerList_RatingBar);
-            
-
-            //Obteniendo instancia de la Tarea en la posición actual
-            Player item = GetItem(position);
-            
-            //Si está pendiente de ser agregado, lo oscurecemos.
-            if (noticeManager.NoticeIsPending(item.PlayerId, captainId, sportId, Constants.TEAM_ADD_PLAYER))
-            {
-                listItemView.SetBackgroundColor(Xamarin.Forms.Color.Default.ToAndroid());
-                listItemView.Background.SetColorFilter(Color.ParseColor("#80000000"), PorterDuff.Mode.Darken);
-            }
-
-            Nick.Text = item.PlayerNick;
-            RatingBar.Rating =(int)item.Level;
-
-            //Devolver al ListView la fila creada
-            return listItemView;
-        }
-    }
+    }    
 }

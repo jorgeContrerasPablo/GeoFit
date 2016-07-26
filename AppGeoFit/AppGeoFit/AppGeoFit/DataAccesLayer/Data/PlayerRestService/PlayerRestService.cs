@@ -10,6 +10,7 @@ using System.Net.Http;
 using AppGeoFit.DataAccesLayer.Models;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using AppGeoFit.DataAccesLayer.Data.GameRestService.Exceptions;
 
 [assembly: Dependency(typeof(AppGeoFit.DataAccesLayer.Data.PlayerRestService.PlayerRestService))]
 namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
@@ -57,8 +58,7 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
             ICollection<Player> responseListPlayers = new Collection<Player>();
             var uri = new Uri(string.Format(url + "Players2/GetAll"));
             HttpResponseMessage response;
-
-
+            
             response = client.GetAsync(uri).Result;
             if (response.StatusCode == HttpStatusCode.NotFound)
             {
@@ -320,6 +320,53 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
             }
 
             return responsePlayer;
+        }
+
+        public async Task<ICollection<Game>> GetActualGames(int page, int rows, int playerId, int sportId)
+        {
+            ICollection<Game> responseGames = new Collection<Game>();
+            Uri uri = new Uri(string.Format(url + "Players2/GetActualGames/{0}/{1}/{2}/{3}", page, rows, playerId, sportId));
+
+            HttpResponseMessage response = client.GetAsync(uri).Result;
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new GameNotFoundException(response.ReasonPhrase);
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+                responseGames = JsonConvert.DeserializeObject<ICollection<Game>>(responseAsString);
+            }
+
+            return responseGames;
+        }
+
+        public async Task<int> TotalGamesCount(int playerId, int sportId)
+        {
+            int totalGames = 0;
+            Uri uri = new Uri(string.Format(url + "Players2/TotalGamesCount/{0}/{1}", playerId, sportId));
+
+            HttpResponseMessage response = client.GetAsync(uri).Result;
+
+            if (response.StatusCode == HttpStatusCode.NotFound)
+            {
+                throw new GameNotFoundException(response.ReasonPhrase);
+            }
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+                totalGames = JsonConvert.DeserializeObject<int>(responseAsString);
+            }
+            return totalGames;
         }
     }
 }

@@ -85,8 +85,6 @@ namespace RestServiceGeoFit.Controllers
             }
             if (ModelState.IsValid)
             {
-                notice.Messenger = null;
-                notice.Receiver = null;
                 db.Entry(notice).State = System.Data.Entity.EntityState.Modified;
                 db.SaveChanges();
             }

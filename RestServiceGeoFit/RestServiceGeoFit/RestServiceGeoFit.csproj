@@ -207,12 +207,14 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
+    <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\NoticeController.cs" />
     <Compile Include="Controllers\Players2Controller.cs" />
     <Compile Include="Controllers\TeamController.cs" />
     <Compile Include="Models2\AppGeoFitDBContext.cs" />
     <Compile Include="Models2\FeedBack.cs" />
     <Compile Include="Models2\Game.cs" />
+    <Compile Include="Models2\GameLatitudeLongitude.cs" />
     <Compile Include="Models2\Joined.cs" />
     <Compile Include="Models2\Notice.cs" />
     <Compile Include="Models2\Photo.cs" />

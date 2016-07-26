@@ -15,6 +15,7 @@ namespace RestServiceGeoFit.Models2
             Players = new HashSet<Player>();
             Teams = new HashSet<Team>();
             Notices = new HashSet<Notice>();
+            Games = new HashSet<Game>();
         }
 
         public int SportID { get; set; }
@@ -33,5 +34,8 @@ namespace RestServiceGeoFit.Models2
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<Notice> Notices { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<Game> Games { get; set; }
     }
 }

@@ -11,6 +11,7 @@ using AppGeoFit.BusinessLayer.Managers;
 using AppGeoFit.BusinessLayer.Managers.PlayerManager;
 using Xamarin.Forms;
 using Android.Content.PM;
+using Android.Views;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -66,6 +67,31 @@ namespace AppGeoFit.Droid.Screens
                 return true;
             }
         }
+        public AlertDialog CreateAlertDialog(int layout, Context context)
+        {
+            AlertDialog.Builder builder = new AlertDialog.Builder(context);
+            LayoutInflater inflater = LayoutInflater;
+            Android.Views.View dialogView;
+            AlertDialog dialog;
+            dialogView = inflater.Inflate(layout, null);
+            builder.SetView(dialogView);
+            dialog = builder.Create();
+            return dialog;
+        }
+        
+
+        protected override void OnPause()
+        {
+            AppSession appSession = new AppSession(this.ApplicationContext);
+            IPlayerManager playerManager = DependencyService.Get<IPlayerManager>().InitiateServices(false);
+            if (appSession.getPlayer() != null)
+            {
+                playerManager.OutSession(appSession.getPlayer().PlayerId);
+                appSession.updateSession(false);
+            }
+            base.OnPause();
+
+        }
 
         protected override void OnRestart()
         {
@@ -92,10 +118,12 @@ namespace AppGeoFit.Droid.Screens
                     appSession.deletePlayer();
                     StartActivity(typeof(Screen_Authentication));
                 }
-                playerManager.Session(appSession.getPlayer().PlayerId);
-                appSession.updateSession(true);
-            }
-            
+                else
+                {
+                    playerManager.Session(appSession.getPlayer().PlayerId);
+                    appSession.updateSession(true);
+                }
+            }            
         }
     }
 }
