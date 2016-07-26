@@ -88,8 +88,11 @@ namespace RestServiceGeoFit.Models2
         public GameLatitudeLongitude GameToGameLl(Game game)
         {
             GameLatitudeLongitude returnGame = new GameLatitudeLongitude();
-            returnGame.Longitude = game.Coordinates.Longitude;
-            returnGame.Latitude = game.Coordinates.Latitude;
+            if(game.Coordinates != null)
+            {
+                returnGame.Longitude = game.Coordinates.Longitude;
+                returnGame.Latitude = game.Coordinates.Latitude;
+            }
             returnGame.Creator = game.Creator;
             returnGame.CreatorID = game.CreatorID;
             returnGame.EndDate = game.EndDate;

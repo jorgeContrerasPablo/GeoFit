@@ -21,5 +21,7 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
         Task<int> FindCaptainOnSportsAsync(int playerId, int sportId);
         Task<ICollection<Team>> FindTeamsJoinedAsync(int playerId, int sportId);
         Task<Player> FindPlayerOnTeamAsync(string playerNick, int teamId);
+        Task<ICollection<Game>> GetActualGames(int page, int rows, int playerId, int sportId);
+        Task<int> TotalGamesCount(int playerId, int sportId);     
     }
 }

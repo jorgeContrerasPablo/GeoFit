@@ -51,5 +51,10 @@ namespace AppGeoFit.DataAccesLayer.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<Player> Players { get; set; }
+
+        public override int GetHashCode()
+        {
+            return GameID;
+        }
     }
 }

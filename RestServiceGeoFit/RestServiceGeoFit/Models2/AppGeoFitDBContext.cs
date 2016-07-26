@@ -1,17 +1,14 @@
 namespace RestServiceGeoFit.Models2
 {
-    using System;
     using System.Data.Entity;
-    using System.ComponentModel.DataAnnotations.Schema;
-    using System.Linq;
 
     public partial class AppGeoFitDBContext : DbContext
     {
         public AppGeoFitDBContext(string stringConnectionDB)
             : base(stringConnectionDB)
         {
-            //Configuration.ProxyCreationEnabled = false;
-            //Configuration.LazyLoadingEnabled = false;
+            Configuration.ProxyCreationEnabled = true;
+            Configuration.LazyLoadingEnabled = true;
         }
 
         public virtual DbSet<FeedBack> FeedBacks { get; set; }
@@ -118,9 +115,24 @@ namespace RestServiceGeoFit.Models2
                 .IsUnicode(false);
 
             modelBuilder.Entity<Sport>()
+               .HasMany(e => e.Games)
+               .WithRequired(e => e.Sport)
+               .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Sport>()
+                .HasMany(e => e.Notices)
+                .WithRequired(e => e.Sport)
+                .WillCascadeOnDelete(false);
+            
+            modelBuilder.Entity<Sport>()
                 .HasMany(e => e.Players)
                 .WithOptional(e => e.Sport)
                 .HasForeignKey(e => e.FavoriteSportID);
+
+            modelBuilder.Entity<Sport>()
+                .HasMany(e => e.Teams)
+                .WithRequired(e => e.Sport)
+                .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Team>()
                 .Property(e => e.TeamName)

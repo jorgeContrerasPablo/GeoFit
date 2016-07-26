@@ -117,13 +117,41 @@ namespace AppGeoFit.Droid.Screens
                  Activity.StartActivity(mainActivity);
             };
             createTeamB.Click += (o, e) => Activity.StartActivity(typeof(Screen_CreateTeam));
+            AlertDialog baDelete;
+            Button baDeletePositiveButton;
+            Button baDeleteNegativeButton;
             delteTeamButon.Click += (o, e) =>
              {
-                 //TODO MENSAJE DE ASEGURAR
-                 teamManager.DeleteTeam(actualTeam.TeamID);
-                 Toast.MakeText(Context, "Team: " + actualTeam.TeamName +
-                    " has been deleted correctly", ToastLength.Long).Show();
-                 UpdateTeams(view);
+                 baDelete = BotonAlert("Alert", "Do you want to delete this team?", "OK", "Cancel", Context);
+                 baDelete.Show();
+                 baDeletePositiveButton = baDelete.GetButton((int)DialogButtonType.Positive);
+                 baDeleteNegativeButton = baDelete.GetButton((int)DialogButtonType.Negative);
+                 baDeletePositiveButton.Click += (oDb, eDb) =>
+                 //Comprobacion , esta seguro ?
+                 baDeletePositiveButton.Click += (oPB, ePB) =>
+                 {
+                     bool isDelete = false;
+                     try
+                     {
+                         isDelete = teamManager.DeleteTeam(actualTeam.TeamID);
+                     }
+                     catch (Exception ex)
+                     {
+                         Toast.MakeText(Activity.ApplicationContext,
+                             ex.Message, ToastLength.Short).Show();
+                     }
+                     if (isDelete)
+                     {
+                         Toast.MakeText(Context, "Team: " + actualTeam.TeamName +
+                                        " has been deleted correctly", ToastLength.Long).Show();
+                         UpdateTeams(view);                         
+                     }
+                     baDelete.Cancel();
+                 };
+                 baDeleteNegativeButton.Click += (oNB, eNB) =>
+                 {
+                     baDelete.Cancel();
+                 };
              };
 
             AlertDialog.Builder builder = new AlertDialog.Builder(Context);
@@ -434,15 +462,13 @@ namespace AppGeoFit.Droid.Screens
                         }
                     };
                     return true;
-                case Resource.Id.CtxLstProfile:
-                    //TODO ARREGLAR ESTO Y ACABARLO BIEN
-                    dialogView = LayoutInflater.FromContext(Context).Inflate(Resource.Layout.PlayerProfile, null);
-                    dialogView.FindViewById<ImageButton>(Resource.Id.imageButtonEdit).Visibility = ViewStates.Invisible;
-                    dialogView.FindViewById<ImageButton>(Resource.Id.imageButtonDelete).Visibility = ViewStates.Invisible;
-                    dialogView.FindViewById<TextView>(Resource.Id.LastName).Visibility = ViewStates.Invisible;
-                    dialogView.FindViewById<TextView>(Resource.Id.PhoneNumber).Visibility = ViewStates.Invisible;
-                    dialogView.FindViewById<TextView>(Resource.Id.LabelLastName).Visibility = ViewStates.Invisible;
-                    dialogView.FindViewById<TextView>(Resource.Id.LabelPhoneNumber).Visibility = ViewStates.Invisible;
+                case Resource.Id.CtxLstProfile:                
+                    dialogView = LayoutInflater.FromContext(Context).Inflate(Resource.Layout.PlayerDetails, null);                   
+                    dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_Name).Text = player.PlayerName;
+                    dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_Nick).Text = player.PlayerNick;
+                    dialogView.FindViewById<RatingBar>(Resource.Id.PlayerDetails_ratingBar).Rating = (int)player.Level;
+                    dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_MedOnTime).Text = player.MedOnTime.ToString();
+                    dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_Email).Text = player.PlayerMail;
                     builder.SetView(dialogView);
                     ad = builder.Create();
                     ad.Show();

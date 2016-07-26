@@ -1,4 +1,5 @@
 ﻿using AppGeoFit.BusinessLayer.Exceptions;
+using AppGeoFit.DataAccesLayer.Data.GameRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Data.TeamRestService;
@@ -6,6 +7,7 @@ using AppGeoFit.DataAccesLayer.Models;
 using DevOne.Security.Cryptography.BCrypt;
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
 
@@ -241,6 +243,59 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
             return teamReturn;
         }
 
+        public List<Player> FindAllPlayersOnOurTeams(int playerId, int sportId)
+        {
+            List<Player> playersReturn = new List<Player>();
+            List<Team> teamsJoined = (List<Team>)playerRestService.FindTeamsJoinedAsync(playerId, sportId).Result;
+            foreach (Team t in teamsJoined)
+            {
+                foreach (Joined j in t.Joineds)
+                {
+                    playersReturn.Add(j.Player);
+                }
+            }
+            return playersReturn;
+        }
+
+        public List<Game> GetActualGames(int page, int rows, int playerId, int sportId)
+        {
+            List<Game> gameListReturn = new List<Game>();
+            try
+            {
+                gameListReturn = playerRestService.GetActualGames(page, rows, playerId, sportId).Result.ToList();
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is GameNotFoundException)
+                    {
+                        throw new GameNotFoundException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return gameListReturn;
+        }
+
+        public int TotalGamesCount(int playerId, int sportId)
+        {
+            int countGames = 0;
+            try
+            {
+                countGames = playerRestService.TotalGamesCount(playerId, sportId).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+            return countGames;
+        }
+
         public void Session(int playerId)
         {
             playerRestService.Session(playerId);
@@ -249,21 +304,8 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
         public void OutSession(int playerId)
         {
             playerRestService.OutSession(playerId);
-        }
-        
-        public List<Player> FindAllPlayersOnOurTeams(int playerId, int sportId)
-        {
-            List<Player> playersReturn = new List<Player>();
-            List<Team> teamsJoined =(List<Team>) playerRestService.FindTeamsJoinedAsync(playerId, sportId).Result;
-            foreach(Team t in teamsJoined)
-            {
-                foreach(Joined j in t.Joineds)
-                {
-                    playersReturn.Add(j.Player);
-                }
-            }
-            return playersReturn;
-        }
+        }        
+
 
         // Funcion split, necesario para el parametro mail.
         string[] splitFunction (string playerMail)
@@ -293,5 +335,6 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
 
             return finalEmail;
         }
+
     }
 }

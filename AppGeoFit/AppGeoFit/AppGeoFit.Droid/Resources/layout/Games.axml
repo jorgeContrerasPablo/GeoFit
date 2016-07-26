@@ -19,13 +19,13 @@
             android:id="@+id/Games_createGame"
             android:layout_weight="1" />
         <ImageButton
-            android:src="@drawable/Games"
+            android:src="@drawable/Find"
             android:id="@+id/Games_findGames"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:layout_weight="1" />
         <ImageButton
-            android:src="@drawable/Games"
+            android:src="@drawable/Time"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/Games_currentGames"

@@ -48,6 +48,9 @@ namespace AppGeoFit.BusinessLayer.Managers.NoticeManager
 
         public Task<bool> UpdateNotice(Notice notice)
         {
+            notice.Messenger = null;
+            notice.Receiver = null;
+            notice.Sport = null;
             return restService.UpdateNoticeAsync(notice);
         }
 

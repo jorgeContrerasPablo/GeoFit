@@ -26,6 +26,7 @@ namespace AppGeoFit.Droid.Screens
         List<Player> ListPlayers_Captain = new List<Player>();
         Team team = new Team();
         bool captain = true;
+        bool addTeam = false;
         Player actualPlayer;
         ListView finalSelectView;
         PlayerArrayAdapter finalArrayAdapter;
@@ -52,8 +53,7 @@ namespace AppGeoFit.Droid.Screens
             catch(CaptainNotFoundException ex)
             {
                 captain = false;
-            }
-            
+            }            
 
             #region datePicker
             //DatePicker
@@ -115,6 +115,17 @@ namespace AppGeoFit.Droid.Screens
                 addPlayers.PerformLongClick();
             };
             #endregion
+            #region SpinnerDuration
+            Spinner durationSpinner = FindViewById<Spinner>(Resource.Id.CreateGame_SpinnerDuration);
+            int[] durations = new int[]{1,2,3};
+            ArrayAdapter<int> adapter = new ArrayAdapter<int>(this, Android.Resource.Layout.SimpleSpinnerItem, durations);
+            durationSpinner.Adapter = adapter;
+            int gameDuration = 1;
+            durationSpinner.ItemSelected += (o, e) =>
+            {
+                gameDuration = e.Position + 1;
+            };
+            #endregion
             Button acept = FindViewById<Button>(Resource.Id.CreateGame_AceptButton);
             DateTime dateTimeStart = new DateTime(date.Year, date.Month, date.Day, hour, minute, 0);
             acept.Click += (o, e) =>
@@ -126,11 +137,24 @@ namespace AppGeoFit.Droid.Screens
                 game.SportId = actualSportId;
                 game.CreatorID = actualPlayer.PlayerId;
                 game.StartDate = dateTimeStart;
-                game.EndDate = game.StartDate.AddHours(3);
+                game.EndDate = game.StartDate.AddHours(gameDuration);
+                if (addTeam)
+                {
+                    game.Team1ID = team.TeamID;
+                }
                 //TODO COORDINATES
                 try
                 {
                     gameManager.CreateGame(game);
+                    Toast.MakeText(ApplicationContext,
+                            "Your Game has been create correctly", ToastLength.Short).Show();
+                    //Creamos intent y le asignamos el fragment 
+                    //que debe abrir y después finalizamos la actual activity
+                    //con el flag cleartop.
+                    var mainActivity = new Intent(ApplicationContext, typeof(FragmentActivity_MainActivity));
+                    mainActivity.PutExtra("toOpen", "TabGame");
+                    mainActivity.SetFlags(ActivityFlags.ClearTop);
+                    StartActivity(mainActivity);
                 }
                 catch(WrongTimeException ex)
                 {
@@ -227,6 +251,7 @@ namespace AppGeoFit.Droid.Screens
 
                         aceptButton.Click += (oc, ec) =>
                         {
+                            addTeam = false;                            
                             //TODO guardar equipo para vincularlo.
                             finalSelectList.Clear();
                             finalSelectList.Add(actualPlayer);
@@ -236,6 +261,10 @@ namespace AppGeoFit.Droid.Screens
                                                    this, finalSelectList,
                                                    0, actualSportId, false, null, false);
                             finalSelectView.Adapter = finalArrayAdapter;
+                            if (SelectedList_captain.Count != 0)
+                            {
+                                addTeam = true;
+                            }
                             dialogSelect_Captain.Cancel();
 
                         };
@@ -284,29 +313,19 @@ namespace AppGeoFit.Droid.Screens
                                 IsValid(autoCompleteTextView, ex.Message, errorD, false);
                             }
                     };
-
-
-
                     /*  var screen_CreateGame_Individual = new Intent(this, typeof(Screen_SelectPlayers_Individual));
                       screen_CreateGame_Individual.PutExtra("sportId", actualSportId);
                       StartActivity(screen_CreateGame_Individual);*/
                     break;
                 case Resource.Id.CtxLstProfile:
                     Player player = finalArrayAdapter.GetItem(info.Position);
-                    AlertDialog dialogProfile = CreateAlertDialog(Resource.Layout.PlayerProfile, this);
+                    AlertDialog dialogProfile = CreateAlertDialog(Resource.Layout.PlayerDetails, this);
                     dialogProfile.Show();
-                    dialogProfile.FindViewById<TextView>(Resource.Id.Name).Text = player.PlayerName;
-                    dialogProfile.FindViewById<TextView>(Resource.Id.Nick).Text = player.PlayerNick;
-                    dialogProfile.FindViewById<RatingBar>(Resource.Id.ratingBar).Rating = (int)player.Level;
-                    dialogProfile.FindViewById<TextView>(Resource.Id.MedOnTime).Text = player.MedOnTime.ToString();
-                    dialogProfile.FindViewById<TextView>(Resource.Id.Email).Text = player.PlayerMail;
-
-                    dialogProfile.FindViewById<ImageButton>(Resource.Id.imageButtonEdit).Visibility = ViewStates.Invisible;
-                    dialogProfile.FindViewById<ImageButton>(Resource.Id.imageButtonDelete).Visibility = ViewStates.Invisible;
-                    dialogProfile.FindViewById<TextView>(Resource.Id.LastName).Visibility = ViewStates.Invisible;
-                    dialogProfile.FindViewById<TextView>(Resource.Id.PhoneNumber).Visibility = ViewStates.Invisible;
-                    dialogProfile.FindViewById<TextView>(Resource.Id.LabelLastName).Visibility = ViewStates.Invisible;
-                    dialogProfile.FindViewById<TextView>(Resource.Id.LabelPhoneNumber).Visibility = ViewStates.Invisible;
+                    dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Name).Text = player.PlayerName;
+                    dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Nick).Text = player.PlayerNick;
+                    dialogProfile.FindViewById<RatingBar>(Resource.Id.PlayerDetails_ratingBar).Rating = (int)player.Level;
+                    dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_MedOnTime).Text = player.MedOnTime.ToString();
+                    dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Email).Text = player.PlayerMail;
                     return true;
                 case Resource.Id.CtxLstDelete:
                     finalSelectList.Remove(finalArrayAdapter.GetItem(info.Position));

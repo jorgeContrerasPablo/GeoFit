@@ -21,6 +21,7 @@ using AppGeoFit.BusinessLayer.Managers.PlayerManager;
 using AppGeoFit.BusinessLayer.Managers.TeamManager;
 using AppGeoFit.BusinessLayer.Managers.NoticeManager;
 using AppGeoFit.DataAccesLayer.Data.NoticeRestService.Exceptions;
+using AppGeoFit.BusinessLayer.Managers.GameManager;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -34,6 +35,7 @@ namespace AppGeoFit.Droid.Screens
         public IPlayerManager playerManager { get; set; }
         public ITeamManager teamManager { get; set; }
         public INoticeManager noticeManager { get; set; }
+        public IGameManager gameManager { get; set; }
         Player player;
 
         protected override void OnCreate(Bundle bundle)
@@ -46,63 +48,79 @@ namespace AppGeoFit.Droid.Screens
             playerManager = DependencyService.Get<IPlayerManager>().InitiateServices(false);
             teamManager = DependencyService.Get<ITeamManager>().InitiateServices(false);
             noticeManager = DependencyService.Get<INoticeManager>().InitiateServices(false);
+            gameManager = DependencyService.Get<IGameManager>().InitiateServices(false);
             //Recuperamos la sesion
             appSession = new AppSession(ApplicationContext);
             player = appSession.getPlayer();
             string tabTag = Intent.GetStringExtra("toOpen") ?? "TabGames";
 
-            // Init TabHost
-            mTabHost = FindViewById<FragmentTabHost>(Android.Resource.Id.TabHost);
-            mTabHost.Setup(this, SupportFragmentManager, Android.Resource.Id.TabContent);
+           
 
-            mTabHost.AddTab(mTabHost.NewTabSpec("TabGames").SetIndicator("", ContextCompat.GetDrawable(this, Resource.Drawable.Games)),
-                Java.Lang.Class.FromType(typeof(Fragment_Games)), null);
-            mTabHost.AddTab(mTabHost.NewTabSpec("TabTeam").SetIndicator("", ContextCompat.GetDrawable(this, Resource.Drawable.Team)),
-                Java.Lang.Class.FromType(typeof(Fragment_Team)), null);
-            mTabHost.AddTab(mTabHost.NewTabSpec("TabProfile").SetIndicator("", ContextCompat.GetDrawable(this, Resource.Drawable.Player)),
-                Java.Lang.Class.FromType(typeof(Fragment_PlayerProfile)), null);
-
-            mTabHost.SetCurrentTabByTag(tabTag);
-
-            List<Sport> sportL = appSession.getSports().ToList();
-            var toolbar = FindViewById<Toolbar>(Resource.Id.toolbarPrincipal);
-            Spinner spinnerFavoriteSport_et = FindViewById<Spinner>(Resource.Id.Toolbar_spinnerSports);
-
-            //Mostramos las peticiones pendientes si es que las hay.
-            List<Notice> pendingNotice = new List<Notice>();
-            try
+            List<Sport> sportL = appSession.getSports();
+            bool errorConnection = false;
+            if (sportL.Count == 0)
             {
-                pendingNotice = noticeManager.GetAllPendingNotice(player.PlayerId).ToList();
-                ShowNotice(pendingNotice);
+                errorConnection = true;
+                BotonAlert("Alert", "There are problems with server connection, please try again in few minutes", "OK", "Cancel", this).Show();
             }
-            catch (NotPendingNoticeException ex) { }
+            if (!errorConnection)
+            {
+                // Init TabHost
+                mTabHost = FindViewById<FragmentTabHost>(Android.Resource.Id.TabHost);
+                mTabHost.Setup(this, SupportFragmentManager, Android.Resource.Id.TabContent);
 
-            var adapter = new ArrayAdapter<Sport>(
-                this, Android.Resource.Layout.SimpleSpinnerItem, sportL);
-            adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
-            spinnerFavoriteSport_et.Adapter = adapter;
-            spinnerFavoriteSport_et.SetSelection(player.Sport != null ? sportL.
-                        FindIndex(s => s.SportName == player.Sport.SportName) : 0);
-            SetActionBar(toolbar);
-            ActionBar.Title = "GeoFit";
+                mTabHost.AddTab(mTabHost.NewTabSpec("TabGames").SetIndicator("", ContextCompat.GetDrawable(this, Resource.Drawable.Games)),
+                    Java.Lang.Class.FromType(typeof(Fragment_Games)), null);
+                mTabHost.AddTab(mTabHost.NewTabSpec("TabTeam").SetIndicator("", ContextCompat.GetDrawable(this, Resource.Drawable.Team)),
+                    Java.Lang.Class.FromType(typeof(Fragment_Team)), null);
+                mTabHost.AddTab(mTabHost.NewTabSpec("TabProfile").SetIndicator("", ContextCompat.GetDrawable(this, Resource.Drawable.Player)),
+                    Java.Lang.Class.FromType(typeof(Fragment_PlayerProfile)), null);
 
-            /*            TabHost.TabSpec spec = tabH.NewTabSpec("TabGames");
-                        //spec.SetContent(Resource.Id.Games);
-                        spec.SetContent(new Intent(this, typeof(PlayerProfile)));
-                        spec.SetIndicator("Games");
-                        tabH.AddTab(spec);
+                mTabHost.SetCurrentTabByTag(tabTag);
 
-                       spec = tabH.NewTabSpec("TabTeam");
-                        spec.SetContent(Resource.Id.Team);
-                        spec.SetIndicator("Team");
-                        tabH.AddTab(spec);*/
+                var toolbar = FindViewById<Toolbar>(Resource.Id.toolbarPrincipal);
+                Spinner spinnerFavoriteSport_et = FindViewById<Spinner>(Resource.Id.Toolbar_spinnerSports);
 
-            /*TabHost.TabSpec spec = tabH.NewTabSpec("TabProfile");
-            spec.SetIndicator("Player Profile");
-            spec.SetContent(new Intent(this, typeof(PlayerProfile)));
-            //tabH.AddTab(spec, Java.Lang.Class.FromType(typeof(Android.Support.V4.App.Fragment)), null);
-            tabH.AddTab(spec);*/
+                //Mostramos las peticiones pendientes si es que las hay.
+                List<Notice> pendingNotice = new List<Notice>();
+                try
+                {
+                    pendingNotice = noticeManager.GetAllPendingNotice(player.PlayerId).ToList();
+                    ShowNotice(pendingNotice);
+                }
+                catch (NotPendingNoticeException ex) { }
+                catch (Exception ex)
+                {
+                    Toast.MakeText(ApplicationContext,
+                               ex.Message, ToastLength.Short).Show();
+                }
 
+                var adapter = new ArrayAdapter<Sport>(
+                    this, Android.Resource.Layout.SimpleSpinnerItem, sportL);
+                adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
+                spinnerFavoriteSport_et.Adapter = adapter;
+                spinnerFavoriteSport_et.SetSelection(player.Sport != null ? sportL.
+                            FindIndex(s => s.SportName == player.Sport.SportName) : 0);
+                SetActionBar(toolbar);
+                ActionBar.Title = "GeoFit";
+
+                /*            TabHost.TabSpec spec = tabH.NewTabSpec("TabGames");
+                            //spec.SetContent(Resource.Id.Games);
+                            spec.SetContent(new Intent(this, typeof(PlayerProfile)));
+                            spec.SetIndicator("Games");
+                            tabH.AddTab(spec);
+
+                           spec = tabH.NewTabSpec("TabTeam");
+                            spec.SetContent(Resource.Id.Team);
+                            spec.SetIndicator("Team");
+                            tabH.AddTab(spec);*/
+
+                /*TabHost.TabSpec spec = tabH.NewTabSpec("TabProfile");
+                spec.SetIndicator("Player Profile");
+                spec.SetContent(new Intent(this, typeof(PlayerProfile)));
+                //tabH.AddTab(spec, Java.Lang.Class.FromType(typeof(Android.Support.V4.App.Fragment)), null);
+                tabH.AddTab(spec);*/
+            }
         }
         void ShowNotice(List<Notice> pendingNotice)
         {
@@ -170,6 +188,18 @@ namespace AppGeoFit.Droid.Screens
         {
             Toast.MakeText(this, "Top ActionBar pressed: " + item.TitleFormatted, ToastLength.Short).Show();
             return base.OnOptionsItemSelected(item);
+        }
+
+        public AlertDialog BotonAlert(string title, string message, string positiveButton, string negativeButton, Context cntx)
+        {
+            // BOTON ALERT
+            AlertDialog.Builder builder = new AlertDialog.Builder(cntx);
+            builder.SetTitle(title);
+            builder.SetMessage(message);
+            builder.SetPositiveButton(positiveButton, (EventHandler<DialogClickEventArgs>)null);
+            builder.SetNegativeButton(negativeButton, (EventHandler<DialogClickEventArgs>)null);
+
+            return builder.Create();
         }
 
         protected override void OnPause()

@@ -183,6 +183,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\GameArrayAdapter.cs" />
     <Compile Include="AppSession.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
@@ -190,6 +191,8 @@
     <Compile Include="Adapters\PlayerArrayAdapter.cs" />
     <Compile Include="Resources\Resource.Designer.cs" />
     <Compile Include="Screens\Fragment_Games.cs" />
+    <Compile Include="Screens\Screen_ActualGames.cs" />
+    <Compile Include="Screens\Screen_AddTeamToGame.cs" />
     <Compile Include="Screens\Screen_ColorPicker.cs" />
     <Compile Include="Screens\Screen_CreateGame.cs" />
     <Compile Include="Screens\Screen_CreateTeam.cs" />
@@ -200,11 +203,13 @@
     <Compile Include="Screens\FragmentActivity_MainActivity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Screens\Screen.cs" />
+    <Compile Include="Screens\Screen_GameDetails.cs" />
     <Compile Include="Screens\Screen_SelectIp.cs" />
     <Compile Include="Screens\Screen_SelectPlayers_Captain.cs" />
     <Compile Include="Screens\Screen_SelectPlayers_Individual.cs" />
     <Compile Include="Screens\Screen_SignUp.cs" />
     <Compile Include="Screens\Fragment_Team.cs" />
+    <Compile Include="Screens\Screen_UpdateGame.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="AppGeoFit.Droid-1.ruleset" />
@@ -284,6 +289,27 @@
     <AndroidResource Include="Resources\layout\ElementPlayerListCheckB.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\layout\ElementGameList.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\LoadingPBFooterGameList.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\GameDetails_NoCreator.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\PlayerDetails.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\ActualGames.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\GameDetails_Creator.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\UpdateGame.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup>
     <AndroidResource Include="Resources\Drawable\Icon.png" />
@@ -341,6 +367,18 @@
     <AndroidResource Include="Resources\menu\MenuCreateTeam.xml">
       <SubType>Designer</SubType>
     </AndroidResource>
+    <AndroidResource Include="Resources\Drawable\Find.png" />
+    <AndroidResource Include="Resources\Drawable\Out.png" />
+    <AndroidResource Include="Resources\Drawable\Time.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Find.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Out.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Time.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Time.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Find.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Out.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Find.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Out.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Time.png" />
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

@@ -42,6 +42,7 @@ namespace RestServiceGeoFit.Controllers
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
+            team.Sport = null;
             if (ModelState.IsValid)
             {
                 team.Sport = db.Sports.Find(team.SportID);

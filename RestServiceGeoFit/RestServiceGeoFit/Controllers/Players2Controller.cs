@@ -281,5 +281,73 @@ namespace RestServiceGeoFit.Controllers
             return BuildSuccesResult(HttpStatusCode.OK, player);
 
         }
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage GetActualGames(int parameter1, int parameter2, int parameter3, int parameter4)
+        {
+            List<GameLatitudeLongitude> resultGameLLList = new List<GameLatitudeLongitude>();
+            GameLatitudeLongitude GameLL = new GameLatitudeLongitude();
+            if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+            }
+
+            var playerId = new SqlParameter("@PlayerId", parameter3);
+            var actualDate = new SqlParameter("@ActualDate", DateTime.Now);
+            var sportId = new SqlParameter("@SportId", parameter4);
+
+            string nativeSQLQuery = @"SELECT GameID, StartDate, EndDate, PlayersNum, Coordinates, Team1ID, Team2ID, PlaceID, CreatorID, SportID" +
+                                    " FROM GeoFitDB.dbo.Game" +
+                                    " WHERE SportID = @SportId AND StartDate > @ActualDate AND GameID IN( SELECT GameID" +
+                                    " FROM GeoFitDB.dbo.Participate" +
+                                    " WHERE PlayerID = @PlayerId)"+
+                                    " ORDER BY StartDate;";
+
+            var resultGameList = db.Database.SqlQuery<Game>(nativeSQLQuery, playerId, actualDate, sportId)
+                                 .Skip(parameter1 * parameter2)
+                                 .Take(parameter2)
+                                 .ToList();
+            if (resultGameList.Count == 0)
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "There are no games");
+            }
+
+            foreach (Game g in resultGameList)
+            {
+                if (g.Sport == null)                    
+                    g.Sport = db.Sports.Find(g.SportId);
+                if (g.Creator == null)                    
+                    g.Creator = db.Players.Find(g.CreatorID);
+                resultGameLLList.Add(GameLL.GameToGameLl(g));
+            }
+            return BuildSuccesResult(HttpStatusCode.OK, resultGameLLList);
+        }
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage TotalGamesCount(int parameter1, int parameter2)
+        {            
+            if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+            }
+            var playerId = new SqlParameter("@PlayerId", parameter1);
+            var actualDate = new SqlParameter("@ActualDate", DateTime.Now);
+            var sportId = new SqlParameter("@SportId", parameter2);
+
+            string nativeSQLQuery = @"SELECT GameID " +
+                                    " FROM GeoFitDB.dbo.Game" +
+                                    " WHERE SportID = @SportId AND StartDate > @ActualDate AND GameID IN( SELECT GameID" +
+                                    " FROM GeoFitDB.dbo.Participate" +
+                                    " WHERE PlayerID = @PlayerId)";
+
+            var numGamesSqlReturn = db.Database.SqlQuery<int>(nativeSQLQuery, playerId, actualDate, sportId).Count();
+            if (numGamesSqlReturn == 0)
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "There are no games");
+            }
+            return BuildSuccesResult(HttpStatusCode.OK, numGamesSqlReturn);
+        }
+
+
     }
 }

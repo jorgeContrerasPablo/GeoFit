@@ -17,6 +17,7 @@ namespace RestServiceGeoFit.Models2
             Games = new HashSet<Game>();
             NoticesMessege = new HashSet<Notice>();
             NoticesRecive = new HashSet<Notice>();
+            GamesCreated = new HashSet<Game>(); 
         }
 
         public int PlayerID { get; set; }
@@ -63,6 +64,7 @@ namespace RestServiceGeoFit.Models2
         public virtual Sport Sport { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+       
         public ICollection<Game> Games { get; set; }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
@@ -70,7 +72,7 @@ namespace RestServiceGeoFit.Models2
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<Notice> NoticesRecive { get; set; }
-
+        [InverseProperty("Creator")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<Game> GamesCreated { get; set; }
     }
