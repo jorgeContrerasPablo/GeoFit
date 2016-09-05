@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout2"
+        android:layout_weight="1">
+        <CheckBox
+            android:text="Start date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_SearchOptions_TimeCB"
+            android:gravity="center"
+            android:layout_marginLeft="94.5dp"
+            android:layout_marginRight="73.5dp" />
+        <CheckBox
+            android:text="Distance"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_SearchOptions_DistanceCB"
+            android:layout_below="@+id/dialog_SearchOptions_TimeCB"
+            android:gravity="center"
+            android:layout_marginTop="10.0dp"
+            android:layout_marginLeft="94.5dp"
+            android:layout_marginRight="73.5dp" />
+        <CheckBox
+            android:text="Number of players"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/dialog_SearchOptions_NumOfPlayersCB"
+            android:layout_below="@+id/dialog_SearchOptions_DistanceCB"
+            android:gravity="center"
+            android:layout_marginTop="10.0dp"
+            android:layout_marginLeft="94.5dp"
+            android:layout_marginRight="73.5dp" />
+    </RelativeLayout>
+</LinearLayout>

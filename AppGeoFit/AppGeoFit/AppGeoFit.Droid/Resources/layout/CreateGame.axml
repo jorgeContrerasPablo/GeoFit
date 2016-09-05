@@ -163,7 +163,7 @@
         <Button
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Cancel"
-            android:id="@+id/CreateTeam_CancelButton"
+            android:id="@+id/CreateGame_CancelButton"
             android:gravity="center"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"

@@ -1,0 +1,192 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="Place details"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/textView1"
+        android:layout_marginTop="21.0dp"
+        android:layout_marginBottom="9.0dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relativeLayout1"
+            android:layout_weight="1">
+            <TextView
+                android:text="Name"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/PlaceDetails_NameL"
+                android:gravity="center"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="20.0dp" />
+            <TextView
+                android:text="Map"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:id="@+id/PlaceDetails_MapL"
+                android:layout_below="@+id/PlaceDetails_NameL"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="20.0dp" />
+            <TextView
+                android:text="Direction"
+                android:id="@+id/PlaceDetails_DirectionL"
+                android:gravity="center"
+                android:layout_below="@+id/PlaceDetails_MapL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="20.0dp" />
+            <TextView
+                android:text="Phone"
+                android:id="@+id/PlaceDetails_PhoneNumL"
+                android:gravity="center"
+                android:layout_below="@+id/PlaceDetails_DirectionL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="20.0dp" />
+            <TextView
+                android:text="Email"
+                android:id="@+id/PlaceDetails_EmailL"
+                android:gravity="center"
+                android:layout_below="@+id/PlaceDetails_PhoneNumL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="20.0dp" />
+            <TextView
+                android:text="Rating"
+                android:layout_width="match_parent"
+                android:gravity="center"
+                android:layout_height="wrap_content"
+                android:id="@+id/PlaceDetails_ValuationMedL"
+                android:layout_below="@+id/PlaceDetails_EmailL"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="20.0dp" />
+            <TextView
+                android:text="Link"
+                android:id="@+id/PlaceDetails_LinkL"
+                android:gravity="center"
+                android:layout_below="@+id/PlaceDetails_ValuationMedL"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="20.0dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/relativeLayout2"
+            android:layout_weight="1">
+            <TextView
+                android:text="Name"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/PlaceDetails_Name"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="20.0dp" />
+            <TextView
+                android:text="Map"
+                android:textColor="#4785F4"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/PlaceDetails_Map"
+                android:layout_below="@+id/PlaceDetails_Name"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="5.0dp" />
+            <TextView
+                android:text="Direction"
+                android:gravity="center"
+                android:id="@+id/PlaceDetails_Direction"
+                android:layout_below="@+id/PlaceDetails_Map"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="5.0dp" />
+            <TextView
+                android:text="Phone"
+                android:gravity="center"
+                android:id="@+id/PlaceDetails_PhoneNum"
+                android:layout_below="@+id/PlaceDetails_Direction"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="20.0dp" />
+            <TextView
+                android:text="Email"
+                android:gravity="center"
+                android:id="@+id/PlaceDetails_Email"
+                android:layout_below="@+id/PlaceDetails_PhoneNum"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="20.0dp" />
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="31.0dp"
+                android:id="@+id/PlaceDetails_ValuationMed"
+                android:numStars="5"
+                android:stepSize="0.1"
+                android:gravity="center"
+                android:layout_below="@+id/PlaceDetails_Email"
+                style="?android:attr/ratingBarStyleSmall"
+                android:layout_marginTop="10.0dp"
+                android:layout_marginLeft="58.2dp" />
+            <TextView
+                android:text="Link"
+                android:textColor="#4785F4"
+                android:gravity="center"
+                android:id="@+id/PlaceDetails_Link"
+                android:layout_below="@+id/PlaceDetails_ValuationMed"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="26.0dp"
+                android:layout_marginTop="5.0dp" />
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="vertical"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:id="@+id/linearLayout2">
+        <TextView
+            android:text="Show comments"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/PlaceDetails_ShowCommentsLink"
+            android:textColor="#4785F4"
+            android:layout_marginTop="4.0dp" />
+        <ImageButton
+            android:src="@drawable/Stick"
+            android:id="@+id/PlaceDetails_AcceptButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:background="?android:selectableItemBackground"
+            android:layout_marginTop="32.5dp" />
+    </LinearLayout>
+</LinearLayout>

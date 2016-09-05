@@ -46,12 +46,20 @@ namespace AppGeoFit.BusinessLayer.Managers.NoticeManager
             return isPending;
         }
 
-        public Task<bool> UpdateNotice(Notice notice)
+        public bool UpdateNotice(Notice notice)
         {
-            notice.Messenger = null;
-            notice.Receiver = null;
-            notice.Sport = null;
-            return restService.UpdateNoticeAsync(notice);
+            bool succes = false;
+            try {
+                succes = restService.UpdateNoticeAsync(notice).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+            return succes;
         }
 
         public Task<int> CreateNotice(Notice notice)
@@ -81,6 +89,45 @@ namespace AppGeoFit.BusinessLayer.Managers.NoticeManager
                     }
                     else
                         throw new Exception(ex.Message);
+                }
+            }
+            return response;
+        }
+
+        public Notice GetNotice(int noticeId)
+        {
+            Notice response = new Notice();
+            try
+            {
+                response = restService.GetNoticeAsync(noticeId).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is NoticeNotFoundException)
+                    {
+                        throw new NoticeNotFoundException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return response;
+        }
+
+        public int TotalNoticesCount(int playerId)
+        {
+            int response = 0;
+            try
+            {
+                response = restService.TotalNoticesCount(playerId).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    throw new Exception(ex.Message);
                 }
             }
             return response;

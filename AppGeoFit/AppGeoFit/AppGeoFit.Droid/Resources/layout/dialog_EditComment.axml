@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:minWidth="25px"
+    android:minHeight="25px">
+    <EditText
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="128.5dp"
+        android:maxLength="75"
+        android:id="@+id/D_EditComment_Comment"
+        android:layout_marginTop="18.0dp"
+        android:layout_marginLeft="18.0dp"
+        android:layout_marginRight="18.0dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <Button
+            android:text="Accept"
+            android:id="@+id/D_EditComment_AcceptB"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="1"
+            android:layout_marginLeft="30.0dp"
+            android:layout_marginRight="25.5dp" />
+        <Button
+            android:text="Cancel"
+            android:id="@+id/D_EditComment_CancelB"
+            android:gravity="center"
+            android:layout_width="wrap_content"
+            android:layout_height="38dp"
+            android:layout_marginTop="20dp"
+            android:layout_weight="1"
+            android:layout_marginRight="30.0dp"
+            android:layout_marginLeft="25.5dp" />
+    </LinearLayout>
+</LinearLayout>

@@ -49,7 +49,7 @@
                 android:layout_marginRight="14dp" />
             <TextView
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="RepeatPassword *"
+                android:text="Repeat Password *"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:id="@+id/SignUp_LabelRepeatPassword"
@@ -169,7 +169,7 @@
                 android:layout_marginRight="14dp" />
             <EditText
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:hint="LastName"
+                android:hint="Last Name"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:id="@+id/SignUp_LastName"

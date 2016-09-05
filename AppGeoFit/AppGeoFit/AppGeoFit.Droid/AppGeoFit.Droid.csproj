@@ -127,10 +127,31 @@
       <HintPath>..\..\packages\Newtonsoft.Json.8.0.3\lib\portable-net40+sl5+wp80+win8+wpa81\Newtonsoft.Json.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="Plugin.CurrentActivity, Version=1.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Plugin.CurrentActivity.1.0.1\lib\MonoAndroid10\Plugin.CurrentActivity.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Plugin.Geolocator, Version=3.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugin.Geolocator.3.0.4\lib\MonoAndroid10\Plugin.Geolocator.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Plugin.Geolocator.Abstractions, Version=3.0.4.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Xam.Plugin.Geolocator.3.0.4\lib\MonoAndroid10\Plugin.Geolocator.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Plugin.Permissions, Version=1.1.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Plugin.Permissions.1.1.7\lib\MonoAndroid10\Plugin.Permissions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Plugin.Permissions.Abstractions, Version=1.1.6.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\Plugin.Permissions.1.1.7\lib\MonoAndroid10\Plugin.Permissions.Abstractions.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Runtime" />
+    <Reference Include="System.Threading.Tasks" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Xml" />
     <Reference Include="Xamarin.Android.Support.Animated.Vector.Drawable, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
@@ -183,8 +204,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Adapters\CommentArrayAdapter.cs" />
     <Compile Include="Adapters\GameArrayAdapter.cs" />
+    <Compile Include="Adapters\NoticeArrayAdapter.cs" />
     <Compile Include="AppSession.cs" />
+    <Compile Include="MainApplication.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs" />
     <Compile Include="obj\Debug\TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs" />
@@ -194,6 +218,7 @@
     <Compile Include="Screens\Screen_ActualGames.cs" />
     <Compile Include="Screens\Screen_AddTeamToGame.cs" />
     <Compile Include="Screens\Screen_ColorPicker.cs" />
+    <Compile Include="Screens\Screen_Comments.cs" />
     <Compile Include="Screens\Screen_CreateGame.cs" />
     <Compile Include="Screens\Screen_CreateTeam.cs" />
     <Compile Include="Screens\Screen_EditTeam.cs" />
@@ -203,7 +228,10 @@
     <Compile Include="Screens\FragmentActivity_MainActivity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Screens\Screen.cs" />
+    <Compile Include="Screens\Screen_FeedBack.cs" />
     <Compile Include="Screens\Screen_GameDetails.cs" />
+    <Compile Include="Screens\Screen_Notices.cs" />
+    <Compile Include="Screens\Screen_PlaceDetails.cs" />
     <Compile Include="Screens\Screen_SelectIp.cs" />
     <Compile Include="Screens\Screen_SelectPlayers_Captain.cs" />
     <Compile Include="Screens\Screen_SelectPlayers_Individual.cs" />
@@ -284,7 +312,7 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\dialog_TimePicker.axml">
-      <SubType>AndroidResource</SubType>
+      <SubType>Designer</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\ElementPlayerListCheckB.axml">
       <SubType>AndroidResource</SubType>
@@ -308,6 +336,33 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\UpdateGame.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\PlaceDetails.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\dialog_SearchOptions.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\FeedBack.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\dialog_RatePlayer.axml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\ElementNoticeList.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Notices.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\ElementCommentList.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\Comments.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\dialog_EditComment.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>
@@ -379,6 +434,26 @@
     <AndroidResource Include="Resources\drawable-xxhdpi\Find.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\Out.png" />
     <AndroidResource Include="Resources\drawable-xxhdpi\Time.png" />
+    <AndroidResource Include="Resources\Drawable\Cross.png" />
+    <AndroidResource Include="Resources\Drawable\Message.png" />
+    <AndroidResource Include="Resources\Drawable\MessagePlus.png" />
+    <AndroidResource Include="Resources\Drawable\Stick.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Cross.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Message.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\MessagePlus.png" />
+    <AndroidResource Include="Resources\drawable-xhdpi\Srick.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Message.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\MessagePlus.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Stick.png" />
+    <AndroidResource Include="Resources\drawable-xxhdpi\Cross.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Cross.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Message.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\MessagePlus.png" />
+    <AndroidResource Include="Resources\drawable-hdpi\Stick.png" />
+    <AndroidResource Include="Resources\menu\MenuNotice.xml" />
+    <AndroidResource Include="Resources\menu\MenuComment.xml">
+      <SubType>Designer</SubType>
+    </AndroidResource>
   </ItemGroup>
   <ItemGroup />
   <ItemGroup>

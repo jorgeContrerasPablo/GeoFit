@@ -16,7 +16,9 @@ namespace AppGeoFit.DataAccesLayer.Models
 
         public int PlaceID { get; set; }
 
-      //  public DbGeography Coordinates { get; set; }
+        public double Longitude { get; set; }
+
+        public double Latitude { get; set; }
 
         public string Direction { get; set; }
 
@@ -32,6 +34,8 @@ namespace AppGeoFit.DataAccesLayer.Models
 
         public string Link { get; set; }
 
+        public int? SportId { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<FeedBack> FeedBacks { get; set; }
 
@@ -40,7 +44,19 @@ namespace AppGeoFit.DataAccesLayer.Models
 
         public virtual Photo Photo { get; set; }
 
+        public virtual Sport Sport { get; set; }
+
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<Team> Teams { get; set; }
+
+        public override String ToString()
+        {
+            return PlaceName;
+        }
+
+        public override int GetHashCode()
+        {
+            return PlaceID;
+        }
     }
 }

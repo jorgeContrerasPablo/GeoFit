@@ -14,6 +14,8 @@ using AppGeoFit.BusinessLayer.Managers.GameManager;
 using AppGeoFit.DataAccesLayer.Models;
 using AppGeoFit.Droid.Adapters;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
+using AppGeoFit.BusinessLayer.Managers.FeedBackManager;
+using Android.Graphics;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -23,20 +25,24 @@ namespace AppGeoFit.Droid.Screens
     public class Screen_GameDetails : Screen
     {
         int gameId;
+        IGameManager gameManager;
+        IFeedBackManager feedBackManager;
+        Game game;
+        TextView startDateEt;
+        TextView endDateEt;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
             global::Xamarin.Forms.Forms.Init(this, bundle);
-            IGameManager gameManager = Xamarin.Forms.DependencyService.Get<IGameManager>().InitiateServices(false);
+            gameManager = Xamarin.Forms.DependencyService.Get<IGameManager>().InitiateServices(false);
+            feedBackManager = Xamarin.Forms.DependencyService.Get<IFeedBackManager>().InitiateServices(false);
             AppSession appSession = new AppSession(ApplicationContext);
             Player player = appSession.getPlayer();
             gameId = Intent.GetIntExtra("gameId", 0);
-            Game game = gameManager.GetGame(gameId);
+            game = gameManager.GetGame(gameId);
 
             bool isCreator = false;
 
-            TextView startDateEt;
-            TextView endDateEt;
             TextView numPlayers;
             TextView location;
             TextView creator;
@@ -46,6 +52,7 @@ namespace AppGeoFit.Droid.Screens
             ImageButton editGameB;
             ImageButton deleteGameB;
             ImageButton leaveGameB;
+            TextView showCommentsLink;
             if (game.CreatorID != player.PlayerId)
             {
                 SetContentView(Resource.Layout.GameDetails_NoCreator);
@@ -58,6 +65,8 @@ namespace AppGeoFit.Droid.Screens
                 homeTeam = FindViewById<TextView>(Resource.Id.GameDetails_NoCreator_HomeTeam);
                 awayTeam = FindViewById<TextView>(Resource.Id.GameDetails_NoCreator_AwayTeam);
                 playerList = FindViewById<ListView>(Resource.Id.GameDetails_NoCreator_PlayerList);
+                showCommentsLink = FindViewById<TextView>(Resource.Id.GameDetails_NoCreator_ShowCommentsLink);
+
                 editGameB = null;
                 deleteGameB = null;
                 leaveGameB = FindViewById<ImageButton>(Resource.Id.GameDetails_NoCreator_LeaveB);
@@ -76,16 +85,49 @@ namespace AppGeoFit.Droid.Screens
                 playerList = FindViewById<ListView>(Resource.Id.GameDetails_Creator_PlayerList);
                 editGameB = FindViewById<ImageButton>(Resource.Id.GameDetails_Creator_EditGameB);
                 deleteGameB = FindViewById<ImageButton>(Resource.Id.GameDetails_Creator_DeleteGameB);
+                showCommentsLink = FindViewById<TextView>(Resource.Id.GameDetails_Creator_ShowCommentsLink);
                 leaveGameB = FindViewById<ImageButton>(Resource.Id.GameDetails_Creator_LeaveB);
                 isCreator = true;
             }
-
+            //android: textColor = "#4785F4"
             startDateEt.Text = game.StartDate.Day + "/" + game.StartDate.Month + "/" + game.StartDate.Year
                 + "  " + game.StartDate.Hour + ":" + game.StartDate.Minute;            
             endDateEt.Text = game.EndDate.Day + "/" + game.EndDate.Month + "/" + game.EndDate.Year
                 + "  " + game.EndDate.Hour + ":" + game.EndDate.Minute;            
             numPlayers.Text = game.PlayersNum + "/" + game.Sport.NumPlayers;
-            //TODO location.Text = game.Place.Direction;
+
+            if(feedBackManager.TotalGameCommentsCount(game.GameID) > 0)
+            {
+                showCommentsLink.SetTextColor(Color.ParseColor("#4785F4"));
+                showCommentsLink.Click += (o, e) =>
+                {
+                    var screen_Comments = new Intent(this, typeof(Screen_Comments));
+                    screen_Comments.PutExtra("gameId", game.GameID);
+                    StartActivity(screen_Comments);
+                };
+            }
+
+            if (game.PlaceID != null)
+            {
+                location.Click += (o, e) =>
+                {
+                    AlertDialog dialogPlaceDetails = ShowPlaceDetails(game.Place);                    
+
+                    if (feedBackManager.TotalPlaceCommentsCount((int)game.PlaceID) > 0)
+                    {
+                        dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_ShowCommentsLink).SetTextColor(Color.ParseColor("#4785F4"));
+                        ImageButton aceptButton = dialogPlaceDetails.FindViewById<ImageButton>(Resource.Id.PlaceDetails_AcceptButton);
+
+                        aceptButton.Click += (oB, eB) =>
+                        {
+                            dialogPlaceDetails.Cancel();
+                        };
+                    }
+                   
+                };
+            }
+            
+
             creator.Text = game.Creator.PlayerNick;            
             if(game.Team1ID != null)
                 homeTeam.Text = game.Team.TeamName;          
@@ -109,13 +151,16 @@ namespace AppGeoFit.Droid.Screens
             playerList.ItemClick += (o, e) =>
             {
                 Player playerClick = adapter.GetItem(e.Position);
-                AlertDialog dialogProfile = CreateAlertDialog(Resource.Layout.PlayerDetails, this);
-                dialogProfile.Show();
-                dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Name).Text = playerClick.PlayerName;
-                dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Nick).Text = playerClick.PlayerNick;
-                dialogProfile.FindViewById<RatingBar>(Resource.Id.PlayerDetails_ratingBar).Rating = (int)playerClick.Level;
-                dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_MedOnTime).Text = playerClick.MedOnTime.ToString();
-                dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Email).Text = playerClick.PlayerMail;
+                AlertDialog dialogProfile = ShowPlayerDetails(player);
+                TextView commentsLink = dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_ShowCommentsLink);
+                if (feedBackManager.TotalPlayerCommentsCount((int)player.PlayerId) > 0)
+                {
+                    commentsLink.SetTextColor(Color.ParseColor("#4785F4"));
+                }
+                else
+                {
+                    commentsLink.Click += (ocl, ecl) => { };
+                }
             };
             AlertDialog baDelete;
             Button baDeletePositiveButton;
@@ -202,7 +247,17 @@ namespace AppGeoFit.Droid.Screens
             };
         }
 
-        public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
+        protected override void OnResume()
+        {
+            base.OnStart();
+            game = gameManager.GetGame(gameId);
+            startDateEt.Text = game.StartDate.Day + "/" + game.StartDate.Month + "/" + game.StartDate.Year
+                + "  " + game.StartDate.Hour + ":" + game.StartDate.Minute;
+            endDateEt.Text = game.EndDate.Day + "/" + game.EndDate.Month + "/" + game.EndDate.Year
+                + "  " + game.EndDate.Hour + ":" + game.EndDate.Minute;
+        }
+
+        /*public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
         {
             if (keyCode == Keycode.Back)
             {
@@ -213,6 +268,6 @@ namespace AppGeoFit.Droid.Screens
                 return true;
             }
             return false;
-        }
+        }*/
     }
 }

@@ -167,10 +167,10 @@ namespace AppGeoFit.DataAccesLayer.Data.NoticeRestService
             return responseSucced;
         }
 
-        public async Task<ICollection<Notice>> GetAllPendingNotice(int PlayerId)
+        public async Task<ICollection<Notice>> GetAllPendingNotice(int playerId)
         {
             ICollection<Notice> responseListNotice = new Collection<Notice>();
-            var uri = new Uri(string.Format(url + "Notice/GetAllPendingNotice/{0}", PlayerId));
+            var uri = new Uri(string.Format(url + "Notice/GetAllPendingNotice/{0}", playerId));
             HttpResponseMessage response = client.GetAsync(uri).Result;
 
             if (response.StatusCode == HttpStatusCode.NotFound)
@@ -188,6 +188,27 @@ namespace AppGeoFit.DataAccesLayer.Data.NoticeRestService
             }
 
             return responseListNotice;
+        }
+
+        public async Task<int> TotalNoticesCount(int playerId)
+        {
+            int numNotices = 0;
+            var uri = new Uri(string.Format(url + "Notice/TotalNoticesCount/{0}", playerId));
+            HttpResponseMessage response;
+
+            response = client.GetAsync(uri).Result;
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+
+                numNotices = JsonConvert.DeserializeObject<int>(responseAsString);
+            }
+
+            return numNotices;
         }
     }
 }

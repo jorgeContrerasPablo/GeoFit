@@ -14,15 +14,17 @@ namespace RestServiceGeoFit.Models2
         [StringLength(500)]
         public string Description { get; set; }
 
-        public double Valuation { get; set; }
+        public double? Valuation { get; set; }
 
         public DateTime FeedBackDate { get; set; }
 
-        public bool OnTime { get; set; }
+        public bool? OnTime { get; set; }
 
         public int? PlaceID { get; set; }
 
         public int? PlayerID { get; set; }
+
+        public int CreatorID { get; set; }
 
         public int? TeamID { get; set; }
 
@@ -33,6 +35,8 @@ namespace RestServiceGeoFit.Models2
         public virtual Place Place { get; set; }
 
         public virtual Player Player { get; set; }
+
+        public virtual Player Creator { get; set; }
 
         public virtual Team Team { get; set; }
     }

@@ -370,7 +370,7 @@ namespace RestServiceGeoFit.Models
 
                 //TODO add Photo
                 selectCommand.CommandText =
-                    "UPDATE Player " +
+                    "UPDATE GeoFitDB.dbo.Player " +
                     "SET PlayerSesion = @OnSession " +
                     "WHERE PlayerID = @PlayerID";
 

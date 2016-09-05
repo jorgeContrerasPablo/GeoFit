@@ -17,7 +17,8 @@ namespace RestServiceGeoFit.Models2
             Games = new HashSet<Game>();
             NoticesMessege = new HashSet<Notice>();
             NoticesRecive = new HashSet<Notice>();
-            GamesCreated = new HashSet<Game>(); 
+            GamesCreated = new HashSet<Game>();
+            FeedBacksCreated = new HashSet<FeedBack>();
         }
 
         public int PlayerID { get; set; }
@@ -75,5 +76,8 @@ namespace RestServiceGeoFit.Models2
         [InverseProperty("Creator")]
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<Game> GamesCreated { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<FeedBack> FeedBacksCreated { get; set; }
     }
 }

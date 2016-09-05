@@ -21,6 +21,7 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
         Player UpdateCaptain(int captainId, int newCaptainId, int teamId);
         Task<int> SendNoticeAddPlayer(string playerNick, Team team);
         Task<ICollection<Player>> GetAllPlayersPendingToAdd(int messengerId, int sportId, string type);
+        bool IsOnTeam(int teamId, int playerId);
 
     }
 }

@@ -14,6 +14,7 @@
         <ImageButton
             android:src="@drawable/Trash"
             android:layout_width="39.0dp"
+            android:background="?android:selectableItemBackground"
             android:layout_height="39.7dp"
             android:id="@+id/Team_deleteTeamButton"
             android:layout_weight="0"
@@ -67,6 +68,7 @@
             <ImageButton
                 android:src="@drawable/Edit"
                 android:layout_width="match_parent"
+                android:background="?android:selectableItemBackground"
                 android:layout_height="38.7dp"
                 android:id="@+id/Team_editTeamButton"
                 android:layout_toRightOf="@id/Team_teamName"
@@ -76,6 +78,7 @@
             <ImageButton
                 android:src="@drawable/Captain"
                 android:id="@+id/Team_createTeamB"
+                android:background="?android:selectableItemBackground"
                 android:layout_width="match_parent"
                 android:layout_height="43.7dp"
                 android:layout_below="@+id/Team_editTeamButton"

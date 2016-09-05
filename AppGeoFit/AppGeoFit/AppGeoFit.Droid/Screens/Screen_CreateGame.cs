@@ -16,6 +16,8 @@ using AppGeoFit.BusinessLayer.Managers.GameManager;
 using AppGeoFit.BusinessLayer.Exceptions;
 using AppGeoFit.DataAccesLayer.Data.GameRestService.Exceptions;
 using AppGeoFit.Droid.Adapters;
+using AppGeoFit.BusinessLayer.Managers.FeedBackManager;
+using Android.Graphics;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -35,6 +37,8 @@ namespace AppGeoFit.Droid.Screens
         List<Player> SelectedList_Individual = new List<Player>();
         IPlayerManager playerManager;
         IGameManager gameManager;
+        IFeedBackManager feedBackManager;
+        Game game = new Game();
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -46,6 +50,8 @@ namespace AppGeoFit.Droid.Screens
 
             playerManager = Xamarin.Forms.DependencyService.Get<IPlayerManager>().InitiateServices(false);
             gameManager = Xamarin.Forms.DependencyService.Get<IGameManager>().InitiateServices(false);
+
+            feedBackManager = Xamarin.Forms.DependencyService.Get<IFeedBackManager>().InitiateServices(false);
             try
             { team = playerManager.FindTeamCaptainOnSport(actualPlayer.PlayerId,
                      actualSportId);
@@ -115,23 +121,93 @@ namespace AppGeoFit.Droid.Screens
                 addPlayers.PerformLongClick();
             };
             #endregion
+            #region SpinnerPlaces
+
+            Spinner placeSpinner = FindViewById<Spinner>(Resource.Id.CreateGame_SpinnerPlaces);
+            List<Place> places = gameManager.GetPlaces(actualSportId);
+            ArrayAdapter<Place> adapter_place = new ArrayAdapter<Place>(this, Android.Resource.Layout.SimpleSpinnerItem, places);
+            placeSpinner.Adapter = adapter_place;
+            bool firstTimeSpinner_Place = true;
+            placeSpinner.ItemSelected += (o, e) =>
+            {                
+                Place placeSelected = places.ElementAt(e.Position);
+                if (!firstTimeSpinner_Place)
+                {
+                    AlertDialog dialogPlaceDetails;
+                    dialogPlaceDetails = CreateAlertDialog(Resource.Layout.PlaceDetails, this);
+                    dialogPlaceDetails.Show();
+                    TextView locationText = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Map);
+                    TextView placeEmail = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Email);
+                    TextView placeLink = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Link);
+                    TextView placeName = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Name);
+                    TextView placePhone = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_PhoneNum);
+                    RatingBar placeValue = dialogPlaceDetails.FindViewById<RatingBar>(Resource.Id.PlaceDetails_ValuationMed);
+                    TextView placeDirection = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Direction);
+                    ImageButton aceptButton = dialogPlaceDetails.FindViewById<ImageButton>(Resource.Id.PlaceDetails_AcceptButton);
+
+                    locationText.Text = placeSelected.Longitude.ToString() +"  "+ placeSelected.Latitude.ToString();
+                    placeEmail.Text = placeSelected.PlaceMail;
+                    placeLink.Text = placeSelected.Link == "" ? "" : placeSelected.Link.Substring(0, 6) + "...";
+                    placeName.Text = placeSelected.PlaceName;
+                    placePhone.Text = placeSelected.PhoneNum == null ? placeSelected.PhoneNum.ToString() : "";
+
+                    placeValue.Rating = placeSelected.ValuationMed == null ? 0 : (int)placeSelected.ValuationMed;
+                    placeDirection.Text = placeSelected.Direction;
+                    locationText.Click += (ol, el) =>
+                    {
+                        Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse("geo:" + placeSelected.Longitude 
+                                                                                                   + "," + placeSelected.Latitude
+                                                                                                   + "?z=16&q=" + placeSelected.Longitude 
+                                                                                                   + "," + placeSelected.Latitude));
+                        intent.SetClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                        StartActivity(intent);
+                    };
+                    placeLink.Click += (od, ed) =>
+                    {
+                        var uri = Android.Net.Uri.Parse(placeSelected.Link);
+                        var intent = new Intent(Intent.ActionView, uri);
+                        StartActivity(intent);
+                    };
+                    
+                    aceptButton.Click += (oB, eB) =>
+                    {
+                        game.PlaceID = placeSelected.PlaceID;
+                        dialogPlaceDetails.Cancel();
+                    };
+                }
+                else
+                {
+                    game.PlaceID = placeSelected.PlaceID;
+                    firstTimeSpinner_Place = false;
+                }
+            };
+
+            #endregion
             #region SpinnerDuration
             Spinner durationSpinner = FindViewById<Spinner>(Resource.Id.CreateGame_SpinnerDuration);
             int[] durations = new int[]{1,2,3};
             ArrayAdapter<int> adapter = new ArrayAdapter<int>(this, Android.Resource.Layout.SimpleSpinnerItem, durations);
             durationSpinner.Adapter = adapter;
             int gameDuration = 1;
+            bool firstTimeSpinner = true;
             durationSpinner.ItemSelected += (o, e) =>
             {
                 gameDuration = e.Position + 1;
             };
             #endregion
             Button acept = FindViewById<Button>(Resource.Id.CreateGame_AceptButton);
+            Button cancel = FindViewById<Button>(Resource.Id.CreateGame_CancelButton);
             DateTime dateTimeStart = new DateTime(date.Year, date.Month, date.Day, hour, minute, 0);
+            cancel.Click += (o, e) => 
+            {
+                var mainActivity = new Intent(ApplicationContext, typeof(FragmentActivity_MainActivity));
+                mainActivity.PutExtra("toOpen", "TabGame");
+                mainActivity.SetFlags(ActivityFlags.ClearTop);
+                StartActivity(mainActivity);
+            };
             acept.Click += (o, e) =>
             {
-                dateTimeStart = new DateTime(changeListener.getDate().Year, changeListener.getDate().Month, changeListener.getDate().Day, hour, minute, 0);
-                Game game = new Game();
+                dateTimeStart = new DateTime(changeListener.getDate().Year, changeListener.getDate().Month, changeListener.getDate().Day, hour, minute, 0);               
                 game.Players = finalSelectList;
                 game.PlayersNum = finalSelectList.Count;
                 game.SportId = actualSportId;
@@ -142,7 +218,6 @@ namespace AppGeoFit.Droid.Screens
                 {
                     game.Team1ID = team.TeamID;
                 }
-                //TODO COORDINATES
                 try
                 {
                     gameManager.CreateGame(game);
@@ -319,13 +394,17 @@ namespace AppGeoFit.Droid.Screens
                     break;
                 case Resource.Id.CtxLstProfile:
                     Player player = finalArrayAdapter.GetItem(info.Position);
-                    AlertDialog dialogProfile = CreateAlertDialog(Resource.Layout.PlayerDetails, this);
-                    dialogProfile.Show();
-                    dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Name).Text = player.PlayerName;
-                    dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Nick).Text = player.PlayerNick;
-                    dialogProfile.FindViewById<RatingBar>(Resource.Id.PlayerDetails_ratingBar).Rating = (int)player.Level;
-                    dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_MedOnTime).Text = player.MedOnTime.ToString();
-                    dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Email).Text = player.PlayerMail;
+                    AlertDialog dialogProfile = ShowPlayerDetails(player);
+                    TextView commentsLink = dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_ShowCommentsLink);
+                    if (feedBackManager.TotalPlayerCommentsCount((int)player.PlayerId) > 0)
+                    {
+                        commentsLink.SetTextColor(Color.ParseColor("#4785F4"));
+                    }
+                    else
+                    {
+                        commentsLink.Click += (o, e) => { };
+                    }
+
                     return true;
                 case Resource.Id.CtxLstDelete:
                     finalSelectList.Remove(finalArrayAdapter.GetItem(info.Position));

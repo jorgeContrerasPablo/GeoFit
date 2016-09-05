@@ -14,6 +14,7 @@ namespace RestServiceGeoFit.Models2
         {
             FeedBacks = new HashSet<FeedBack>();
             Players = new HashSet<Player>();
+            Notices = new HashSet<Notice>();
         }
 
         public int GameID { get; set; }
@@ -24,7 +25,9 @@ namespace RestServiceGeoFit.Models2
 
         public int PlayersNum { get; set; }
 
-        public DbGeography Coordinates { get; set; }
+        public double? Longitude { get; set; }
+
+        public double? Latitude { get; set; }
 
         public int? Team1ID { get; set; }
 
@@ -53,5 +56,8 @@ namespace RestServiceGeoFit.Models2
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<Player> Players { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<Notice> Notices { get; set; }
     }
 }

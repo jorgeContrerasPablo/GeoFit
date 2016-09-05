@@ -27,6 +27,7 @@
                 android:id="@+id/RelativeLayoutButtonDelete">
                 <ImageButton
                     android:src="@drawable/Trash"
+                    android:background="?android:selectableItemBackground"
                     android:id="@+id/GameDetails_Creator_DeleteGameB"
                     android:layout_centerInParent="true"
                     android:layout_width="39.0dp"
@@ -121,6 +122,7 @@
                 android:id="@+id/RelativeLayoutButtonEdit">
                 <ImageButton
                     android:src="@drawable/Edit"
+                    android:background="?android:selectableItemBackground"
                     android:id="@+id/GameDetails_Creator_EditGameB"
                     android:layout_centerInParent="true"
                     android:layout_width="39.0dp"
@@ -166,7 +168,8 @@
                 android:layout_height="wrap_content"
                 android:gravity="center"
                 android:layout_marginTop="7.0dp"
-                android:layout_marginLeft="11.0dp" />
+                android:layout_marginLeft="11.0dp"
+                android:textColor="#4785F4" />
             <TextView
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:text="Home team"
@@ -199,9 +202,18 @@
                 android:layout_marginLeft="11.0dp" />
         </RelativeLayout>
     </LinearLayout>
+    <TextView
+        android:text="Show comments"
+        android:gravity="center"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/GameDetails_Creator_ShowCommentsLink"
+        android:layout_marginTop="13.5dp" />
     <ImageButton
         android:src="@drawable/Out"
         android:layout_width="51.5dp"
+        android:background="?android:selectableItemBackground"
         android:layout_height="54.0dp"
         android:id="@+id/GameDetails_Creator_LeaveB"
         android:layout_marginTop="24.0dp"

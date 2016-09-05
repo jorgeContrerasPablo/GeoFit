@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout3">
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/relativeLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:text="Player"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/dialog_RatePlayer_Player"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:textColor="#4785F4"
+                android:layout_height="32.0dp"
+                android:layout_marginTop="23.5dp" />
+            <TextView
+                android:text="Level"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/dialog_RatePlayer_Level"
+                android:layout_below="@+id/dialog_RatePlayer_Player"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="32.0dp"
+                android:layout_marginTop="23.5dp" />
+            <CheckBox
+                android:text="On time?"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:id="@+id/dialog_RatePlayer_OnTime"
+                android:layout_below="@+id/dialog_RatePlayer_Level"
+                android:layout_marginTop="13.0dp"
+                android:layout_marginBottom="19.0dp"
+                android:layout_marginLeft="30.0dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/relativeLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <EditText
+                android:hint="Comment player"
+                android:gravity="center"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="74.7dp"
+                android:maxLength="75"
+                android:id="@+id/dialog_RatePlayer_commentPlayer"
+                android:layout_marginRight="21.0dp" />
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="31.0dp"
+                android:numStars="5"
+                android:stepSize="0.1"
+                style="?android:attr/ratingBarStyleIndicator"
+                android:gravity="center"
+                android:layout_marginBottom="18dp"
+                android:layout_below="@+id/dialog_RatePlayer_commentPlayer"
+                android:id="@+id/dialog_RatePlayer_ratingPlayer"
+                android:isIndicator="false"
+                android:layout_marginTop="12.0dp" />
+        </RelativeLayout>
+    </LinearLayout>
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout2">
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="44.5dp"
+            android:id="@+id/dialog_RatePlayer_CancelButton"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/Cross"
+            android:layout_weight="1" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/Stick"
+            android:id="@+id/dialog_RatePlayer_AcceptButton"
+            android:layout_weight="1" />
+    </LinearLayout>
+</LinearLayout>

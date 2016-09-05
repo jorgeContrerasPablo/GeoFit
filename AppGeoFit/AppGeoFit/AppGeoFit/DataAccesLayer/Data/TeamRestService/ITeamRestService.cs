@@ -19,6 +19,7 @@ namespace AppGeoFit.DataAccesLayer.Data.TeamRestService
         Task<int> FindTeamByNameOnSports(string teamName, int sportId);
         Task<Player> GetCaptainAsync(int teamId);
         Task<ICollection<Player>> GetAllPlayersPendingToAdd(int messengerId, int sportId, string type);
+        Task<bool> IsOnTeam(int teamId, int playerId);
         //Task<Player> UpdateCaptain(int captainId, int newCaptainId,int teamId);
     }
 }

@@ -355,6 +355,24 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
             }
             return listPlayers;       
         }
+
+        public bool IsOnTeam(int teamId, int playerId)
+        {
+
+            bool isOnTeam = false;
+            try
+            {
+                isOnTeam = teamRestService.IsOnTeam(teamId, playerId).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                  throw new Exception(ex.Message);
+                }
+            }
+            return isOnTeam;
+        }
     }
 }
 

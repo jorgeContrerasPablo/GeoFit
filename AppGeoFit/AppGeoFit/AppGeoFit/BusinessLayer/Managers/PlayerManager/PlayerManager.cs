@@ -298,12 +298,33 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
 
         public void Session(int playerId)
         {
-            playerRestService.Session(playerId);
+            try
+            {
+                playerRestService.Session(playerId);
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+
         }
 
         public void OutSession(int playerId)
         {
-            playerRestService.OutSession(playerId);
+            try
+            {
+                playerRestService.OutSession(playerId);
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
         }        
 
 
