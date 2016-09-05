@@ -24,6 +24,7 @@
             android:id="@+id/RelativeLayoutButtonEdit">
             <ImageButton
                 android:src="@drawable/Edit"
+                android:background="?android:selectableItemBackground"
                 android:id="@+id/imageButtonEdit"
                 android:layout_centerInParent="true"
                 android:layout_width="39.0dp"
@@ -111,6 +112,7 @@
             android:id="@+id/RelativeLayoutButtonDelete">
             <ImageButton
                 android:src="@drawable/Trash"
+                android:background="?android:selectableItemBackground"
                 android:id="@+id/imageButtonDelete"
                 android:layout_centerInParent="true"
                 android:layout_width="39.0dp"

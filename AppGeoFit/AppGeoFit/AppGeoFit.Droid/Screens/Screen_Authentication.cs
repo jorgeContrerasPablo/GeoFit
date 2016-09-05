@@ -42,20 +42,21 @@ namespace AppGeoFit.Droid.Screens
                 BotonAlert("Alert", "There are problems with server connection, please try again in few minutes", "OK", "Cancel", this).Show();
                 errorConnection = true;
             }
-            appSession.setSports(sportList);
-            // Comprobamos si el usuario aun tiene una sesion disponible para conectarse 
-            // sin loguearse y que no esté ocupada por otro dispositivo
-            if (appSession.getPlayer() != null)
-            {
-                if (!appSession.getPlayer().PlayerSesion)
-                {
-                    appSession.updateSession(true);
-                    StartActivity(typeof(FragmentActivity_MainActivity));
-                }
-            }            
 
             if (!errorConnection)
             {
+                appSession.setSports(sportList);
+                // Comprobamos si el usuario aun tiene una sesion disponible para conectarse 
+                // sin loguearse y que no esté ocupada por otro dispositivo
+                if (appSession.getPlayer() != null)
+                {
+                    if (!appSession.getPlayer().PlayerSesion)
+                    {
+                        appSession.updateSession(true);
+                        StartActivity(typeof(FragmentActivity_MainActivity));
+                    }
+                }
+
                 SetContentView(Resource.Layout.Authentication);
                 var toolbar = FindViewById<Toolbar>(Resource.Id.toolbarPrincipal);
                 SetActionBar(toolbar);

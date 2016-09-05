@@ -6,7 +6,7 @@
     android:minWidth="25px"
     android:minHeight="25px">
     <TextView
-        android:text="Create your Team"
+        android:text="Create your team"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:layout_width="match_parent"
         android:layout_height="43.7dp"

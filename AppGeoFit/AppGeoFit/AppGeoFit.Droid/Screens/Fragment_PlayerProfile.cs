@@ -48,7 +48,8 @@ namespace AppGeoFit.Droid.Screens
             PhoneNumberT.Text = player.PhoneNum.ToString();
             EmailT.Text = player.PlayerMail;
             rating.Rating = (int)player.Level;
-            OnTime.Text = player.MedOnTime.ToString();
+            OnTime.Text = string.Format("{0:P2}", player.MedOnTime);
+           // OnTime.Text = (player.MedOnTime * 100).ToString().Substring(3);
 
             //Button Edit
             ImageButton buttonEdit = view.FindViewById<ImageButton>(Resource.Id.imageButtonEdit);

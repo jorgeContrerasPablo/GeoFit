@@ -73,6 +73,29 @@ namespace AppGeoFit.Droid
             appSharedPrefsEditor.Commit();
         }
 
+        public void setSelectedSport(int selectedSportId)
+        {
+            var selectedSportIdJson = JsonConvert.SerializeObject(selectedSportId);
+            appSharedPrefsEditor.PutString("SelectedSportId", selectedSportIdJson);
+            appSharedPrefsEditor.Commit();
+        }
+
+        public int getSelectedSport()
+        {
+            string selectedSportJson = appSharedPrefs.GetString("SelectedSportId", "");
+            if (selectedSportJson == "")
+            {
+                return 0;
+            }
+            return JsonConvert.DeserializeObject<int>(selectedSportJson);
+        }
+
+        public void deleteSelectedSport()
+        {
+            appSharedPrefsEditor.Remove("SelectedSportId");
+            appSharedPrefsEditor.Commit();
+        }
+
         public void updateSession(bool state)
         {
             Player playerToUpdate = this.getPlayer();

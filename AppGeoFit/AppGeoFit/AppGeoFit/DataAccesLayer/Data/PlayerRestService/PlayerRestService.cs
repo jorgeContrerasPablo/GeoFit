@@ -206,45 +206,40 @@ namespace AppGeoFit.DataAccesLayer.Data.PlayerRestService
 
         }
 
-        public void Session(int playerId)
+        public async void Session(int playerId)
         {
             var uri = new Uri(string.Format(url + "Players2/Session/{0}", playerId));
-           
-            try
-            {
-                var json = JsonConvert.SerializeObject("");
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = client.PutAsync(uri, content).Result;
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    throw new Exception(response.ReasonPhrase);
-                }
-            }
-            catch (Exception ex)
+            var json = JsonConvert.SerializeObject("");
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+            HttpResponseMessage response = client.PutAsync(uri, content).Result;
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                throw new Exception(ex.Message);
+                throw new Exception(response.ReasonPhrase);
             }
+            if (response.IsSuccessStatusCode)
+            {
+                await response.Content.ReadAsStringAsync();
+            }
+
         }
 
-        public void OutSession(int playerId)
+        public async void OutSession(int playerId)
         {
             var uri = new Uri(string.Format(url + "Players2/OutSession/{0}", playerId));
 
-            try
-            {
-                var json = JsonConvert.SerializeObject("");
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var json = JsonConvert.SerializeObject("");
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = client.PutAsync(uri, content).Result;
-                if (response.StatusCode == HttpStatusCode.BadRequest)
-                {
-                    throw new Exception(response.ReasonPhrase);
-                }
-            }
-            catch (Exception ex)
+            HttpResponseMessage response = client.PutAsync(uri, content).Result;
+            if (response.StatusCode == HttpStatusCode.BadRequest)
             {
-                throw new Exception(ex.Message);
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                await response.Content.ReadAsStringAsync();
             }
         }
 

@@ -31,7 +31,7 @@ namespace RestServiceGeoFit.Models2
                 .HasMany(e => e.Players)
                 .WithMany(e => e.Games)
                 .Map(m => m.ToTable("Participate").MapLeftKey("GameID").MapRightKey("PlayerID"));
-
+            
             modelBuilder.Entity<Photo>()
                 .Property(e => e.PhotoName)
                 .IsUnicode(false);
@@ -106,6 +106,18 @@ namespace RestServiceGeoFit.Models2
                 .HasForeignKey(e => e.CreatorID)
                 .WillCascadeOnDelete(false);
 
+            modelBuilder.Entity<Player>()
+                .HasMany(e => e.FeedBacksCreated)
+                .WithRequired(e => e.Creator)
+                .HasForeignKey(e => e.CreatorID)
+                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Player>()
+                .HasMany(e => e.FeedBacks)
+                .WithRequired(e => e.Player)
+                .HasForeignKey(e => e.PlayerID)
+                .WillCascadeOnDelete(false);
+
             modelBuilder.Entity<Notice>()
                 .Property(e => e.Type)
                 .IsUnicode(false);
@@ -118,6 +130,11 @@ namespace RestServiceGeoFit.Models2
                .HasMany(e => e.Games)
                .WithRequired(e => e.Sport)
                .WillCascadeOnDelete(false);
+
+            modelBuilder.Entity<Sport>()
+              .HasMany(e => e.Places)
+              .WithRequired(e => e.Sport)
+              .WillCascadeOnDelete(false);
 
             modelBuilder.Entity<Sport>()
                 .HasMany(e => e.Notices)
@@ -152,7 +169,7 @@ namespace RestServiceGeoFit.Models2
                 .HasMany(e => e.Games1)
                 .WithRequired(e => e.Team1)
                 .HasForeignKey(e => e.Team2ID)
-                .WillCascadeOnDelete(false);
+                .WillCascadeOnDelete(false);   
         }
     }
 }

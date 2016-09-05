@@ -52,7 +52,7 @@ namespace AppGeoFit.Droid.Screens
             string teamName = Intent.GetStringExtra("teamName") ?? team.TeamName;
 
             Android.Widget.Button updateButton = FindViewById<Android.Widget.Button>(Resource.Id.EditTeam_AceptButton);
-            Android.Widget.Button cancelButton = FindViewById<Android.Widget.Button>(Resource.Id.EditTeam_AceptButton);
+            Android.Widget.Button cancelButton = FindViewById<Android.Widget.Button>(Resource.Id.EditTeam_CancelButton);
             Android.Widget.Button selectColor = FindViewById<Android.Widget.Button>(Resource.Id.EditTeam_ColorButton);
             EditText teamNameET = FindViewById<EditText>(Resource.Id.EditTeam_Name);
             Spinner spinnerCaptains = FindViewById<Spinner>(Resource.Id.EditTeam_SpinnerCaptain);
@@ -124,7 +124,7 @@ namespace AppGeoFit.Droid.Screens
 
             cancelButton.Click += (o, e) =>
             {
-               // Finish();
+                Finish();
             };
             selectColor.Click += (o, e) =>
             {

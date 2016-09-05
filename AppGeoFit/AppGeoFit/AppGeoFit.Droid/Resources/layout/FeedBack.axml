@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <TextView
+        android:text="Score the game"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="27.5dp"
+        android:gravity="center"
+        android:id="@+id/textView5"
+        android:layout_marginTop="6.0dp"
+        android:layout_marginBottom="21.5dp" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout1">
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/relativeLayout1"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:text="Game"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:id="@+id/FeedBack_Game"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="32.0dp" />
+            <TextView
+                android:text="Place"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:gravity="center"
+                android:layout_width="match_parent"
+                android:layout_height="37.0dp"
+                android:layout_below="@+id/FeedBack_Game"
+                android:id="@+id/FeedBack_Place"
+                android:layout_marginTop="51.7dp" />
+        </RelativeLayout>
+        <RelativeLayout
+            android:minWidth="25px"
+            android:minHeight="25px"
+            android:id="@+id/relativeLayout2"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <EditText
+                android:hint="Comment game"
+                android:gravity="center"
+                android:maxLength="75"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="74.7dp"
+                android:id="@+id/FeedBack_GameComent" />
+            <RatingBar
+                android:layout_width="wrap_content"
+                android:layout_height="31.0dp"
+                android:numStars="5"
+                android:stepSize="0.1"
+                style="?android:attr/ratingBarStyleIndicator"
+                android:gravity="center"
+                android:layout_marginBottom="18dp"
+                android:layout_below="@+id/FeedBack_GameComent"
+                android:id="@+id/FeedBack_RatingBarPlace"
+                android:isIndicator="false"
+                android:layout_marginTop="12.0dp" />
+            <EditText
+                android:hint="Comment place"
+                android:gravity="center"
+                android:maxLength="75"
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_below="@+id/FeedBack_RatingBarPlace"
+                android:layout_width="match_parent"
+                android:layout_height="74.7dp"
+                android:id="@+id/FeedBack_PlaceComent" />
+        </RelativeLayout>
+    </LinearLayout>
+    <ListView
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/FeedBack_PlayerList" />
+    <LinearLayout
+        android:orientation="horizontal"
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/linearLayout2">
+        <ImageButton
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/Cross"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:id="@+id/FeedBack_CancelButton"
+            android:layout_weight="1" />
+        <ImageButton
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:background="?android:selectableItemBackground"
+            android:src="@drawable/Stick"
+            android:id="@+id/FeedBack_AcceptButton"
+            android:layout_weight="1" />
+    </LinearLayout>
+</LinearLayout>

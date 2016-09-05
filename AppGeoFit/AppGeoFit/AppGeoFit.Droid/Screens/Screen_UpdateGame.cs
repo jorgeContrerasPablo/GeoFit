@@ -14,6 +14,8 @@ using AppGeoFit.BusinessLayer.Managers.GameManager;
 using AppGeoFit.DataAccesLayer.Models;
 using AppGeoFit.BusinessLayer.Exceptions;
 using AppGeoFit.DataAccesLayer.Data.GameRestService.Exceptions;
+using Android.Graphics;
+using AppGeoFit.BusinessLayer.Managers.FeedBackManager;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -27,6 +29,7 @@ namespace AppGeoFit.Droid.Screens
             global::Xamarin.Forms.Forms.Init(this, bundle);
             int gameId = Intent.GetIntExtra("gameId", 0);
             IGameManager gameManager = Xamarin.Forms.DependencyService.Get<IGameManager>().InitiateServices(false);
+            IFeedBackManager feedBackManager = Xamarin.Forms.DependencyService.Get<IFeedBackManager>().InitiateServices(false);
             Game game = new Game();
             try
             {
@@ -35,8 +38,7 @@ namespace AppGeoFit.Droid.Screens
             {
                 Toast.MakeText(ApplicationContext,
                           ex.Message, ToastLength.Short).Show();
-            }
-            //TODO SPINNER SELECTOR DURACIOON
+            }            
             #region datePicker
             //DatePicker
             TextView selectDate = FindViewById<TextView>(Resource.Id.UpdateGame_Date);
@@ -81,6 +83,39 @@ namespace AppGeoFit.Droid.Screens
                 };
             };
             #endregion
+            #region SpinnerPlaces
+
+            Spinner placeSpinner = FindViewById<Spinner>(Resource.Id.UpdateGame_SpinnerPlace);
+            List<Place> places = gameManager.GetPlaces(game.SportId);
+            ArrayAdapter<Place> adapter_place = new ArrayAdapter<Place>(this, Android.Resource.Layout.SimpleSpinnerItem, places);
+            placeSpinner.Adapter = adapter_place;
+            bool firstTimeSpinner_Place = true;
+            placeSpinner.SetSelection(game.PlaceID != null ? places.
+                        FindIndex(p => p.PlaceID == game.PlaceID) : 0);
+            placeSpinner.ItemSelected += (o, e) =>
+            {
+                Place placeSelected = places.ElementAt(e.Position);
+                if (!firstTimeSpinner_Place)
+                {
+                    AlertDialog dialogPlaceDetails = ShowPlaceDetails(game.Place);
+                    if (feedBackManager.TotalPlaceCommentsCount((int)game.PlaceID) > 0)
+                    {
+                        dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_ShowCommentsLink).SetTextColor(Color.ParseColor("#4785F4"));
+                        ImageButton aceptButton = dialogPlaceDetails.FindViewById<ImageButton>(Resource.Id.PlaceDetails_AcceptButton);
+
+                        aceptButton.Click += (oB, eB) =>
+                        {
+                            dialogPlaceDetails.Cancel();
+                        };
+                    }
+                }
+                else
+                {
+                    firstTimeSpinner_Place = false;
+                }
+            };
+
+            #endregion
             #region SpinnerDuration
             Spinner durationSpinner = FindViewById<Spinner>(Resource.Id.UpdateGame_SpinnerDuration);
             int[] durations = new int[] { 1, 2, 3 };
@@ -94,22 +129,24 @@ namespace AppGeoFit.Droid.Screens
             };
             #endregion
             Button acept = FindViewById<Button>(Resource.Id.UpdateGame_AceptButton);
+            Button cancel = FindViewById<Button>(Resource.Id.UpdateGame_CancelButton);
+            cancel.Click += (o, e) => Finish();
             DateTime dateTimeStart = new DateTime(date.Year, date.Month, date.Day, hour, minute, 0);
             acept.Click += (o, e) =>
             {
                 dateTimeStart = new DateTime(changeListener.getDate().Year, changeListener.getDate().Month, changeListener.getDate().Day, hour, minute, 0);
                 game.StartDate = dateTimeStart;
                 game.EndDate = game.StartDate.AddHours(gameDuration);
-                //TODO COORDINATES
                 try
                 {
                     gameManager.UpdateGame(game);
                     Toast.MakeText(ApplicationContext,
                             "Your Game has been update correctly", ToastLength.Short).Show();
-                    var screen_GameDetails = new Intent(this, typeof(Screen_GameDetails));
-                    screen_GameDetails.PutExtra("gameId", gameId);
-                    //  screen_AddTeamToGame.PutExtra("gameId", adapterLGames.GetItem(info.Position).GameID);
-                    StartActivity(screen_GameDetails);
+                    /* var screen_GameDetails = new Intent(this, typeof(Screen_GameDetails));
+                     screen_GameDetails.PutExtra("gameId", gameId);
+                     //  screen_AddTeamToGame.PutExtra("gameId", adapterLGames.GetItem(info.Position).GameID);
+                     StartActivity(screen_GameDetails);*/
+                    Finish();
                 }
                 catch (WrongTimeException ex)
                 {

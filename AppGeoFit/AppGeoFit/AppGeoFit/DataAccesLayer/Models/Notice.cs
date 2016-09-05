@@ -18,10 +18,19 @@ namespace AppGeoFit.DataAccesLayer.Models
 
         public int SportID { get; set; }
 
+        public int? GameID { get; set; }
+
         public virtual Player Messenger { get; set; }
 
         public virtual Player Receiver { get; set; }
 
         public virtual Sport Sport { get; set; }
+
+        public virtual Game Game { get; set; }
+
+        public override int GetHashCode()
+        {
+            return NoticeID;
+        }
     }
 }

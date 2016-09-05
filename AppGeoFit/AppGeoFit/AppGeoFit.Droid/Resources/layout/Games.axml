@@ -14,18 +14,22 @@
         android:id="@+id/linearLayout1">
         <ImageButton
             android:src="@drawable/Plus"
+            android:background="?android:selectableItemBackground"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/Games_createGame"
             android:layout_weight="1" />
         <ImageButton
             android:src="@drawable/Find"
+            android:background="?android:selectableItemBackground"
             android:id="@+id/Games_findGames"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:layout_marginTop="9.5dp" />
         <ImageButton
             android:src="@drawable/Time"
+           android:background="?android:selectableItemBackground"
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
             android:id="@+id/Games_currentGames"

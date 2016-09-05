@@ -142,10 +142,5 @@ namespace AppGeoFit.Droid
             #endregion
 
         }
-
-        public static async Task Sleep(int ms)
-        {
-            await Task.Delay(ms);
-        }
     }
 }

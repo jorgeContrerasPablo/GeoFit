@@ -10,6 +10,7 @@ using AppGeoFit.DataAccesLayer.Data.GameRestService.Exceptions;
 using System.Linq;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService;
+using Plugin.Geolocator;
 
 [assembly: Dependency(typeof(AppGeoFit.BusinessLayer.Managers.GameManager.GameManager))]
 namespace AppGeoFit.BusinessLayer.Managers.GameManager
@@ -109,17 +110,27 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
                 }
             }
             //Avisos a los jugadores.
-            Notice notice = new Notice();
             foreach(Player p in game.Players)
             {
-                if(p.PlayerId != game.CreatorID)
+                Notice notice = new Notice();
+                notice.MessengerID = game.CreatorID;
+                notice.ReceiverID = p.PlayerId;
+                notice.SportID = game.SportId;
+                if (p.PlayerId != game.CreatorID)
                 {
-                    notice.MessengerID = game.CreatorID;
-                    notice.ReceiverID = p.PlayerId;
-                    notice.SportID = game.SportId;
                     notice.Type = Constants.PLAYER_ADD_TO_A_GAME;
                     noticeRestService.CreateNoticeAsync(notice);
+                    notice.GameID = gameIdReturn;
+                    notice.Type = Constants.FEEDBACK_GAME;
+                    noticeRestService.CreateNoticeAsync(notice);
                 }
+                else
+                {
+                    notice.GameID = gameIdReturn;
+                    notice.Type = Constants.FEEDBACK_GAME;
+                    noticeRestService.CreateNoticeAsync(notice);
+                }
+                
             }            
             return gameIdReturn;
         }
@@ -219,12 +230,25 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
             return isDelete;
         }
 
-        public List<Game> GetAllPagination(int pages, int rows, int sportId)
+        public List<Game> GetAllPagination(int pages, int rows, int sportId, string selectedType,double longitude, double latitude)
         {
             List<Game> returnGameList = new List<Game>();
             try
             {
-                returnGameList = gameRestService.GetAllPagination(pages, rows, sportId).Result.ToList();
+                switch (selectedType)
+                {
+                    case "distance":
+                        returnGameList = gameRestService.GetAllPaginationByDistance(pages, rows, sportId, longitude, latitude).Result.ToList();
+                        break;
+                    case "time":
+                        returnGameList = gameRestService.GetPaginationByTime(pages, rows, sportId).Result.ToList();
+                        break;
+                    case "numPlayers":
+                        returnGameList = gameRestService.GetAllPaginationByNumPlayers(pages, rows, sportId).Result.ToList();
+                        break;
+                    default:
+                        break;
+                }
             }catch (AggregateException aex)
             {
                 foreach (var ex in aex.Flatten().InnerExceptions)
@@ -285,14 +309,14 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
             {
                 foreach (var ex in aex.Flatten().InnerExceptions)
                 {
-                    if (ex is GameNotFoundException){}
-                    else
-                        throw new Exception(ex.Message);
+                    if (ex is GameNotFoundException) { }
+                    if(ex is PlayerOnGameException)
+                        throw new PlayerOnGameException("You are already joining this game");
+                    else {
+                        if (ex is Exception)
+                            throw new Exception(ex.Message);
+                    }
                 }
-            }
-            if (playerOnGame)
-            {
-                throw new PlayerOnGameException("You are already joining this game");
             }
             if (game.PlayersNum + 1 > game.Sport.NumPlayers)
             {
@@ -556,6 +580,48 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
             return listPlayers;
         }
 
+        public List<Place> GetPlaces(int sportId)
+        {
+            List<Place> placeListBySport = new List<Place>();
+            List<Place> placeListWithOutSport = new List<Place>();
+            try
+            {
+                placeListBySport = gameRestService.GetPlacesBySport(sportId).Result.ToList();
+               
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is PlaceNotFoundException){}
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            try
+            {
+                placeListWithOutSport = gameRestService.GetPlacesWithOutSport().Result.ToList();               
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is PlaceNotFoundException)
+                    {                         
+                        return placeListBySport;
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            if (placeListBySport.Count != 0)
+            {
+                placeListBySport.Concat(placeListWithOutSport);
+                return placeListBySport;
+            }
+            else
+                return placeListWithOutSport;
+        }
 
     }
 }

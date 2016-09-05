@@ -18,10 +18,11 @@
         android:gravity="center"
         android:id="@+id/linearLayout1">
         <ImageButton
-            android:src="@android:drawable/ic_menu_gallery"
+            android:src="@drawable/Stick"
             android:id="@+id/TimePicker_OK"
             android:layout_width="74.0dp"
             android:layout_height="38.5dp"
+            android:background="?android:selectableItemBackground"
             android:gravity="center" />
     </LinearLayout>
 </LinearLayout>

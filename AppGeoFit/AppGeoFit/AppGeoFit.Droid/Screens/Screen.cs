@@ -12,6 +12,7 @@ using AppGeoFit.BusinessLayer.Managers.PlayerManager;
 using Xamarin.Forms;
 using Android.Content.PM;
 using Android.Views;
+using AppGeoFit.DataAccesLayer.Models;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -78,7 +79,70 @@ namespace AppGeoFit.Droid.Screens
             dialog = builder.Create();
             return dialog;
         }
+
+        public AlertDialog ShowPlayerDetails(Player player)
+        {
+            AlertDialog dialogProfile = CreateAlertDialog(Resource.Layout.PlayerDetails, this);
+            dialogProfile.Show();
+            dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Name).Text = player.PlayerName;
+            dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Nick).Text = player.PlayerNick;
+            dialogProfile.FindViewById<RatingBar>(Resource.Id.PlayerDetails_ratingBar).Rating = (int)player.Level;
+            dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_MedOnTime).Text = string.Format("{0:P2}", player.MedOnTime);
+            dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_Email).Text = player.PlayerMail;
+            dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_ShowCommentsLink).Click += (o, e) =>
+            {
+                var screen_Comments = new Intent(this, typeof(Screen_Comments));
+                screen_Comments.PutExtra("playerId", player.PlayerId);
+                StartActivity(screen_Comments);
+            };
+
+            return dialogProfile;
+        }
         
+        public AlertDialog ShowPlaceDetails(Place place)
+        {
+            AlertDialog dialogPlaceDetails;
+            dialogPlaceDetails = CreateAlertDialog(Resource.Layout.PlaceDetails, this);
+            dialogPlaceDetails.Show();
+            TextView locationText = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Map);
+            TextView placeEmail = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Email);
+            TextView placeLink = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Link);
+            TextView placeName = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Name);
+            TextView placePhone = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_PhoneNum);
+            RatingBar placeValue = dialogPlaceDetails.FindViewById<RatingBar>(Resource.Id.PlaceDetails_ValuationMed);
+            TextView placeDirection = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Direction);
+            dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_ShowCommentsLink).Click += (o, e) =>
+            {
+                var screen_Comments = new Intent(this, typeof(Screen_Comments));
+                screen_Comments.PutExtra("placeId", place.PlaceID);
+                StartActivity(screen_Comments);
+            };
+
+            locationText.Text = place.Longitude.ToString() + "  " + place.Latitude.ToString();
+            placeEmail.Text = place.PlaceMail;
+            placeLink.Text = place.Link == "" ? "" : place.Link.Substring(0, 6) + "...";
+            placeName.Text = place.PlaceName;
+            placePhone.Text = place.PhoneNum == null ? place.PhoneNum.ToString() : "";
+
+            placeValue.Rating = place.ValuationMed == null ? 0 : (int)place.ValuationMed;
+            placeDirection.Text = place.Direction;
+            locationText.Click += (ol, el) =>
+            {
+                Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse("geo:" + place.Longitude
+                                                                                           + "," + place.Latitude
+                                                                                           + "?z=16&q=" + place.Longitude
+                                                                                           + "," + place.Latitude));
+                intent.SetClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
+                StartActivity(intent);
+            };
+            placeLink.Click += (od, ed) =>
+            {
+                var uri = Android.Net.Uri.Parse(place.Link);
+                var intent = new Intent(Intent.ActionView, uri);
+                StartActivity(intent);
+            };
+            return dialogPlaceDetails;
+        }
 
         protected override void OnPause()
         {
@@ -86,8 +150,15 @@ namespace AppGeoFit.Droid.Screens
             IPlayerManager playerManager = DependencyService.Get<IPlayerManager>().InitiateServices(false);
             if (appSession.getPlayer() != null)
             {
-                playerManager.OutSession(appSession.getPlayer().PlayerId);
-                appSession.updateSession(false);
+                try
+                {
+                    playerManager.OutSession(appSession.getPlayer().PlayerId);
+                    appSession.updateSession(false);
+                }
+                catch (Exception ex)
+                {
+                    Toast.MakeText(this, ex.Message, ToastLength.Long).Show();
+                }
             }
             base.OnPause();
 
@@ -120,8 +191,15 @@ namespace AppGeoFit.Droid.Screens
                 }
                 else
                 {
-                    playerManager.Session(appSession.getPlayer().PlayerId);
-                    appSession.updateSession(true);
+                    try
+                    {
+                        playerManager.Session(appSession.getPlayer().PlayerId);
+                        appSession.updateSession(true);
+                    }
+                    catch (Exception ex)
+                    {
+                        Toast.MakeText(this, ex.Message, ToastLength.Long).Show();
+                    }
                 }
             }            
         }

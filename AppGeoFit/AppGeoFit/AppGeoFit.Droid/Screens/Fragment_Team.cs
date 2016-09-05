@@ -17,6 +17,8 @@ using AppGeoFit.BusinessLayer.Managers.PlayerManager;
 using AppGeoFit.BusinessLayer.Managers.TeamManager;
 using AppGeoFit.BusinessLayer.Managers.NoticeManager;
 using AppGeoFit.Droid.Adapters;
+using Android.Graphics;
+using AppGeoFit.BusinessLayer.Managers.FeedBackManager;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -28,6 +30,7 @@ namespace AppGeoFit.Droid.Screens
         ITeamManager teamManager;
         IPlayerManager playerManager;
         INoticeManager noticeManager;
+        IFeedBackManager feedBackManager;
         List<Team> Teams = new List<Team>();
         List<Player> LPlayersOnTeam = new List<Player>();
         Team actualTeam = new Team();
@@ -46,6 +49,7 @@ namespace AppGeoFit.Droid.Screens
             playerManager = myActivity.playerManager;
             teamManager = myActivity.teamManager;
             noticeManager = myActivity.noticeManager;
+            feedBackManager = myActivity.feedBackManager;
             AppSession appSession = new AppSession(Activity.ApplicationContext);
 
             ImageButton createTeamB = view.FindViewById<ImageButton>(Resource.Id.Team_createTeamB);
@@ -80,6 +84,7 @@ namespace AppGeoFit.Droid.Screens
             spinnerFavoriteSport_et.ItemSelected += (o, e) =>
             {
                 actualSportId = spinnerFavoriteSport_et.GetItemAtPosition(e.Position).GetHashCode();
+                appSession.setSelectedSport(actualSportId);
                 UpdateTeams(view);
             };
             
@@ -126,8 +131,6 @@ namespace AppGeoFit.Droid.Screens
                  baDelete.Show();
                  baDeletePositiveButton = baDelete.GetButton((int)DialogButtonType.Positive);
                  baDeleteNegativeButton = baDelete.GetButton((int)DialogButtonType.Negative);
-                 baDeletePositiveButton.Click += (oDb, eDb) =>
-                 //Comprobacion , esta seguro ?
                  baDeletePositiveButton.Click += (oPB, ePB) =>
                  {
                      bool isDelete = false;
@@ -448,8 +451,7 @@ namespace AppGeoFit.Droid.Screens
                                             BotonAlert("Alert", e.Message, "OK", "Cancel", Context).Show();
                                         }
                                     }
-                                };
-                                
+                                };                                
                             };
                         }
                         catch (NotJoinedException ex)
@@ -467,8 +469,19 @@ namespace AppGeoFit.Droid.Screens
                     dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_Name).Text = player.PlayerName;
                     dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_Nick).Text = player.PlayerNick;
                     dialogView.FindViewById<RatingBar>(Resource.Id.PlayerDetails_ratingBar).Rating = (int)player.Level;
-                    dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_MedOnTime).Text = player.MedOnTime.ToString();
+                    dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_MedOnTime).Text = string.Format("{0:P2}", player.MedOnTime);
                     dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_Email).Text = player.PlayerMail;
+                    TextView commentsLink = dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_ShowCommentsLink);
+                    if (feedBackManager.TotalPlayerCommentsCount((int)player.PlayerId) > 0)
+                    {
+                        commentsLink.SetTextColor(Color.ParseColor("#4785F4"));
+                        commentsLink.Click += (o, e) =>
+                        {
+                            var screen_Comments = new Intent(Context, typeof(Screen_Comments));
+                            screen_Comments.PutExtra("playerId", player.PlayerId);
+                            StartActivity(screen_Comments);
+                        };
+                    }
                     builder.SetView(dialogView);
                     ad = builder.Create();
                     ad.Show();

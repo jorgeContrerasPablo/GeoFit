@@ -207,6 +207,7 @@
   <ItemGroup>
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\BaseApiController.cs" />
+    <Compile Include="Controllers\FeedBackController.cs" />
     <Compile Include="Controllers\GameController.cs" />
     <Compile Include="Controllers\NoticeController.cs" />
     <Compile Include="Controllers\Players2Controller.cs" />
@@ -214,7 +215,6 @@
     <Compile Include="Models2\AppGeoFitDBContext.cs" />
     <Compile Include="Models2\FeedBack.cs" />
     <Compile Include="Models2\Game.cs" />
-    <Compile Include="Models2\GameLatitudeLongitude.cs" />
     <Compile Include="Models2\Joined.cs" />
     <Compile Include="Models2\Notice.cs" />
     <Compile Include="Models2\Photo.cs" />
@@ -222,6 +222,17 @@
     <Compile Include="Models2\Player.cs" />
     <Compile Include="Models2\Sport.cs" />
     <Compile Include="Models2\Team.cs" />
+    <Compile Include="Models3\FeedBack.cs" />
+    <Compile Include="Models3\Game.cs" />
+    <Compile Include="Models3\Joined.cs" />
+    <Compile Include="Models3\Model1.cs" />
+    <Compile Include="Models3\Notice.cs" />
+    <Compile Include="Models3\Photo.cs" />
+    <Compile Include="Models3\Place.cs" />
+    <Compile Include="Models3\Player.cs" />
+    <Compile Include="Models3\Sport.cs" />
+    <Compile Include="Models3\sysdiagram.cs" />
+    <Compile Include="Models3\Team.cs" />
     <Compile Include="Models\FeedBack.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\Managers\Player\Exceptions\PlayerNotFoundException.cs" />

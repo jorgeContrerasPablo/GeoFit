@@ -9,6 +9,7 @@ using System.Net;
 using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
+using System.Data.Entity.Spatial;
 
 namespace RestServiceGeoFit.Controllers
 {
@@ -24,7 +25,7 @@ namespace RestServiceGeoFit.Controllers
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
             var gameId = new SqlParameter("@GameId", parameter1);
-            string nativeSQLQuery = @"SELECT GameID, StartDate, EndDate, PlayersNum, Coordinates, Team1ID, Team2ID, PlaceID, CreatorID, SportID" +
+            string nativeSQLQuery = @"SELECT GameID, StartDate, EndDate, PlayersNum, Longitude, Latitude, Team1ID, Team2ID, PlaceID, CreatorID, SportID" +
                                      " FROM GeoFitDB.dbo.Game" +
                                     " WHERE GameID = @GameId;";
             var gameResult = db.Games.SqlQuery(nativeSQLQuery, gameId).FirstOrDefault();
@@ -32,24 +33,36 @@ namespace RestServiceGeoFit.Controllers
             {
                 return BuildErrorResult(HttpStatusCode.NotFound, "game with this id don't exist");
             }
-            GameLatitudeLongitude gamLL = new GameLatitudeLongitude();            
-            return BuildSuccesResult(HttpStatusCode.OK, gamLL.GameToGameLl(gameResult));
+            gameResult.Place.Games.Clear();
+            gameResult.Sport.Games.Clear();
+            gameResult.Creator.GamesCreated.Clear();
+            gameResult.Creator.Joineds.Clear();
+            if (gameResult.Team1ID != null)
+            {
+                gameResult.Team.Joineds.Clear();
+                gameResult.Team.Games.Clear();
+                gameResult.Team.Games1.Clear();
+            }
+            if (gameResult.Team2ID != null)
+            {
+                gameResult.Team1.Joineds.Clear();
+                gameResult.Team1.Games.Clear();
+                gameResult.Team1.Games1.Clear();
+            }         
+            return BuildSuccesResult(HttpStatusCode.OK, gameResult);
         }
 
         [System.Web.Http.HttpPost]
-        public HttpResponseMessage CreateGame([Bind(Include = "Longitude, Latitude, CreatorID, PlaceID, PlayersNum, StartDate, Team1ID, Team2ID")] GameLatitudeLongitude gameLl)
+        public HttpResponseMessage CreateGame([Bind(Include = "StartDate, EndDate, PlayersNum, Longitude, Latitude, Team1ID, Team2ID, PlaceID, CreatorID,SportId")] Game game)
         {
-            List<Player> playersToAdd = gameLl.Players.ToList();
+            List<Player> playersToAdd = game.Players.ToList();
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
-            Game game = new Game();
             if (ModelState.IsValid)
             {
-                
-                game = gameLl.GameLlToGame(gameLl);
                 game.Players.Clear();
                 if (game.Team1ID != null)
                     game.Team = db.Teams.Find(game.Team1ID);
@@ -96,32 +109,23 @@ namespace RestServiceGeoFit.Controllers
         }
 
         [System.Web.Http.HttpPut]
-        public HttpResponseMessage UpdateGame([Bind(Include = "Longitude, Latitude, CreatorID, PlaceID, PlayersNum, StartDate, Team1ID, Team2ID")] GameLatitudeLongitude gameLl)
+        public HttpResponseMessage UpdateGame([Bind(Include = "Longitude, Latitude, CreatorID, PlaceID, PlayersNum, StartDate, Team1ID, Team2ID")] Game game)
         {
             // Acces Data Base Test according to request
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
-            //Configuration.ProxyCreationEnabled = false;
-            //Configuration.LazyLoadingEnabled = false;
             db.Configuration.ProxyCreationEnabled = false;
             db.Configuration.LazyLoadingEnabled = false;
-            gameLl.Players.Clear();
-            gameLl.Sport = null;
-            gameLl.Team = null;
-            gameLl.Team1 = null;
-            gameLl.Creator = null;
-            gameLl.Place = null;
-            Game game = new Game();
+            game.Players.Clear();
+            game.Sport = null;
+            game.Team = null;
+            game.Team1 = null;
+            game.Creator = null;
+            game.Place = null;
             if (ModelState.IsValid)
             {
-                game = gameLl.GameLlToGame(gameLl);
-                /*game.Team = null;
-                game.Team1 = null;
-                game.Creator = null;
-                game.Place = null;
-                game.Sport.Games.Clear();*/
                 db.Entry(game).State = EntityState.Modified;
                 db.SaveChanges();
             }
@@ -174,12 +178,10 @@ namespace RestServiceGeoFit.Controllers
             return BuildSuccesResult(HttpStatusCode.OK, gameIdReturn);
         }
         [System.Web.Http.HttpGet]
-        public HttpResponseMessage GetAllPagination(int parameter1/*page*/, int parameter2/*rows*/, int parameter3/*sportId*/)
+        public HttpResponseMessage GetPaginationByTime(int parameter1/*page*/, int parameter2/*rows*/, int parameter3/*sportId*/)
         {
             //int totalRows = db.Games.Count();
             //int totalPages = (int)Math.Ceiling((double)totalRows / parameter2);
-            List<GameLatitudeLongitude> resultGameLLList = new List<GameLatitudeLongitude>();
-            GameLatitudeLongitude GameLL = new GameLatitudeLongitude();
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -191,7 +193,7 @@ namespace RestServiceGeoFit.Controllers
                                  .Take(parameter2)                                 
                                  .ToList();
              
-            if (resultGameList == null)
+            if (resultGameList.Count == 0)
             {
                 return BuildErrorResult(HttpStatusCode.NotFound, "There are no games on this page");
             }
@@ -201,11 +203,134 @@ namespace RestServiceGeoFit.Controllers
             {
                 //g.Sport = db.Sports.Find(g.SportId);
                 // g.Creator = db.Players.Find(g.CreatorID);
+                g.Place.Games.Clear();
                 g.Sport.Games.Clear();
                 g.Creator.GamesCreated.Clear();
-                resultGameLLList.Add(GameLL.GameToGameLl(g));
+
+                g.Creator.Joineds.Clear();
+                if (g.Team1ID != null)
+                {
+                    g.Team.Joineds.Clear();
+                    g.Team.Games.Clear();
+                    g.Team.Games1.Clear();
+                }
+                if (g.Team2ID != null)
+                {
+                    g.Team1.Joineds.Clear();
+                    g.Team1.Games.Clear();
+                    g.Team1.Games1.Clear();
+                }      
             }
-            return BuildSuccesResult(HttpStatusCode.OK, resultGameLLList);
+            return BuildSuccesResult(HttpStatusCode.OK, resultGameList);
+        }
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage GetAllPaginationByDistance(int parameter1/*page*/, int parameter2/*rows*/, int parameter3/*sportId*/, double parameter4 /*Longitude*/, double parameter5 /*Latitude*/)
+        {
+
+            //int totalRows = db.Games.Count();
+            //int totalPages = (int)Math.Ceiling((double)totalRows / parameter2);
+            if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+            }
+            
+            DateTime dateTimeNow = DateTime.Now;
+            List<Game> resultGameList = db.Games.Where(g => g.StartDate.CompareTo(dateTimeNow) > 0 && g.SportId == parameter3)
+                                 .OrderBy(g => g.StartDate)
+                                 .Skip(parameter1 * parameter2)
+                                 .Take(parameter2)
+                                 .ToList();
+
+            if (resultGameList.Count == 0)
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "There are no games on this page");
+            }
+            double nearestLongitude;
+            double nearestLatitude;
+
+            foreach (Game g in resultGameList)
+            {               
+                //g.Sport = db.Sports.Find(g.SportId);
+                // g.Creator = db.Players.Find(g.CreatorID);
+                g.Place.Games.Clear();
+                g.Sport.Games.Clear();
+                g.Creator.GamesCreated.Clear();
+
+                g.Creator.Joineds.Clear();
+                if (g.Team1ID != null)
+                {
+                    g.Team.Joineds.Clear();
+                    g.Team.Games.Clear();
+                    g.Team.Games1.Clear();
+                }
+                if (g.Team2ID != null)
+                {
+                    g.Team1.Joineds.Clear();
+                    g.Team1.Games.Clear();
+                    g.Team1.Games1.Clear();
+                }
+            }
+            resultGameList.Sort(delegate(Game toCompare, Game home) { return (int)CompareDistance(toCompare.Place.Longitude, toCompare.Place.Latitude, parameter4, parameter5); });
+            return BuildSuccesResult(HttpStatusCode.OK, resultGameList);
+        }
+
+        private double? CompareDistance(double? longitudeToCompare, double? latitudeToCompare, double? longitudeHome, double? latitudeHome)
+        {
+            string stringPointHomestring = string.Format(CultureInfo.InvariantCulture.NumberFormat, "POINT({0} {1})", longitudeHome, latitudeHome);
+            string stringPointToCompare = string.Format(CultureInfo.InvariantCulture.NumberFormat, "POINT({0} {1})", longitudeToCompare, latitudeToCompare);
+
+            DbGeography dbGeographyHome= DbGeography.PointFromText(stringPointHomestring, 4326);
+            DbGeography dbGeographyToCompare = DbGeography.PointFromText(stringPointToCompare, 4326);
+
+            return dbGeographyHome.Distance(dbGeographyToCompare);
+        }
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage GetAllPaginationByNumPlayers(int parameter1/*page*/, int parameter2/*rows*/, int parameter3/*sportId*/)
+        {
+            //int totalRows = db.Games.Count();
+            //int totalPages = (int)Math.Ceiling((double)totalRows / parameter2);
+            if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+            }
+            DateTime dateTimeNow = DateTime.Now;
+            List<Game> resultGameList = db.Games.Where(g => g.StartDate.CompareTo(dateTimeNow) > 0 && g.SportId == parameter3)
+                                 .OrderBy(g => g.PlayersNum)
+                                 .Skip(parameter1 * parameter2)
+                                 .Take(parameter2)
+                                 .ToList();
+
+            if (resultGameList.Count == 0)
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "There are no games on this page");
+            }
+            //  Sport sport = 
+            //  Player player = 
+            foreach (Game g in resultGameList)
+            {
+                //g.Sport = db.Sports.Find(g.SportId);
+                // g.Creator = db.Players.Find(g.CreatorID);
+                g.Place.Games.Clear();
+                g.Sport.Games.Clear();
+                g.Creator.GamesCreated.Clear();
+
+                g.Creator.Joineds.Clear();
+                if (g.Team1ID != null)
+                {
+                    g.Team.Joineds.Clear();
+                    g.Team.Games.Clear();
+                    g.Team.Games1.Clear();
+                }
+                if (g.Team2ID != null)
+                {
+                    g.Team1.Joineds.Clear();
+                    g.Team1.Games.Clear();
+                    g.Team1.Games1.Clear();
+                }
+            }
+            return BuildSuccesResult(HttpStatusCode.OK, resultGameList);
         }
 
         [System.Web.Http.HttpGet]
@@ -264,9 +389,9 @@ namespace RestServiceGeoFit.Controllers
         }
         
         [System.Web.Http.HttpPost]
-        public HttpResponseMessage AddPlayers([Bind(Include = "Longitude, Latitude, CreatorID, PlaceID, PlayersNum, StartDate, Team1ID, Team2ID")] GameLatitudeLongitude gameLl)
+        public HttpResponseMessage AddPlayers([Bind(Include = "Longitude, Latitude, CreatorID, PlaceID, PlayersNum, StartDate, Team1ID, Team2ID")] Game game)
         {
-            List<Player> playersToAdd = gameLl.Players.ToList();
+            List<Player> playersToAdd = game.Players.ToList();
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -275,7 +400,7 @@ namespace RestServiceGeoFit.Controllers
            
             if (ModelState.IsValid)
             {
-                Game game = db.Games.Find(gameLl.GameID);
+                game = db.Games.Find(game.GameID);
                 db.Entry(game).State = EntityState.Unchanged;
 
                 /*  game = gameLl.GameLlToGame(gameLl);
@@ -308,9 +433,9 @@ namespace RestServiceGeoFit.Controllers
         }
 
         [System.Web.Http.HttpPost]
-        public HttpResponseMessage RemovePlayers([Bind(Include = "Longitude, Latitude, CreatorID, PlaceID, PlayersNum, StartDate, Team1ID, Team2ID")] GameLatitudeLongitude gameLl)
+        public HttpResponseMessage RemovePlayers([Bind(Include = "Longitude, Latitude, CreatorID, PlaceID, PlayersNum, StartDate, Team1ID, Team2ID")] Game game)
         {
-            List<Player> playersToRemove = gameLl.Players.ToList();
+            List<Player> playersToRemove = game.Players.ToList();
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -319,7 +444,7 @@ namespace RestServiceGeoFit.Controllers
 
             if (ModelState.IsValid)
             {
-                Game game = db.Games.Include("Players").FirstOrDefault(g => g.GameID == gameLl.GameID);
+                game = db.Games.Include("Players").FirstOrDefault(g => g.GameID == game.GameID);
                 Player player;
                 foreach (Player p in playersToRemove)
                 {
@@ -374,6 +499,47 @@ namespace RestServiceGeoFit.Controllers
                 return BuildErrorResult(HttpStatusCode.NotFound, "Any player participate on this game.");
             }
             return BuildSuccesResult(HttpStatusCode.OK, playerListReturn);
+        }
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage GetPlacesWithOutSport()
+        {
+            // var Places = db.Places.Where(p=> !p.SportId.HasValue).OrderBy(p=> p.ValuationMed);
+
+            string nativeSQLQuery = @"SELECT * FROM GeoFitDB.dbo.Place WHERE SportID IS NULL;";
+            var Places = db.Places.SqlQuery(nativeSQLQuery);
+
+            if (Places.Count() == 0)
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "Don't exists any place!.");
+            }
+            return BuildSuccesResult(HttpStatusCode.OK, Places);
+
+        }
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage GetPlacesBySport(int parameter1)
+        {
+            var Places = from p in db.Places
+                         where p.SportId == parameter1
+                         orderby p.ValuationMed
+                         select p;
+
+            if (Places.Count() == 0)
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "Don't exists any place!.");
+            }
+            foreach (Place p in Places)
+            {
+                //g.Sport = db.Sports.Find(g.SportId);
+                // g.Creator = db.Players.Find(g.CreatorID);
+                p.Sport.Places.Clear();
+                // g.Creator.GamesCreated.Clear();
+            }
+            return BuildSuccesResult(HttpStatusCode.OK, Places);
+
+            // return BuildSuccesResult(HttpStatusCode.OK, Places);
+
         }
     }
 }

@@ -277,7 +277,7 @@ namespace AppGeoFit.DataAccesLayer.Data.TeamRestService
             {
                 throw new NotPendingPlayersToAddException(response.ReasonPhrase);
             }
-            if(response.StatusCode == HttpStatusCode.NotFound)
+            if(response.StatusCode == HttpStatusCode.BadRequest)
             {
                 throw new Exception(response.ReasonPhrase);
             }
@@ -289,6 +289,27 @@ namespace AppGeoFit.DataAccesLayer.Data.TeamRestService
             }
 
             return responseListPlayers;
+        }
+
+        public async Task<bool> IsOnTeam(int teamId, int playerId)
+        {
+            bool isOnTeam = false;
+            var uri = new Uri(string.Format(url + "Team/IsOnTeam/{0}/{1}", teamId, playerId));
+            HttpResponseMessage response;
+
+            response = client.GetAsync(uri).Result;
+            if (response.StatusCode == HttpStatusCode.BadRequest)
+            {
+                throw new Exception(response.ReasonPhrase);
+            }
+            if (response.IsSuccessStatusCode)
+            {
+                string responseAsString = await response.Content.ReadAsStringAsync();
+
+                isOnTeam = JsonConvert.DeserializeObject<bool>(responseAsString);
+            }
+
+            return isOnTeam;
         }
     }
 }

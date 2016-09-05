@@ -165,7 +165,7 @@ namespace RestServiceGeoFit.Controllers
             player.PlayerSesion = true;
             db.Entry(player).State = System.Data.Entity.EntityState.Modified;
             db.SaveChanges();
-            return BuildSuccesResult(HttpStatusCode.OK, "");
+            return BuildSuccesResult(HttpStatusCode.OK, true);
         }
 
         [System.Web.Http.HttpPut]
@@ -185,7 +185,7 @@ namespace RestServiceGeoFit.Controllers
             player.PlayerSesion = false;
             db.Entry(player).State = System.Data.Entity.EntityState.Modified;
             db.SaveChanges();
-            return BuildSuccesResult(HttpStatusCode.OK, "");
+            return BuildSuccesResult(HttpStatusCode.OK, true);
         }
 
         [System.Web.Http.HttpGet]
@@ -285,8 +285,6 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetActualGames(int parameter1, int parameter2, int parameter3, int parameter4)
         {
-            List<GameLatitudeLongitude> resultGameLLList = new List<GameLatitudeLongitude>();
-            GameLatitudeLongitude GameLL = new GameLatitudeLongitude();
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -296,7 +294,7 @@ namespace RestServiceGeoFit.Controllers
             var actualDate = new SqlParameter("@ActualDate", DateTime.Now);
             var sportId = new SqlParameter("@SportId", parameter4);
 
-            string nativeSQLQuery = @"SELECT GameID, StartDate, EndDate, PlayersNum, Coordinates, Team1ID, Team2ID, PlaceID, CreatorID, SportID" +
+            string nativeSQLQuery = @"SELECT GameID, StartDate, EndDate, PlayersNum, Longitude, Latitude, Team1ID, Team2ID, PlaceID, CreatorID, SportID" +
                                     " FROM GeoFitDB.dbo.Game" +
                                     " WHERE SportID = @SportId AND StartDate > @ActualDate AND GameID IN( SELECT GameID" +
                                     " FROM GeoFitDB.dbo.Participate" +
@@ -318,9 +316,8 @@ namespace RestServiceGeoFit.Controllers
                     g.Sport = db.Sports.Find(g.SportId);
                 if (g.Creator == null)                    
                     g.Creator = db.Players.Find(g.CreatorID);
-                resultGameLLList.Add(GameLL.GameToGameLl(g));
             }
-            return BuildSuccesResult(HttpStatusCode.OK, resultGameLLList);
+            return BuildSuccesResult(HttpStatusCode.OK, resultGameList);
         }
 
         [System.Web.Http.HttpGet]

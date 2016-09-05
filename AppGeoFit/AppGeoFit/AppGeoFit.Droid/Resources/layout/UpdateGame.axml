@@ -47,11 +47,22 @@
                 android:layout_marginRight="14dp" />
             <TextView
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:text="Select place"
+                android:text="Update duration"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/UpdateGame_LabelDuration"
+                android:layout_below="@+id/UpdateGame_LabelHour"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <TextView
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:text="Update place"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:id="@+id/UpdateGame_LabelPlace"
-                android:layout_below="@+id/UpdateGame_LabelHour"
+                android:layout_below="@+id/UpdateGame_LabelDuration"
                 android:gravity="center"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="14dp"
@@ -95,6 +106,16 @@
                 android:layout_height="35dp"
                 android:id="@+id/UpdateGame_SpinnerDuration"
                 android:layout_below="@+id/UpdateGame_Time"
+                android:gravity="center"
+                android:layout_marginBottom="16dp"
+                android:layout_marginLeft="14dp"
+                android:layout_marginRight="14dp" />
+            <Spinner
+                android:textAppearance="?android:attr/textAppearanceSmall"
+                android:layout_width="match_parent"
+                android:layout_height="35dp"
+                android:id="@+id/UpdateGame_SpinnerPlace"
+                android:layout_below="@+id/UpdateGame_SpinnerDuration"
                 android:gravity="center"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="14dp"

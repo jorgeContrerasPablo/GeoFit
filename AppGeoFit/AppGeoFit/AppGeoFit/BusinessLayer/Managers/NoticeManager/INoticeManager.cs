@@ -13,6 +13,8 @@ namespace AppGeoFit.BusinessLayer.Managers.NoticeManager
         ICollection<Notice>  GetAllPendingNotice(int PlayerId);
         Task<int> CreateNotice(Notice notice);
         Task<Boolean> DeleteNotice(int noticeId);
-        Task<Boolean> UpdateNotice(Notice notice);
+        bool UpdateNotice(Notice notice);
+        Notice GetNotice(int noticeId);
+        int TotalNoticesCount(int playerId);
     }
 }

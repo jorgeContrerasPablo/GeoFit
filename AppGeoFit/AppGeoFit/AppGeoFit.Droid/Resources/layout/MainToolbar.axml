@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <Toolbar xmlns:android="http://schemas.android.com/apk/res/android"
     android:minHeight="?android:attr/actionBarSize"
-    android:background="?android:attr/colorPrimary"
+    android:background="@null"
     android:minWidth="25px"
     android:layout_width="match_parent"
     android:layout_height="40.5dp"
@@ -13,4 +13,11 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:id="@+id/Toolbar_spinnerSports" />
+    <ImageButton
+        android:src="@drawable/Message"
+        android:background="?android:selectableItemBackground"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/Toolbar_noticeButton"
+        android:layout_marginLeft="28.5dp" />
 </Toolbar>

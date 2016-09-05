@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="horizontal"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+    <RelativeLayout
+        android:minWidth="25px"
+        android:minHeight="25px"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/relativeLayout1"
+        android:layout_marginLeft="4.5dp">
+        <TextView
+            android:text="Send by:"
+            android:id="@+id/ElementNoticeL_SendByT"
+            android:layout_width="67.0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            android:layout_marginLeft="25dp" />
+        <TextView
+            android:id="@+id/ElementNoticeL_SendBy"
+            android:layout_below="@+id/ElementNoticeL_SendByT"
+            android:hint="Nick"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="29.0dp"
+            android:layout_marginTop="6.3dp" />
+    </RelativeLayout>
+    <TextView
+        android:text="Message"
+        android:textAppearance="?android:attr/textAppearanceMedium"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/ElementNoticeL_Message"
+        android:layout_marginTop="8.0dp"
+        android:layout_marginLeft="46.0dp" />
+</LinearLayout>

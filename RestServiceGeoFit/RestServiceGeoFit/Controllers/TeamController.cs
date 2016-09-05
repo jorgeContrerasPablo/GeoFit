@@ -218,5 +218,21 @@ namespace RestServiceGeoFit.Controllers
             }
             return BuildSuccesResult(HttpStatusCode.OK, listPlayersPending);
         }
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage IsOnTeam(int parameter1, int parameter2)
+        {
+            if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+            }
+            var joined = db.Joineds.Where(j => j.TeamID == parameter1 && j.PlayerID == parameter2).FirstOrDefault<Joined>();
+
+            if(joined == null)
+                return BuildSuccesResult(HttpStatusCode.OK, false);
+            else
+                return BuildSuccesResult(HttpStatusCode.OK, true);
+
+        }
     }
 }

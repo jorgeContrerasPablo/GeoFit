@@ -15,6 +15,9 @@ namespace AppGeoFit.DataAccesLayer.Models
             Games = new HashSet<Game>();
             NoticesMessege = new HashSet<Notice>();
             NoticesRecive = new HashSet<Notice>();
+            GamesCreated = new HashSet<Game>();
+            FeedBacksCreated = new HashSet<FeedBack>();
+
         }
 
         public int PlayerId { get; set; }
@@ -59,6 +62,12 @@ namespace AppGeoFit.DataAccesLayer.Models
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
         public ICollection<Notice> NoticesRecive { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<Game> GamesCreated { get; set; }
+
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2227:CollectionPropertiesShouldBeReadOnly")]
+        public ICollection<FeedBack> FeedBacksCreated { get; set; }
 
 
         public override String ToString()
