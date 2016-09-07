@@ -39,7 +39,7 @@ namespace AppGeoFit.Droid.Screens
         LayoutInflater layoutInflater;
         string selectedType = "time";
         static readonly string TAG = "X:" + typeof(Fragment_Games).Name;
-        Position position;
+        Position position = new Position();
 
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle bundle)
         {
@@ -57,9 +57,7 @@ namespace AppGeoFit.Droid.Screens
             //Recuperamos el id del deporte actual.
             Spinner spinnerSport = this.Activity.FindViewById<Spinner>(Resource.Id.Toolbar_spinnerSports);
             actualSportId = spinnerSport.SelectedItem.GetHashCode();
-
-           // InitializeLocationManager();
-
+            
             createGameButton.Click += (o, e) =>
             {
                 var screen_CreateGame_Captain = new Intent(Context, typeof(Screen_CreateGame));
@@ -72,7 +70,7 @@ namespace AppGeoFit.Droid.Screens
                 Screen_ActualGames.PutExtra("sportId", actualSportId);
                 Activity.StartActivity(Screen_ActualGames);
             };
-            findGames.Click += (o, e) =>
+            findGames.Click += (o,e) =>
             {
                 AlertDialog dialogSearchOptions;
                 dialogSearchOptions = CreateAlertDialog(Resource.Layout.dialog_SearchOptions, Context);
@@ -111,15 +109,43 @@ namespace AppGeoFit.Droid.Screens
                     selectedType = "time";
                     updateGameList(selectedType);
                 };
-                distanceCB.Click += (od, ed) =>
+                distanceCB.Click += async delegate
                 {
+                    position.Latitude = 42.1354955;
+                    position.Longitude = -8.812848199999962;
                     timeCB.Checked = false;
                     distanceCB.Checked = true;
                     numPlayersCB.Checked = false;
                     selectedType = "distance";
-                    //TODO
-                    //position = GetPositionAsync().Result;
-                    updateGameList(selectedType);
+
+                    LocationManager locationManager = (LocationManager)Context
+                   .GetSystemService(Context.LocationService);
+                    bool isGPSEnabled = locationManager
+                    .IsProviderEnabled(LocationManager.GpsProvider);
+                    bool isNetworkEnabled = locationManager
+                    .IsProviderEnabled(LocationManager.NetworkProvider);
+                   
+                    if (!isGPSEnabled && !isNetworkEnabled)
+                    {
+                        Toast.MakeText(Activity.ApplicationContext,
+                            "Enable GPS to use this option", ToastLength.Short).Show();
+                    }
+                    else
+                    {
+                        try
+                        {
+                            var geolocator = CrossGeolocator.Current;
+                            geolocator.DesiredAccuracy = 50;
+                            position = await geolocator.GetPositionAsync(timeoutMilliseconds: 10000);
+                            updateGameList(selectedType);
+
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(Activity.ApplicationContext,
+                               "Unable to get location, please try again", ToastLength.Short).Show();
+                        }
+                    }
 
                 };
                 numPlayersCB.Click += (onp, enp) =>
@@ -151,8 +177,7 @@ namespace AppGeoFit.Droid.Screens
                 Toast.MakeText(Activity.ApplicationContext,
                          ex.Message, ToastLength.Short).Show();
             }
-            #region listGames
-            //ListGames           
+            #region listGames    
             gameListView = view.FindViewById<ListView>(Resource.Id.Games_GamesList);
             updateGameList(selectedType);
             spinnerSport.ItemSelected += (oT, eT) =>
@@ -177,23 +202,16 @@ namespace AppGeoFit.Droid.Screens
                              ex.Message, ToastLength.Short).Show();
                 }
             };
-            // listGames = gameManager.GetAllPagination(page, rows, actualSportId);
-            // RelativeLayout footerView = (RelativeLayout)inflater.Inflate(Resource.Layout.LoadingPBFooterGameList, null, false);
-            // bool isLoading = false;
             gameListView.Scroll += (o, e) =>
             {
                 if (!(gameListView.Adapter == null || gameListView.Adapter.Count == 0)
                     && gameListView.LastVisiblePosition >= gameListView.Count - 1)
                 {
                     int totalGamesCount = gameManager.TotalGamesCount(actualSportId);
-                    if (totalGamesCount > gameListView.Count) //&& !isLoading)
+                    if (totalGamesCount > gameListView.Count)
                     {
-                        //gameListView.AddFooterView(footerView);
-                        //isLoading = true;
                         page = (int)Math.Ceiling((double)totalGamesCount / gameListView.LastVisiblePosition) - 1;
                         updateGameList(selectedType);
-                        // gameListView.RemoveFooterView(footerView);
-                        // isLoading = false;
                     }
                 }
             };
@@ -203,7 +221,6 @@ namespace AppGeoFit.Droid.Screens
                 int gameSelectedOnClickId = gameListView.GetItemAtPosition(e.Position).GetHashCode();
                 var screen_GameDetails = new Intent(Context, typeof(Screen_GameDetails));
                 screen_GameDetails.PutExtra("gameId", gameSelectedOnClickId);
-                //  screen_AddTeamToGame.PutExtra("gameId", adapterLGames.GetItem(info.Position).GameID);
                 Activity.StartActivity(screen_GameDetails);
             };
 
@@ -225,49 +242,18 @@ namespace AppGeoFit.Droid.Screens
         private void updateGameList(string selectedTypeSearch)
         {
             try
-            {
-                double latitude = 42.1354955;
-                double longitude = -8.812848199999962;
-                if (selectedTypeSearch.Equals("distance"))
-                {
-                    LocationManager locationManager = (LocationManager)Context
-                     .GetSystemService(Context.LocationService);
-                    bool isGPSEnabled = locationManager
-                    .IsProviderEnabled(LocationManager.GpsProvider);
-                    bool isNetworkEnabled = locationManager
-                    .IsProviderEnabled(LocationManager.NetworkProvider);
-                    if (!isGPSEnabled && !isNetworkEnabled)
-                    {
-                        Toast.MakeText(Activity.ApplicationContext,
-                            "Enable GPS to use this option", ToastLength.Short).Show();
-                    }
-                    else
-                    {
-                     //  if (position.Longitude != 0 && position.Latitude != 0)
-                       // {
-                            listGames = gameManager.GetAllPagination(page, rows, actualSportId, selectedTypeSearch, longitude, latitude);
-                            adapterLGames = new GameArrayAdapter(view.Context, listGames);
-                            gameListView.Adapter = adapterLGames;
-                            RegisterForContextMenu(gameListView);
-                        //}
-                    }
-                }
-                else
-                {
-                    listGames = gameManager.GetAllPagination(page, rows, actualSportId, selectedTypeSearch, 0, 0);
-                    adapterLGames = new GameArrayAdapter(view.Context, listGames);
-                    gameListView.Adapter = adapterLGames;
-                    RegisterForContextMenu(gameListView);
-                }
+            {               
+                listGames = gameManager.GetAllPagination(page, rows, actualSportId, selectedTypeSearch, position.Longitude, position.Latitude);
+                adapterLGames = new GameArrayAdapter(view.Context, listGames);
+                gameListView.Adapter = adapterLGames;
+                RegisterForContextMenu(gameListView);          
             }
-            catch (GameNotFoundException) {
-                //adapterLGames = new GameArrayAdapter(view.Context, );
+            catch (GameNotFoundException)
+            {
                 gameListView.Adapter = null;
-                //RegisterForContextMenu(gameListView);
             }
             catch (Exception ex)
             {
-
                 Toast.MakeText(Activity.ApplicationContext,
                     ex.Message, ToastLength.Short).Show();
             }
@@ -287,16 +273,13 @@ namespace AppGeoFit.Droid.Screens
         public override void OnCreateContextMenu(IContextMenu menu, View vValue, IContextMenuContextMenuInfo menuInfo)
         {
             base.OnCreateContextMenu(menu, vValue, menuInfo);
-            //var info = (AdapterView.AdapterContextMenuInfo)menuInfo;
             MenuInflater inflater = new MenuInflater(Context);
 
             menu.SetHeaderTitle("Join?");
             inflater.Inflate(Resource.Menu.MenuCreateTeam, menu);
         }
         public override bool OnContextItemSelected(IMenuItem item)
-        {
-            //TODO ARREGLAR LOS AVISOS; QUE SEAN ESO; Y NO PROHIBICIONES.
-            //TODO Arreglar catch de excepciones-> o excepeciones o booleanos devueltos para comprobar.
+        {           
             var info = (AdapterView.AdapterContextMenuInfo)item.MenuInfo;
             Game gameSelected = adapterLGames.GetItem(info.Position);
             bool error = false;
@@ -384,7 +367,7 @@ namespace AppGeoFit.Droid.Screens
                         gameManager.AddPlayer(gameSelected.GameID, actualPlayer.PlayerId);
                         Toast.MakeText(Activity.ApplicationContext,
                          "You have been added correctly to this game", ToastLength.Short).Show();
-                        //TODO actualizar lista
+                        updateGameList(selectedType);
                     }
                     catch (PlayerOnGameException ex)
                     {
@@ -413,27 +396,7 @@ namespace AppGeoFit.Droid.Screens
                     return base.OnContextItemSelected(item);
 
             }
-        }        
-
-        public async Task<Position> GetPositionAsync()
-        {
-            Position currentPositionPlugin = new Position();
-            currentPositionPlugin.Latitude = 42.1354955;
-            currentPositionPlugin.Longitude = -8.812848199999962;
-            try
-            {
-                IGeolocator geolocator = new GeolocatorImplementation();
-                geolocator.DesiredAccuracy = 500;
-                 currentPositionPlugin = await geolocator.GetPositionAsync(timeoutMilliseconds: 10000);
-
-            }
-            catch (Exception ex)
-            {
-                Toast.MakeText(Activity.ApplicationContext,
-                   "Unable to get location, may need to increase timeout: " + ex, ToastLength.Short).Show();
-            }
-            return currentPositionPlugin;
-        }
+        }                
     }
 }
 

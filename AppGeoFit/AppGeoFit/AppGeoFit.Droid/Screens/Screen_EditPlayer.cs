@@ -15,6 +15,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using AppGeoFit.BusinessLayer.Managers.PlayerManager;
 using Xamarin.Forms;
+using DevOne.Security.Cryptography.BCrypt;
 
 namespace AppGeoFit.Droid
 {
@@ -46,6 +47,7 @@ namespace AppGeoFit.Droid
             phoneNumber_et.Text = player.PhoneNum.ToString();
             EditText email_et = FindViewById<EditText>(Resource.Id.Edit_Email);
             email_et.Text = player.PlayerMail;
+            TextView editPassword = FindViewById<TextView>(Resource.Id.Edit_EditPassWord);
             
             Spinner spinnerFavoriteSport_et = FindViewById<Spinner>(Resource.Id.Edit_SpinnerFavoriteSport);
             ICollection<Sport> sports = appSession.getSports();
@@ -77,15 +79,60 @@ namespace AppGeoFit.Droid
             adapter.SetDropDownViewResource(Android.Resource.Layout.SimpleSpinnerDropDownItem);
             spinnerFavoriteSport_et.Adapter = adapter;
             spinnerFavoriteSport_et.SetSelection(player.Sport != null ? sportLS.FindIndex(s => s.SportName == player.Sport.SportName) : 0);
-
-            // TODO EDIT PASSWORD
-            Android.Widget.Button acept_bn = FindViewById<Android.Widget.Button>(Resource.Id.Edit_AceptButton);
-            Android.Widget.Button cancel_bn = FindViewById<Android.Widget.Button>(Resource.Id.Edit_CancelButton);
-            cancel_bn.Click += (o, e) => Finish(); //StartActivity(typeof(MainActivity));
-
+                        
             //Se crea el icono exclamation_error
             Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
             errorD.SetBounds(0, 0, errorD.IntrinsicWidth, errorD.IntrinsicHeight);
+
+            AlertDialog ADialogActualPass;
+            AlertDialog ADNewPass;
+            editPassword.Click += (o, e) =>
+            {
+                ADialogActualPass = CreateAlertDialog(Resource.Layout.dialog_EditPassword, this);
+                ADialogActualPass.Show();
+                ADialogActualPass.FindViewById<TextView>(Resource.Id.D_EditPassword_textView1).Text = "Insert your actual password";
+                Android.Widget.Button acceptButtonActualPass = ADialogActualPass.FindViewById<Android.Widget.Button>(Resource.Id.D_EditPassword_accept);
+                Android.Widget.Button cancelButtonActualPass = ADialogActualPass.FindViewById<Android.Widget.Button>(Resource.Id.D_EditPassword_cancel);
+                EditText password = ADialogActualPass.FindViewById<EditText>(Resource.Id.D_EditPassword_password);
+                acceptButtonActualPass.Click += (oAB, eAB) =>
+                 {
+                     if(BCryptHelper.CheckPassword(password.Text, player.Password))
+                     {
+                         ADialogActualPass.Cancel();
+                         ADNewPass = CreateAlertDialog(Resource.Layout.dialog_EditPassword, this);
+                         ADNewPass.Show();
+                         ADNewPass.FindViewById<TextView>(Resource.Id.D_EditPassword_textView1).Text = "Insert your new password";
+                         Android.Widget.Button acceptButtonNewPass = ADNewPass.FindViewById<Android.Widget.Button>(Resource.Id.D_EditPassword_accept);
+                         Android.Widget.Button cancelButtonNewPass = ADNewPass.FindViewById<Android.Widget.Button>(Resource.Id.D_EditPassword_cancel);
+                         EditText newPassword = ADNewPass.FindViewById<EditText>(Resource.Id.D_EditPassword_password);
+                         acceptButtonNewPass.Click += (oABN, eABN) => 
+                         {
+                             //Encriptacion de la contraseña
+                             player.Password = BCryptHelper.HashPassword(newPassword.Text, BCryptHelper.GenerateSalt());
+                             playerManager.UpdatePlayer(player);
+                             ADNewPass.Cancel();
+                         };
+                         cancelButtonNewPass.Click += (oCBN, eCBN) => 
+                         {
+                             ADNewPass.Cancel();
+                         };
+                     }
+                     else
+                     {
+                         IsValid(password, "Not correct password", errorD, false);
+                     }
+                 };
+                cancelButtonActualPass.Click += (oCB, eCB) =>
+                {
+                    ADialogActualPass.Cancel();
+                };
+
+            };
+
+            Android.Widget.Button acept_bn = FindViewById<Android.Widget.Button>(Resource.Id.Edit_AceptButton);
+            Android.Widget.Button cancel_bn = FindViewById<Android.Widget.Button>(Resource.Id.Edit_CancelButton);
+            cancel_bn.Click += (o, e) => Finish();
+           
 
             #region Edit
             bool reN = false;

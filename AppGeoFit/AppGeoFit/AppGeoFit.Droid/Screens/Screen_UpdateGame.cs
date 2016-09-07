@@ -142,10 +142,6 @@ namespace AppGeoFit.Droid.Screens
                     gameManager.UpdateGame(game);
                     Toast.MakeText(ApplicationContext,
                             "Your Game has been update correctly", ToastLength.Short).Show();
-                    /* var screen_GameDetails = new Intent(this, typeof(Screen_GameDetails));
-                     screen_GameDetails.PutExtra("gameId", gameId);
-                     //  screen_AddTeamToGame.PutExtra("gameId", adapterLGames.GetItem(info.Position).GameID);
-                     StartActivity(screen_GameDetails);*/
                     Finish();
                 }
                 catch (WrongTimeException ex)

@@ -37,16 +37,16 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
             return this;
         }
 
-        public Task<Team> GetTeam(int teamId)
+        public Team GetTeam(int teamId)
         {
-            return teamRestService.GetTeamAsync(teamId);
+            return teamRestService.GetTeamAsync(teamId).Result;
         }
 
-        public Task<bool> CreateTeam(Team team, Player player)
+        public int CreateTeam(Team team, Player player)
         {
             int teamRecived = 0;
             int teamCaptainRecived = 0;
-            int teamCreated = 0;
+            int teamCreatedId = 0;
             try
             {
                 teamRecived = teamRestService.FindTeamByNameOnSports(team.TeamName, team.SportID).Result;
@@ -65,8 +65,7 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
             try
             {
                 teamCaptainRecived = playerRestService.FindCaptainOnSportsAsync(player.PlayerId, team.SportID).Result;
-                //throw new DuplicateCaptainException("");
-                throw new AlreadyCaptainOnSport("The player: " + player.PlayerNick + " is already a captian on "+team.Sport.SportName+".");
+                throw new AlreadyCaptainOnSportException("The player: " + player.PlayerNick + " is already a captian on this sport.");
             }
             catch (AggregateException aex)
             {
@@ -79,7 +78,7 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
             }
             try
             {
-                teamCreated = teamRestService.CreateTeamAsync(team).Result;
+                teamCreatedId = teamRestService.CreateTeamAsync(team).Result;
             }
             catch (AggregateException aex)
             {
@@ -90,12 +89,16 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
 
                 }
             }
-            return teamRestService.AddPlayer(teamCreated, player.PlayerId, true);
+            teamRestService.AddPlayer(teamCreatedId, player.PlayerId, true);
+
+            return teamCreatedId;
         }
 
         public bool DeleteTeam(int teamId)        {            
 
             bool isDelete = false;
+            Team team = teamRestService.GetTeamAsync(teamId).Result;
+            Player teamCaptain = teamRestService.GetCaptainAsync(teamId).Result;
             try
             {
                 isDelete = teamRestService.DeleteTeamAsync(teamId).Result;
@@ -107,11 +110,23 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
                     throw new Exception(ex.Message);
                 }
             }
+            Notice notice = new Notice();
+            foreach (Joined j in team.Joineds)
+            {
+                if (j.PlayerID != teamCaptain.PlayerId)
+                {
+                    notice.MessengerID = teamCaptain.PlayerId;
+                    notice.ReceiverID = j.PlayerID;
+                    notice.SportID = team.SportID;
+                    notice.Type = Constants.TEAM_DELETED;
+                    noticeRestService.CreateNoticeAsync(notice);
+                }
+            }
             return isDelete;
 
         }
 
-        public Task<Boolean> UpdateTeam(Team team, Player player)
+        public bool UpdateTeam(Team team, Player player)
         {
             int teamRecivedId = 0;
             int teamCaptainRecived = 0;
@@ -137,7 +152,7 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
             {
                 teamCaptainRecived = playerRestService.FindCaptainOnSportsAsync(player.PlayerId, team.SportID).Result;
                 if (player.PlayerId != actualCaptain.PlayerId)
-                    throw new AlreadyCaptainOnSport("The player: " + player.PlayerNick + " is already a captian on " + team.Sport.SportName + ".");
+                    throw new AlreadyCaptainOnSportException("The player: " + player.PlayerNick + " is already a captian on " + team.Sport.SportName + ".");
                 else
                     sameCaptain = true;
             }
@@ -153,7 +168,6 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
             //Si mandamos le entidad Team con los Joineds actuales
             //El dbContext intentará agregarlos. Por lo que hay que
             //"Limpiarlos"
-            //TODO CAPA SEPARADA???
             team.Joineds.Clear();
             try
             {
@@ -169,15 +183,15 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
             }
             if (!sameCaptain)
                 UpdateCaptain(actualCaptain.PlayerId, player.PlayerId, team.TeamID);              
-            return new Task<Boolean>(() => true);
+            return true;
         }
 
-        public Task<Boolean> AddPlayer(int playerId, int teamId)
+        public bool AddPlayer(int playerId, int teamId)
         {
-            return teamRestService.AddPlayer(teamId, playerId, false);
+            return teamRestService.AddPlayer(teamId, playerId, false).Result;
         }
 
-        public Task<int> SendNoticeAddPlayer(string playerNick, Team team)
+        public int SendNoticeAddPlayer(string playerNick, Team team)
         {
             Player playerToAdd = new Player();
             Notice notice = new Notice();
@@ -217,7 +231,6 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
                 {
                     if (ex is NotFoundPlayerOnTeamException)
                     {
-                        //TODO ARREGLAR ESTO
                         playerToAdd = playerRestService.GetPlayerAsync(playerIdFind).Result;
                     }
                     else
@@ -227,7 +240,6 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
             //Comprobamos que el jugador no este ya pendiente de una petición nuestra para ser agregado
             try
             {
-                //int noticeId = noticeRestService.FindNoticeAsync(playerIdFind, captainTeamId, team.SportID, Constants.TEAM_ADD_PLAYER).Result;
                 notice.NoticeID = noticeRestService.FindNoticeAsync(playerIdFind, captainTeamId, team.SportID, Constants.TEAM_ADD_PLAYER).Result;
                 notice = noticeRestService.GetNoticeAsync(notice.NoticeID).Result;
                 if (notice.Accepted == null)
@@ -242,22 +254,21 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
                         throw new Exception(ex.Message);
                 }
             }
-
-            //notice.Messenger = 
+            
             notice.MessengerID = captainTeamId;
             notice.ReceiverID = playerIdFind;
             notice.Type = Constants.TEAM_ADD_PLAYER;
             notice.SportID = team.SportID;
             notice.Accepted = null;
-            return noticeRestService.CreateNoticeAsync(notice);
+            return noticeRestService.CreateNoticeAsync(notice).Result;
         }
 
-        public Task<Boolean> RemovePlayer(int teamId, int playerId)
+        public bool RemovePlayer(int teamId, int playerId)
         {
             Player playerToRemove = new Player();
             Player captain = teamRestService.GetCaptainAsync(teamId).Result;
             Team team = teamRestService.GetTeamAsync(teamId).Result;
-            // Comprobación capitán, anzamos excepcion, pues deberemos elegir otro.
+            // Comprobación capitán, lanzamos excepcion, pues deberemos elegir otro.
             // Comprobación ultimo jugador, borraremos el equipo.
             if(playerId == captain.PlayerId)
             {
@@ -267,7 +278,7 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
                     throw new CaptainRemoveException("You are the captain. You need to chose other captain.");
             }
             //Eliminamos el jugador del equipo.
-            return teamRestService.RemovePlayer(teamId, playerId, false);
+            return teamRestService.RemovePlayer(teamId, playerId, false).Result;
 
             
         }
@@ -293,14 +304,14 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
             return sportList;
         }
 
-        public Task<int> FindTeamByNameOnSports(string teamName, int sportId)
+        public int FindTeamByNameOnSports(string teamName, int sportId)
         {
-            return teamRestService.FindTeamByNameOnSports(teamName, sportId);
+            return teamRestService.FindTeamByNameOnSports(teamName, sportId).Result;
         }
 
-        public Task<Player> GetCaptainAsync(int teamId)
+        public Player GetCaptainAsync(int teamId)
         {
-            return teamRestService.GetCaptainAsync(teamId);
+            return teamRestService.GetCaptainAsync(teamId).Result;
         }
 
         public Player UpdateCaptain(int captainId, int newCaptainId, int teamId)
@@ -331,15 +342,15 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
                         throw new Exception(ex.Message);
                 }
             }
-            throw new AlreadyCaptainOnSport("The player: " + joineds.ElementAt(joineds.FindIndex(j => j.PlayerID == captainId)).Player.PlayerNick + " is already a captian for this sport.");
+            throw new AlreadyCaptainOnSportException("The player: " + joineds.ElementAt(joineds.FindIndex(j => j.PlayerID == captainId)).Player.PlayerNick + " is already a captian for this sport.");
         }
 
-        public Task<ICollection<Player>> GetAllPlayersPendingToAdd(int messengerId, int sportId, string type)
+        public ICollection<Player> GetAllPlayersPendingToAdd(int messengerId, int sportId, string type)
         {
-            Task<ICollection<Player>> listPlayers = null;
+            ICollection<Player> listPlayers = null;
             try
             {
-                listPlayers = teamRestService.GetAllPlayersPendingToAdd(messengerId, sportId, type);
+                listPlayers = teamRestService.GetAllPlayersPendingToAdd(messengerId, sportId, type).Result;
             }
             catch (AggregateException aex)
             {

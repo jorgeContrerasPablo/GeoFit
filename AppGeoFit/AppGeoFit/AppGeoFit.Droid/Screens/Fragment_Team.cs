@@ -94,9 +94,9 @@ namespace AppGeoFit.Droid.Screens
                 teamNameT.Text = spinnerTeams.GetItemAtPosition(eT.Position).ToString();
                 actualTeam = Teams.ElementAt(Teams.FindIndex(t => t.TeamName == spinnerTeams.SelectedItem.ToString()));
                 colorView.SetBackgroundColor(Android.Graphics.Color.ParseColor(actualTeam.ColorTeam));
-                captain = actualTeam.Joineds.ElementAt(actualTeam.Joineds.ToList().
-                                FindIndex(j => (j.Captain) && (j.TeamID == spinnerTeams.SelectedItem.GetHashCode()))).Player;
-                captainNameT.Text = captain.PlayerNick;
+                var positionCaptainOnList = actualTeam.Joineds.ToList().FindIndex(j => (j.Captain) && (j.TeamID == spinnerTeams.SelectedItem.GetHashCode()));
+                captain = positionCaptainOnList == -1? null : actualTeam.Joineds.ElementAt(positionCaptainOnList).Player;
+                captainNameT.Text = captain == null ? "" : captain.PlayerNick;
                 //Mostraremos los botones editar, borrar y añadir a equipo, según seamos capitán o no.
                 if (captain != null)
                 {
@@ -166,7 +166,7 @@ namespace AppGeoFit.Droid.Screens
                 builder.SetView(dialogView);
 
                 AutoCompleteTextView AutocompleteView = dialogView.FindViewById<AutoCompleteTextView>(Resource.Id.D_SPlayer_playerToFind);
-                var adapterAutoComplete = new PlayerArrayAdapter(Context, playerManager.GetAll().Result.ToList(), captain.PlayerId, actualSportId, false, null, true);
+                var adapterAutoComplete = new PlayerArrayAdapter(Context, playerManager.GetAll().ToList(), captain.PlayerId, actualSportId, false, null, true);
 
                 AutocompleteView.Adapter = adapterAutoComplete;
                 AlertDialog ad = builder.Create();
@@ -223,7 +223,7 @@ namespace AppGeoFit.Droid.Screens
             List<Player> LPlayersPending = new List<Player>();
             try
             {
-                LPlayersPending = teamManager.GetAllPlayersPendingToAdd(captain.PlayerId, actualSportId, Constants.TEAM_ADD_PLAYER).Result.ToList();
+                LPlayersPending = teamManager.GetAllPlayersPendingToAdd(captain.PlayerId, actualSportId, Constants.TEAM_ADD_PLAYER).ToList();
             }
             catch (NotPendingPlayersToAddException)
             {
@@ -233,7 +233,7 @@ namespace AppGeoFit.Droid.Screens
             //Recuperamos el equipo actual seleccionado
             actualTeam = Teams.ElementAt(Teams.FindIndex(t => t.TeamName == spinnerTeams.SelectedItem.ToString()));
             //Recuperamos el equipo de base de datos por si ha sufrido alguna alta o baja.
-            var updateTeam = teamManager.GetTeam(actualTeam.TeamID).Result;
+            var updateTeam = teamManager.GetTeam(actualTeam.TeamID);
             var n = 0;
             while (n < updateTeam.Joineds.Count)
             {
@@ -268,12 +268,11 @@ namespace AppGeoFit.Droid.Screens
             Teams = playerManager.
                FindTeamsJoined(actualPlayer.PlayerId,
                spinnerFavoriteSport_et.SelectedItem
-               .GetHashCode()).Result.ToList();
+               .GetHashCode()).ToList();
             if (Teams.Count == 0)
             {
                 teamNameT.Text = "";
                 captainNameT.Text = "";
-                //addPlayerButton.Visibility = ViewStates.Invisible;
                 delteTeamButon.Visibility = ViewStates.Invisible;
                 editTeamButton.Visibility = ViewStates.Invisible;
                 spinnerTeams.Visibility = ViewStates.Invisible;
@@ -441,10 +440,9 @@ namespace AppGeoFit.Droid.Screens
                                             ad.Cancel();
                                             UpdateTeams(view);
                                         }
-                                        catch (AlreadyCaptainOnSport e)
+                                        catch (AlreadyCaptainOnSportException e)
                                         {
                                             IsValid(AutocompleteView, e.Message, errorD, false);
-                                            // Toast.MakeText(this.Context, "SelectOtherCaptain", ToastLength.Long).Show();
                                         }
                                         catch (Exception e)
                                         {

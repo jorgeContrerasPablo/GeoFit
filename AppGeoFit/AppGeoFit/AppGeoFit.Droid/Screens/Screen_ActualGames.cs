@@ -42,10 +42,7 @@ namespace AppGeoFit.Droid.Screens
             {
                 playerGamesList = playerManager.GetActualGames(page, rows, player.PlayerId, sportId);
             }
-            catch (GameNotFoundException ex)
-            {
-                //TODO Aviso no tienes ninguna partida actualmente.
-            }
+            catch (GameNotFoundException ex){}
             catch (Exception ex)
             {
                 Toast.MakeText(ApplicationContext,
@@ -59,10 +56,8 @@ namespace AppGeoFit.Droid.Screens
                     && gameListView.LastVisiblePosition >= gameListView.Count - 1)
                 {
                     int totalGamesCount = playerManager.TotalGamesCount(player.PlayerId, sportId);
-                    if (totalGamesCount > gameListView.Count) //&& !isLoading)
+                    if (totalGamesCount > gameListView.Count)
                     {
-                        //gameListView.AddFooterView(footerView);
-                        //isLoading = true;
                         page = (int)Math.Ceiling((double)totalGamesCount / gameListView.LastVisiblePosition) - 1;
                         playerGamesList.AddRange(playerManager.GetActualGames(page, rows, player.PlayerId, sportId));
                         adapter = new GameArrayAdapter(this, playerGamesList);

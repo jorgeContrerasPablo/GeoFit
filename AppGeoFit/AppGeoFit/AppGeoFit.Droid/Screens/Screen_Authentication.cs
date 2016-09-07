@@ -165,53 +165,5 @@ namespace AppGeoFit.Droid.Screens
 
             return builder.Create();
         }
-
-        /*emailOrNickT.AfterTextChanged += (sender, e) =>
-        {
-            if (!imm.IsAcceptingText && emailOrNickT.Text.ToString().Length == 0)
-            {                 
-                 emailOrNickT.SetError("Email is required", errorEmail);
-            }
-        };
-
-        password.TextChanged += (sender, e) =>
-        {
-            if (password.Text.ToString().Length == 0)
-            {                 
-                password.SetError("Email is required", errorPassword);                    
-            }
-        };*/
-
-        /* To Hide the keyboard
-            InputMethodManager imm = (InputMethodManager)GetSystemService(Context.InputMethodService);
-            imm.HideSoftInputFromWindow(emailOrNickT.WindowToken, 0);
-        */
-        //  emailOrNickT.cle
-        //Keyboard keyboard = new Keyboard();
-
-
-        /*Control del boton return
-
-         public override void OnBackPressed()
-         {
-             if (emailOrNickT.Length() == 0)
-             {
-                 emailOrNickT.SetError("", null);
-                 emailOrNickT.SetError("Email is required", errorEmail);
-             }
-
-             if (password.Length() == 0)
-             {
-                 password.SetError("", null);
-                 password.SetError("Password is required", errorPassword);
-             }
-
-
-          #if DEBUG
-  [assembly: Application(Debuggable=true)]
-  #else
-  [assembly: Application(Debuggable=false)]
-  #endif
-         */
     }
 }

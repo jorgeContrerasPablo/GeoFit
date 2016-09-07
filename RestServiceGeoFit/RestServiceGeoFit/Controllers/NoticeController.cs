@@ -139,7 +139,6 @@ namespace RestServiceGeoFit.Controllers
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
-            //var noticeL = db.Notices.Where(n => n.ReceiverID == parameter1 && n.Accepted == null);
             var receiverId = new SqlParameter("@ReceiverId", parameter1);
             var nowDate = new SqlParameter("@NowDate", DateTime.Now);
             string nativeSQLQuery = @"SELECT *" +

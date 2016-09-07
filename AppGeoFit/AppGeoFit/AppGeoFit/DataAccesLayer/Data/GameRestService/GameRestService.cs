@@ -149,8 +149,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
 
             return responseId;
         }
-        //TODO PLACE
-        public async Task<bool> FindOnTimeAndPlace(int placeId, DateTime startDate, DateTime endDate)
+        public async Task<bool> FindOnTimeAndPlace(int placeId, string startDate, string endDate)
         {
             bool responseSucced = false;
             Uri uri = new Uri(string.Format(url + "Game/FindOnTimeAndPlace/{0}/{1}/{2}", placeId, startDate, endDate));
@@ -173,8 +172,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
 
             return responseSucced;
         }
-        //TODO Coordinates
-        public async Task<bool> FindOnTimeAndPlace(double latitude, double longitude, DateTime startDate, DateTime endDate)
+        public async Task<bool> FindOnTimeAndPlace(double latitude, double longitude, string startDate, string endDate)
         {
             bool responseSucced = false;
             Uri uri = new Uri(string.Format(url + "Game/FindOnTimeAndPlace/{0}/{1}/{2}/{4}", latitude, longitude, startDate, endDate));

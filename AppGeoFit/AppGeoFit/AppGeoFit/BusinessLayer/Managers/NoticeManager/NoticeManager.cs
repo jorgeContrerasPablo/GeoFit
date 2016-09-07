@@ -62,14 +62,14 @@ namespace AppGeoFit.BusinessLayer.Managers.NoticeManager
             return succes;
         }
 
-        public Task<int> CreateNotice(Notice notice)
+        public int CreateNotice(Notice notice)
         {
-            return restService.CreateNoticeAsync(notice);
+            return restService.CreateNoticeAsync(notice).Result;
         }
 
-        public Task<bool> DeleteNotice(int noticeId)
+        public bool DeleteNotice(int noticeId)
         {
-            return restService.DeleteNoticeAsync(noticeId);
+            return restService.DeleteNoticeAsync(noticeId).Result;
         }
 
         public ICollection<Notice> GetAllPendingNotice(int PlayerId)

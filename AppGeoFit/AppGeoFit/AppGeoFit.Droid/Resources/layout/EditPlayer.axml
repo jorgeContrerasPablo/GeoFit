@@ -77,18 +77,28 @@
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="14dp"
             android:layout_marginRight="14dp" />
+        <TextView
+            android:text="Edit password"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_below="@+id/Edit_LabelFavoriteSport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Edit_EditPassWord"
+            android:textColor="#4785F4"
+            android:layout_marginTop="4.0dp" />
         <Button
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Acept"
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:id="@+id/Edit_AceptButton"
-            android:layout_below="@+id/Edit_LabelFavoriteSport"
+            android:layout_below="@+id/Edit_EditPassWord"
             android:gravity="center"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="45.0dp"
             android:layout_marginRight="43.0dp"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="18.0dp" />
     </RelativeLayout>
     <RelativeLayout
         android:minWidth="25px"
@@ -173,6 +183,6 @@
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="45.0dp"
             android:layout_marginRight="43.0dp"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="38.3dp" />
     </RelativeLayout>
 </LinearLayout>

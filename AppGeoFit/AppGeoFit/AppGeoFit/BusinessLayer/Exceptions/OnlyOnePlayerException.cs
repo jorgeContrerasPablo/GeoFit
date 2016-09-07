@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AppGeoFit.BusinessLayer.Exceptions
 {
-    class OnlyOnePlayerException : Exception
+    public class OnlyOnePlayerException : Exception
     {
         public OnlyOnePlayerException(string message) : base(message){ }
 

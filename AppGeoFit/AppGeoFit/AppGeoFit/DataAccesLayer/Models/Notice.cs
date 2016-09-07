@@ -12,9 +12,9 @@ namespace AppGeoFit.DataAccesLayer.Models
 
         public bool? Accepted { get; set; }
 
-        public int MessengerID { get; set; }
+        public int? MessengerID { get; set; }
 
-        public int ReceiverID { get; set; }
+        public int? ReceiverID { get; set; }
 
         public int SportID { get; set; }
 

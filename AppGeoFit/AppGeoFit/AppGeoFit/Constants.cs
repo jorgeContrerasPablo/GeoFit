@@ -14,10 +14,13 @@ namespace AppGeoFit
         public const string TEAM_ADD_PLAYER = "Team add player";
         public const string PLAYER_ADD_TO_A_GAME = "Player add to a game";
         public const string FEEDBACK_GAME = "You can comment a game";
+        public const string GAME_DELETED = "Game has been deleted";
+        public const string GAME_UPDATED = "Game has been updated";
+        public const string TEAM_DELETED = "Your team has been deleted";
 
         //public readonly static string RestUrl = "http://10.0.2.2:51830/api/";
         // Credentials that are hard coded into the REST service
-        //TODO
+
         // public static string Username = "Xamarin";
         // public static string Password = "Pa$$w0rd";
 

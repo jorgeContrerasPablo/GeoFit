@@ -89,7 +89,6 @@ namespace AppGeoFit.Droid.Screens
                 leaveGameB = FindViewById<ImageButton>(Resource.Id.GameDetails_Creator_LeaveB);
                 isCreator = true;
             }
-            //android: textColor = "#4785F4"
             startDateEt.Text = game.StartDate.Day + "/" + game.StartDate.Month + "/" + game.StartDate.Year
                 + "  " + game.StartDate.Hour + ":" + game.StartDate.Minute;            
             endDateEt.Text = game.EndDate.Day + "/" + game.EndDate.Month + "/" + game.EndDate.Year
@@ -256,18 +255,5 @@ namespace AppGeoFit.Droid.Screens
             endDateEt.Text = game.EndDate.Day + "/" + game.EndDate.Month + "/" + game.EndDate.Year
                 + "  " + game.EndDate.Hour + ":" + game.EndDate.Minute;
         }
-
-        /*public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
-        {
-            if (keyCode == Keycode.Back)
-            {
-                var mainActivity = new Intent(ApplicationContext, typeof(FragmentActivity_MainActivity));
-                mainActivity.PutExtra("toOpen", "TabGame");
-                mainActivity.SetFlags(ActivityFlags.ClearTop);
-                StartActivity(mainActivity);
-                return true;
-            }
-            return false;
-        }*/
     }
 }

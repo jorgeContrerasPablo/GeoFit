@@ -15,6 +15,7 @@ namespace RestServiceGeoFit.Controllers
     public class Players2Controller : BaseApiController
     {
         private AppGeoFitDBContext db = new AppGeoFitDBContext("name=AppGeoFitDBContext");
+        string dataBase = "GeoFitDB";
 
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetPlayer(int parameter1)
@@ -23,7 +24,7 @@ namespace RestServiceGeoFit.Controllers
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
-                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");               
             }
 
             player = db.Players.Find(parameter1);
@@ -43,11 +44,12 @@ namespace RestServiceGeoFit.Controllers
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
             }
 
             string nativeSQLQuery = @"SELECT PlayerID, Password, PlayerNick, PlayerName, LastName," +
                                     " PhoneNum, PlayerMail, PhotoID, Level, MedOnTime, FavoriteSportID, PlayerSesion " +
-                                    "FROM GeoFitDB.dbo.Player ";
+                                    "FROM " + dataBase+".dbo.Player ";
             var players = db.Players.SqlQuery(nativeSQLQuery);
 
             if (!players.Any())
@@ -211,14 +213,15 @@ namespace RestServiceGeoFit.Controllers
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
             }
             var playerId = new SqlParameter("@PlayerId", parameter1);
             var sportId = new SqlParameter("@SportId", parameter2);
             string nativeSQLQuery = @"SELECT PlayerID, TeamID, Captain " +
-                                    "FROM GeoFitDB.dbo.Joined " +
+                                    "FROM "+dataBase+".dbo.Joined " +
                                     "WHERE PlayerID = @PlayerId AND Captain = 1 " +
                                              "AND TeamID in ( SELECT TeamID " +
-                                                     "FROM GeoFitDB.dbo.Team " +
+                                                     "FROM "+dataBase+".dbo.Team " +
                                                      "WHERE SportID = @SportId)";
 
             var joined = db.Joineds.SqlQuery(nativeSQLQuery, playerId, sportId).FirstOrDefault<Joined>(); ;
@@ -237,14 +240,15 @@ namespace RestServiceGeoFit.Controllers
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
             }
 
             var playerId = new SqlParameter("@PlayerId", parameter1);
             var sportId = new SqlParameter("@SportId", parameter2);
             string nativeSQLQuery = @"SELECT TeamID, TeamName, ColorTeam, EmblemID, Level, SportID " +
-                                    "FROM GeoFitDB.dbo.Team " +
+                                    "FROM "+dataBase+".dbo.Team " +
                                     "WHERE SportID = @SportId AND TeamID in (SELECT TeamID " +
-                                                                            "FROM GeoFitDB.dbo.Joined " +
+                                                                            "FROM "+dataBase+".dbo.Joined " +
                                                                             "WHERE PlayerID = @PlayerId);";
             var listTeam = db.Teams.SqlQuery(nativeSQLQuery, playerId, sportId);
 
@@ -262,14 +266,15 @@ namespace RestServiceGeoFit.Controllers
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
             }
             var playerNick = new SqlParameter("@PlayerNick", parameter1);
             var sportId = new SqlParameter("@TeamId", parameter2);
             string nativeSQLQuery = @"SELECT PlayerID, Password, PlayerNick, PlayerName, LastName,"+
                                     " PhoneNum, PlayerMail, PhotoID, Level, MedOnTime, FavoriteSportID, PlayerSesion " +
-                                    "FROM GeoFitDB.dbo.Player " +
+                                    "FROM " + dataBase+".dbo.Player " +
                                     "WHERE PlayerNick = @playerNick AND PlayerID in (SELECT PlayerID " +
-                                                                            "FROM GeoFitDB.dbo.Joined " +
+                                                                            "FROM "+dataBase+".dbo.Joined " +
                                                                             "WHERE TeamID = @TeamId);";
             var player = db.Players.SqlQuery(nativeSQLQuery, playerNick, sportId).FirstOrDefault<Player>();
 
@@ -288,6 +293,7 @@ namespace RestServiceGeoFit.Controllers
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
             }
 
             var playerId = new SqlParameter("@PlayerId", parameter3);
@@ -295,9 +301,9 @@ namespace RestServiceGeoFit.Controllers
             var sportId = new SqlParameter("@SportId", parameter4);
 
             string nativeSQLQuery = @"SELECT GameID, StartDate, EndDate, PlayersNum, Longitude, Latitude, Team1ID, Team2ID, PlaceID, CreatorID, SportID" +
-                                    " FROM GeoFitDB.dbo.Game" +
+                                    " FROM "+dataBase+".dbo.Game" +
                                     " WHERE SportID = @SportId AND StartDate > @ActualDate AND GameID IN( SELECT GameID" +
-                                    " FROM GeoFitDB.dbo.Participate" +
+                                    " FROM "+dataBase+".dbo.Participate" +
                                     " WHERE PlayerID = @PlayerId)"+
                                     " ORDER BY StartDate;";
 
@@ -326,15 +332,16 @@ namespace RestServiceGeoFit.Controllers
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
             }
             var playerId = new SqlParameter("@PlayerId", parameter1);
             var actualDate = new SqlParameter("@ActualDate", DateTime.Now);
             var sportId = new SqlParameter("@SportId", parameter2);
 
             string nativeSQLQuery = @"SELECT GameID " +
-                                    " FROM GeoFitDB.dbo.Game" +
+                                    " FROM "+dataBase+".dbo.Game" +
                                     " WHERE SportID = @SportId AND StartDate > @ActualDate AND GameID IN( SELECT GameID" +
-                                    " FROM GeoFitDB.dbo.Participate" +
+                                    " FROM "+dataBase+".dbo.Participate" +
                                     " WHERE PlayerID = @PlayerId)";
 
             var numGamesSqlReturn = db.Database.SqlQuery<int>(nativeSQLQuery, playerId, actualDate, sportId).Count();

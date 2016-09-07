@@ -183,7 +183,7 @@ namespace AppGeoFit.Droid.Screens
             {
                 try
                 {
-                    appSession.setPlayer(playerManager.GetPlayer(appSession.getPlayer().PlayerId).Result);
+                    appSession.setPlayer(playerManager.GetPlayer(appSession.getPlayer().PlayerId));
                 }
                 catch (AggregateException aex)
                 {

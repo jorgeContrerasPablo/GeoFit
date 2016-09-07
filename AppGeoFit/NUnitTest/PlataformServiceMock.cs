@@ -1,4 +1,6 @@
-﻿using AppGeoFit.BusinessLayer.Managers.PlayerManager;
+﻿using AppGeoFit.BusinessLayer.Managers.GameManager;
+using AppGeoFit.BusinessLayer.Managers.PlayerManager;
+using AppGeoFit.BusinessLayer.Managers.TeamManager;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -21,8 +23,10 @@ namespace NUnitTest
         Assembly[] IPlatformServices.GetAssemblies()
         {
             // Recuperamos el ensamblador que queremos para las pruebas.
-            Assembly[] assembly = new Assembly[1];
+            Assembly[] assembly = new Assembly[3];
             assembly[0] = Assembly.GetAssembly(typeof(PlayerManager));
+            assembly[1] = Assembly.GetAssembly(typeof(TeamManager));
+            assembly[2] = Assembly.GetAssembly(typeof(GameManager));
 
             return assembly;
         }

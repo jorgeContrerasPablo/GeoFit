@@ -38,7 +38,6 @@ namespace AppGeoFit.Droid.Screens
             IGameManager gameManager = Xamarin.Forms.DependencyService.Get<IGameManager>().InitiateServices(false);
             AppSession appSession = new AppSession(ApplicationContext);
             actualPlayer = appSession.getPlayer();            
-            //ITeamManager teamManager = Xamarin.Forms.DependencyService.Get<ITeamManager>().InitiateServices(false);
             Team actualTeam = playerManager.FindTeamCaptainOnSport(actualPlayer.PlayerId, actualSportId);
             ListView playerListView = FindViewById<ListView>(Resource.Id.SelectPlayers_Captain_playerListView);
             Button aceptButton = FindViewById<Button>(Resource.Id.SelectPlayers_Captain_AceptButton);

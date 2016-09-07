@@ -36,6 +36,7 @@ namespace AppGeoFit.Droid.Screens
             TextView EmailT = view.FindViewById<TextView>(Resource.Id.Email);
             TextView OnTime = view.FindViewById<TextView>(Resource.Id.MedOnTime);
             RatingBar rating = view.FindViewById<RatingBar>(Resource.Id.ratingBar);
+            TextView showComments = view.FindViewById<TextView>(Resource.Id.ShowCommentsLink);
 
             //Indicar valores en pestaña profile mediante el usuario de la sesion
             player = appSession.getPlayer();
@@ -49,20 +50,21 @@ namespace AppGeoFit.Droid.Screens
             EmailT.Text = player.PlayerMail;
             rating.Rating = (int)player.Level;
             OnTime.Text = string.Format("{0:P2}", player.MedOnTime);
-           // OnTime.Text = (player.MedOnTime * 100).ToString().Substring(3);
+
+            //Se abrírá la ventana para visiualizar los comentarios
+            showComments.Click += (o, e) =>
+            {
+                var screen_Comments = new Intent(Context, typeof(Screen_Comments));
+                screen_Comments.PutExtra("playerId", player.PlayerId);
+                StartActivity(screen_Comments);
+            };
 
             //Button Edit
             ImageButton buttonEdit = view.FindViewById<ImageButton>(Resource.Id.imageButtonEdit);
-            /*Drawable edit = ContextCompat.GetDrawable(this, Resource.Drawable.Edit);
-            edit.SetBounds(0, 0, edit.IntrinsicWidth, edit.IntrinsicHeight);
-            buttonEdit.SetImageDrawable(edit);*/
             buttonEdit.Click += (o, e) => Activity.StartActivity(typeof(Screen_EditPlayer));
 
             //Button Trash
             ImageButton buttonTrash = view.FindViewById<ImageButton>(Resource.Id.imageButtonDelete);
-            /*Drawable trash = ContextCompat.GetDrawable(this, Resource.Drawable.Trash);
-            trash.SetBounds(0, 0, trash.IntrinsicWidth, trash.IntrinsicHeight);
-            buttonTrash.SetImageDrawable(trash);*/
            Android.App.AlertDialog baDelete;
             Button baDeletePositiveButton;
             Button baDeleteNegativeButton;

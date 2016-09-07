@@ -76,7 +76,6 @@ namespace AppGeoFit.Droid.Screens
         public override void OnCreateContextMenu(IContextMenu menu, View vValue, IContextMenuContextMenuInfo menuInfo)
         {
             base.OnCreateContextMenu(menu, vValue, menuInfo);
-            //var info = (AdapterView.AdapterContextMenuInfo)menuInfo;
             MenuInflater inflater = new MenuInflater(this);
             inflater.Inflate(Resource.Menu.MenuNotice, menu);
         }
@@ -129,7 +128,7 @@ namespace AppGeoFit.Droid.Screens
                     noticeAD.Show();
                     noticeAD.GetButton((int)DialogButtonType.Positive).Click += (oDb, eDb) =>
                     {
-                        teamManager.AddPlayer(notice.ReceiverID, playerManager.FindTeamCaptainOnSport(notice.MessengerID, notice.SportID).TeamID);
+                        teamManager.AddPlayer((int)notice.ReceiverID, playerManager.FindTeamCaptainOnSport((int)notice.MessengerID, notice.SportID).TeamID);
                         notice.Accepted = true;
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
@@ -168,6 +167,60 @@ namespace AppGeoFit.Droid.Screens
                     screen_FeedBack.PutExtra("gameId", noiticeId);
                     screen_FeedBack.PutExtra("noticeId", notice.NoticeID);
                     StartActivity(screen_FeedBack);
+                    break;
+                case Constants.GAME_DELETED:
+                    builder.SetMessage("A game you are joined, has been delted.");
+                    noticeAD = builder.Create();
+                    noticeAD.Show();
+                    noticeAD.GetButton((int)DialogButtonType.Positive).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        noticeManager.UpdateNotice(notice);
+                        noticeAD.Cancel();
+                    };
+                    noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        noticeManager.UpdateNotice(notice);
+                        noticeAD.Cancel();
+                    };
+                    updateNoticeList();
+                    break;
+                case Constants.GAME_UPDATED:
+                    builder.SetMessage("The game at: "+notice.Game.Place.Direction+" has been updated.");
+                    noticeAD = builder.Create();
+                    noticeAD.Show();
+                    noticeAD.GetButton((int)DialogButtonType.Positive).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        noticeManager.UpdateNotice(notice);
+                        noticeAD.Cancel();
+                    };
+                    noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        noticeManager.UpdateNotice(notice);
+                        noticeAD.Cancel();
+                    };
+                    updateNoticeList();
+                    break;
+                case Constants.TEAM_DELETED:
+                    builder.SetMessage("You have been removed for a team");
+                    noticeAD = builder.Create();
+                    noticeAD.Show();
+                    noticeAD.GetButton((int)DialogButtonType.Positive).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        noticeManager.UpdateNotice(notice);
+                        noticeAD.Cancel();
+                    };
+                    noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        noticeManager.UpdateNotice(notice);
+                        noticeAD.Cancel();
+                    };
+                    updateNoticeList();
                     break;
                 default:
                     break;                

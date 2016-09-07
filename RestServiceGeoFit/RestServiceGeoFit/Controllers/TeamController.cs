@@ -13,7 +13,7 @@ namespace RestServiceGeoFit.Controllers
     public class TeamController : BaseApiController
     {
         private AppGeoFitDBContext db = new AppGeoFitDBContext("name=AppGeoFitDBContext");
-
+        string dataBase = "GeoFitDB";
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetTeam(int parameter1)
         {
@@ -175,12 +175,13 @@ namespace RestServiceGeoFit.Controllers
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
             }
             var TeamId = new SqlParameter("@TeamId", parameter1);
             string nativeSQLQuery = @"SELECT PlayerID, Password, PlayerNick, PlayerName, LastName, PhoneNum, PlayerMail, PhotoID, Level, MedOnTime, FavoriteSportID, PlayerSesion " +
-                                    "FROM GeoFitDB.dbo.Player " +
+                                    "FROM "+dataBase+ ".dbo.Player " +
                                     "WHERE PlayerID = (SELECT PlayerID " +
-                                                       "FROM GeoFitDB.dbo.Joined " +
+                                                       "FROM "+dataBase+".dbo.Joined " +
                                                        "WHERE TeamID = @TeamId AND Captain = 1);";
             var player = db.Players.SqlQuery(nativeSQLQuery, TeamId).FirstOrDefault<Player>();
             if (player == null)
@@ -204,9 +205,9 @@ namespace RestServiceGeoFit.Controllers
             var type = new SqlParameter("@type", parameter3);
             string nativeSQLQuery = @"SELECT PlayerID, Password, PlayerNick, PlayerName, LastName," +
                                     " PhoneNum, PlayerMail, PhotoID, Level, MedOnTime, FavoriteSportID, PlayerSesion " +
-                                    "FROM GeoFitDB.dbo.Player " + 
+                                    "FROM "+dataBase+".dbo.Player " + 
                                     "WHERE PlayerID IN (SELECT ReceiverID "+ 
-                                                        "FROM GeoFitDB.dbo.Notice "+
+                                                        "FROM "+dataBase+".dbo.Notice "+
                                                         "WHERE MessengerID = @MessengerId AND " +
                                                         "SportID = @SportId AND Type = @type "+
                                                         "AND Accepted IS NULL)";

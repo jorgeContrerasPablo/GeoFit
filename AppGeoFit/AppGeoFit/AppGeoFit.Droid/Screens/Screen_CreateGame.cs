@@ -239,7 +239,11 @@ namespace AppGeoFit.Droid.Screens
                 {
                     Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
                 }
-                catch(Exception ex)
+                catch (GameOnTimeAndPlaceException ex)
+                {
+                    Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                }
+                catch (Exception ex)
                 {
                     Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
                 }
@@ -326,8 +330,7 @@ namespace AppGeoFit.Droid.Screens
 
                         aceptButton.Click += (oc, ec) =>
                         {
-                            addTeam = false;                            
-                            //TODO guardar equipo para vincularlo.
+                            addTeam = false;
                             finalSelectList.Clear();
                             finalSelectList.Add(actualPlayer);
                             finalSelectList.AddRange(SelectedList_Individual);
@@ -344,9 +347,6 @@ namespace AppGeoFit.Droid.Screens
 
                         };
 
-                        /* var screen_CreateGame_Captain = new Intent(this, typeof(Screen_SelectPlayers_Captain));
-                         screen_CreateGame_Captain.PutExtra("sportId", actualSportId);
-                         StartActivity(screen_CreateGame_Captain);*/
                     }
                     return true;
                 case Resource.Id.MenuCTIndividual:
@@ -372,7 +372,7 @@ namespace AppGeoFit.Droid.Screens
                             try
                             {
                                 int playerId = playerManager.FindPlayerByNick(autoCompleteTextView.Text);
-                                SelectedList_Individual.Add(playerManager.GetPlayer(playerId).Result);
+                                SelectedList_Individual.Add(playerManager.GetPlayer(playerId));
                                 finalSelectList.Clear();
                                 finalSelectList.Add(actualPlayer);
                                 finalSelectList.AddRange(SelectedList_Individual);
@@ -388,9 +388,6 @@ namespace AppGeoFit.Droid.Screens
                                 IsValid(autoCompleteTextView, ex.Message, errorD, false);
                             }
                     };
-                    /*  var screen_CreateGame_Individual = new Intent(this, typeof(Screen_SelectPlayers_Individual));
-                      screen_CreateGame_Individual.PutExtra("sportId", actualSportId);
-                      StartActivity(screen_CreateGame_Individual);*/
                     break;
                 case Resource.Id.CtxLstProfile:
                     Player player = finalArrayAdapter.GetItem(info.Position);

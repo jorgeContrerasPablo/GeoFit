@@ -52,6 +52,31 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
             return game;
         }
 
+        public int TeamGameOnTime(int teamId, Game game)
+        {
+            int onTimeGameId = 0;
+            try
+            {
+                onTimeGameId = gameRestService.FindTeamOnTime(teamId,
+                    game.StartDate.ToString("yyyyMMddHHmmss"),
+                    game.EndDate.ToString("yyyyMMddHHmmss")).Result;
+                throw new GameOnTimeException("Your team has other game at this time");
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is GameNotFoundException)
+                    {
+                        throw new GameNotFoundException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return onTimeGameId;
+        }
+
         public int CreateGame(Game game)
         {
             DateTime timeNow = DateTime.Now;
@@ -64,8 +89,7 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
             }
             try
             {
-                //TODO comprobacion tambien del equipo.
-                int onTimeGameId = gameRestService.FindOnTime(game.CreatorID, game.StartDate.ToString("yyyyMMddHHmmss"), game.EndDate.ToString("yyyyMMddHHmmss")).Result;
+                int onTimeGameId = gameRestService.FindOnTime((int)game.CreatorID, game.StartDate.ToString("yyyyMMddHHmmss"), game.EndDate.ToString("yyyyMMddHHmmss")).Result;
                 throw new GameOnTimeException("You have an other game in this time");
             }
             catch (AggregateException aex)
@@ -77,27 +101,43 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
                         throw new Exception(ex.Message);
                 }
             }
-            //TODO COORDINATES
-        /* try
+            if (game.Team1ID != null)
+            {
+                try
+                {
+                    int onTimeGameTeamId = gameRestService.FindTeamOnTime((int)game.Team1ID,
+                        game.StartDate.ToString("yyyyMMddHHmmss"),
+                        game.EndDate.ToString("yyyyMMddHHmmss")).Result;
+                    throw new GameOnTimeException("Your team has other game at this time");
+                }
+                catch (AggregateException aex)
+                {
+                    foreach (var ex in aex.Flatten().InnerExceptions)
+                    {
+                        if (ex is GameNotFoundException){}
+                        else
+                            throw new Exception(ex.Message);
+                    }
+                }
+            }
+            try
             {
                 bool onTimePlace;
                 if (game.PlaceID != null)
-                    onTimePlace = gameRestService.FindOnTimeAndPlace((int) game.PlaceID, game.StartDate, game.EndDate).Result;
+                    onTimePlace = gameRestService.FindOnTimeAndPlace((int) game.PlaceID, game.StartDate.ToString("yyyyMMddHHmmss"), game.EndDate.ToString("yyyyMMddHHmmss")).Result;
                 else
-                    onTimePlace = gameRestService.FindOnTimeAndPlace((double)game.Latitude,(double) game.Longitude, game.StartDate, game.EndDate).Result;
+                    onTimePlace = gameRestService.FindOnTimeAndPlace((double)game.Latitude,(double) game.Longitude, game.StartDate.ToString("yyyyMMddHHmmss"), game.EndDate.ToString("yyyyMMddHHmmss")).Result;
+                throw new GameOnTimeAndPlaceException("there are an other game at this place on same time");
             }
             catch (AggregateException aex)
             {
                 foreach (var ex in aex.Flatten().InnerExceptions)
                 {
-                    if (ex is GameOnTimeAndPlaceException)
-                    {
-                        throw new GameOnTimeAndPlaceException(ex.Message);
-                    }
+                    if (ex is GameNotFoundException){}
                     else
                         throw new Exception(ex.Message);
                 }
-            }*/
+            }
             try
             {
                 gameIdReturn = gameRestService.CreateGameAsync(game).Result;
@@ -148,8 +188,7 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
             }
             try
             {
-                //TODO comprobacion tambien del equipo.
-                int onTimeGameId = gameRestService.FindOnTime(game.CreatorID, game.StartDate.ToString("yyyyMMddHHmmss"), game.EndDate.ToString("yyyyMMddHHmmss")).Result;
+                int onTimeGameId = gameRestService.FindOnTime((int)game.CreatorID, game.StartDate.ToString("yyyyMMddHHmmss"), game.EndDate.ToString("yyyyMMddHHmmss")).Result;
                 if(game.GameID != onTimeGameId)
                 {
                     throw new GameOnTimeException("You have an other game in this time");
@@ -165,27 +204,47 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
                         throw new Exception(ex.Message);
                 }
             }
-            //TODO COORDINATES
-            /* try
+
+            if (game.Team1ID != null)
+            {
+                try
                 {
-                    bool onTimePlace;
-                    if (game.PlaceID != null)
-                        onTimePlace = gameRestService.FindOnTimeAndPlace((int) game.PlaceID, game.StartDate, game.EndDate).Result;
-                    else
-                        onTimePlace = gameRestService.FindOnTimeAndPlace((double)game.Latitude,(double) game.Longitude, game.StartDate, game.EndDate).Result;
+                    int onTimeGameTeamId = gameRestService.FindTeamOnTime((int)game.Team1ID,
+                        game.StartDate.ToString("yyyyMMddHHmmss"),
+                        game.EndDate.ToString("yyyyMMddHHmmss")).Result;
+                    if (game.GameID != onTimeGameTeamId)
+                    {
+                        throw new GameOnTimeException("Your team has other game at this time");
+                    }
                 }
                 catch (AggregateException aex)
                 {
                     foreach (var ex in aex.Flatten().InnerExceptions)
                     {
-                        if (ex is GameOnTimeAndPlaceException)
-                        {
-                            throw new GameOnTimeAndPlaceException(ex.Message);
-                        }
+                        if (ex is GameNotFoundException) { }
                         else
                             throw new Exception(ex.Message);
                     }
-                }*/
+                }
+            }
+            try
+            {
+                bool onTimePlace;
+                if (game.PlaceID != null)
+                    onTimePlace = gameRestService.FindOnTimeAndPlace((int)game.PlaceID, game.StartDate.ToString("yyyyMMddHHmmss"), game.EndDate.ToString("yyyyMMddHHmmss")).Result;
+                else
+                    onTimePlace = gameRestService.FindOnTimeAndPlace((double)game.Latitude, (double)game.Longitude, game.StartDate.ToString("yyyyMMddHHmmss"), game.EndDate.ToString("yyyyMMddHHmmss")).Result;
+                throw new GameOnTimeAndPlaceException("there are an other game at this place on same time");
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is GameNotFoundException) { }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
             try
             {
                 updateResult = gameRestService.UpdateGameAsync(game).Result;
@@ -197,8 +256,7 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
                     throw new Exception(ex.Message);
                 }
             }
-            //TODO Avisos a los jugadores. GameID
-         /*   Notice notice = new Notice();
+            Notice notice = new Notice();
             foreach (Player p in game.Players)
             {
                 if (p.PlayerId != game.CreatorID)
@@ -206,16 +264,17 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
                     notice.MessengerID = game.CreatorID;
                     notice.ReceiverID = p.PlayerId;
                     notice.SportID = game.SportId;
-                    notice.Type = Constants.PLAYER_ADD_TO_A_GAME;
+                    notice.Type = Constants.GAME_UPDATED;
                     noticeRestService.CreateNoticeAsync(notice);
                 }
-            }*/
+            }
             return updateResult;
         }
 
         public bool DeleteGame(int gameId)
         {
             bool isDelete = false;
+            Game game = gameRestService.GetGameAsync(gameId).Result;            
             try
             {
                 isDelete = gameRestService.DeleteGameAsync(gameId).Result;
@@ -225,6 +284,19 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
                 foreach (var ex in aex.Flatten().InnerExceptions)
                 {
                     throw new Exception(ex.Message);
+                }
+            }
+            //Avisos a los jugadores.
+            foreach (Player p in game.Players)
+            {
+                Notice notice = new Notice();
+                notice.MessengerID = game.CreatorID;
+                notice.ReceiverID = p.PlayerId;
+                notice.SportID = game.SportId;
+                if (p.PlayerId != game.CreatorID)
+                {
+                    notice.Type = Constants.GAME_DELETED;
+                    noticeRestService.CreateNoticeAsync(notice);
                 }
             }
             return isDelete;
@@ -310,11 +382,12 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
                 foreach (var ex in aex.Flatten().InnerExceptions)
                 {
                     if (ex is GameNotFoundException) { }
-                    if(ex is PlayerOnGameException)
-                        throw new PlayerOnGameException("You are already joining this game");
                     else {
-                        if (ex is Exception)
+                        if (ex is PlayerOnGameException)
+                            throw new PlayerOnGameException("You are already joining this game");
+                        else {
                             throw new Exception(ex.Message);
+                        }
                     }
                 }
             }
@@ -324,7 +397,6 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
             }            
             try
             {
-                //TODO ARREGLAR ESTO Y LLAMAR A ADDPLAYERS -> esto no es una peticion get.
                playerAdd = gameRestService.AddPlayer(gameId, playerId).Result;
             }
             catch (AggregateException aex)
@@ -526,29 +598,6 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
                 {
                     if (ex is GameNotFoundException)
                     {
-                        throw new GameNotFoundException(ex.Message);
-                    }
-                    else
-                        throw new Exception(ex.Message);
-                }
-            }
-            return onTimeGameId;
-        }
-        public int TeamGameOnTime(int teamId, Game game)
-        {
-            int onTimeGameId = 0;
-            try
-            {
-                onTimeGameId = gameRestService.FindTeamOnTime(teamId, 
-                    game.StartDate.ToString("yyyyMMddHHmmss"),
-                    game.EndDate.ToString("yyyyMMddHHmmss")).Result;
-                throw new GameOnTimeException("Your team has other game at this time");
-            }
-            catch (AggregateException aex)
-            {
-                foreach (var ex in aex.Flatten().InnerExceptions)
-                {
-                    if (ex is GameNotFoundException){
                         throw new GameNotFoundException(ex.Message);
                     }
                     else

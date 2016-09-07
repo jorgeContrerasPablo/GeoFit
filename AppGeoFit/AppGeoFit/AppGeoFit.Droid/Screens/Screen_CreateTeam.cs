@@ -98,7 +98,7 @@ namespace AppGeoFit.Droid.Screens
                     {
                         okName = IsValid(teamNameET, exN.Message, errorD, false);
                     }
-                    catch (AlreadyCaptainOnSport ex)
+                    catch (AlreadyCaptainOnSportException ex)
                     {
                         Toast.MakeText(this, ex.Message, ToastLength.Long).Show();
                     }

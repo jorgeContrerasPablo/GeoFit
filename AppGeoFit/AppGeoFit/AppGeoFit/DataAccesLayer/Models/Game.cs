@@ -33,7 +33,7 @@ namespace AppGeoFit.DataAccesLayer.Models
 
         public int? PlaceID { get; set; }
 
-        public int CreatorID { get; set; }
+        public int? CreatorID { get; set; }
 
         public int SportId { get; set; }
 

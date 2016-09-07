@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AppGeoFit.BusinessLayer.Exceptions
 {
-    class MaxPlayerOnTeamException : Exception
+    public class MaxPlayerOnTeamException : Exception
     {
         public MaxPlayerOnTeamException(string message) : base(message){ }
     }

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AppGeoFit.DataAccesLayer.Data.GameRestService.Exceptions
 {
-    class PlaceNotFoundException : Exception
+    public class PlaceNotFoundException : Exception
     {
         public PlaceNotFoundException(string message) : base(message) { }
 
