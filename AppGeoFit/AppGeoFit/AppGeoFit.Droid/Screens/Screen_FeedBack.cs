@@ -79,7 +79,7 @@ namespace AppGeoFit.Droid.Screens
             {
                 place.SetTextColor(Color.ParseColor("#4785F4"));
             }
-                game.Click += (o, e) =>
+            game.Click += (o, e) =>
             {
                 AlertDialog dialogProfile = CreateAlertDialog(Resource.Layout.GameDetails_NoCreator, this);
                 dialogProfile.Show();

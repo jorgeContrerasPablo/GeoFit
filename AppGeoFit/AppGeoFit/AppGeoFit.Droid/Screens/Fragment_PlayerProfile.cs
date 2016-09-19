@@ -13,6 +13,11 @@ using AppGeoFit.DataAccesLayer.Models;
 using AppGeoFit.BusinessLayer.Managers;
 using Android.Support.V4.App;
 using AppGeoFit.BusinessLayer.Managers.PlayerManager;
+using Android.Graphics;
+using AppGeoFit.BusinessLayer.Managers.FeedBackManager;
+using AppGeoFit.DataAccesLayer.Data.GameRestService.Exceptions;
+using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
+using AppGeoFit.DataAccesLayer.Data.TeamRestService.Exceptions;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -29,6 +34,7 @@ namespace AppGeoFit.Droid.Screens
             AppSession appSession = new AppSession(Activity.ApplicationContext);
             FragmentActivity_MainActivity myActivity = (FragmentActivity_MainActivity)Activity;
             IPlayerManager playerManager = myActivity.playerManager;
+            IFeedBackManager feedBackManager = myActivity.feedBackManager;
             TextView NameT = view.FindViewById<TextView>(Resource.Id.Name);
             TextView NickT = view.FindViewById<TextView>(Resource.Id.Nick);
             TextView LastNameT = view.FindViewById<TextView>(Resource.Id.LastName);
@@ -52,12 +58,23 @@ namespace AppGeoFit.Droid.Screens
             OnTime.Text = string.Format("{0:P2}", player.MedOnTime);
 
             //Se abrírá la ventana para visiualizar los comentarios
-            showComments.Click += (o, e) =>
+            try
             {
-                var screen_Comments = new Intent(Context, typeof(Screen_Comments));
-                screen_Comments.PutExtra("playerId", player.PlayerId);
-                StartActivity(screen_Comments);
-            };
+                if (feedBackManager.TotalPlayerCommentsCount((int)player.PlayerId) > 0)
+                {
+                    showComments.SetTextColor(Color.ParseColor("#4785F4"));
+                    showComments.Click += (o, e) =>
+                    {
+                        var screen_Comments = new Intent(Context, typeof(Screen_Comments));
+                        screen_Comments.PutExtra("playerId", player.PlayerId);
+                        StartActivity(screen_Comments);
+                    };
+                }
+            }
+            catch(Exception ex)
+            {
+                Toast.MakeText(Activity.ApplicationContext, ex.Message, ToastLength.Short).Show();
+            }            
 
             //Button Edit
             ImageButton buttonEdit = view.FindViewById<ImageButton>(Resource.Id.imageButtonEdit);
@@ -78,10 +95,33 @@ namespace AppGeoFit.Droid.Screens
                 baDeleteNegativeButton = baDelete.GetButton((int)DialogButtonType.Negative);
                 baDeletePositiveButton.Click += (oc, ec) =>
                 {
-                    playerManager.DeletePlayer(player.PlayerId);
-                    appSession.deletePlayer();
-                    Activity.StartActivity(typeof(Screen_Authentication));
-                    Activity.Finish();
+                    try
+                    {
+                        playerManager.DeletePlayer(player.PlayerId);
+                        appSession.deletePlayer();
+                        Activity.StartActivity(typeof(Screen_Authentication));
+                        Activity.Finish();
+                    }
+                    catch(GameNotFoundException ex)
+                    {
+                        Toast.MakeText(Activity.ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }
+                    catch (PlayerNotFoundException ex)
+                    {
+                        Toast.MakeText(Activity.ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }
+                    catch (TeamNotFoundException ex)
+                    {
+                        Toast.MakeText(Activity.ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }
+                    catch (NotJoinedException ex)
+                    {
+                        Toast.MakeText(Activity.ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }
+                    catch (Exception ex)
+                    {
+                        Toast.MakeText(Activity.ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }
                 };
             };           
             return view;

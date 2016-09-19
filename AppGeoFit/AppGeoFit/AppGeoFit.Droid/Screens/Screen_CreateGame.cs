@@ -18,6 +18,7 @@ using AppGeoFit.DataAccesLayer.Data.GameRestService.Exceptions;
 using AppGeoFit.Droid.Adapters;
 using AppGeoFit.BusinessLayer.Managers.FeedBackManager;
 using Android.Graphics;
+using Android.Util;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -69,14 +70,14 @@ namespace AppGeoFit.Droid.Screens
             DatePicker datePicker;
             AlertDialog dialogDate;
             MyOnDateChangeListener changeListener = new MyOnDateChangeListener();
-            changeListener.setDate(date);
             selectDate.Click += (o, e) =>
             {
                 dialogDate = CreateAlertDialog(Resource.Layout.dialog_DatePicker, this);
                 dialogDate.Show();
                 datePicker = dialogDate.FindViewById<DatePicker>(Resource.Id.datePicker1);
                 changeListener = new MyOnDateChangeListener(dialogDate, selectDate, date);
-                datePicker.Init(date.Year, date.Month, date.Day, changeListener);        
+                changeListener.setDate(date);
+                datePicker.Init(date.Year, date.Month -1, date.Day, changeListener);
             };
             #endregion
             #region timePicker
@@ -122,53 +123,26 @@ namespace AppGeoFit.Droid.Screens
             };
             #endregion
             #region SpinnerPlaces
-
-            Spinner placeSpinner = FindViewById<Spinner>(Resource.Id.CreateGame_SpinnerPlaces);
             List<Place> places = gameManager.GetPlaces(actualSportId);
+            PlaceSpinner placeSpinner = FindViewById<PlaceSpinner>(Resource.Id.CreateGame_SpinnerPlaces);
+           // PlaceSpinner placeSpinner = new PlaceSpinner(normalPlaceSpinner.Context);
             ArrayAdapter<Place> adapter_place = new ArrayAdapter<Place>(this, Android.Resource.Layout.SimpleSpinnerItem, places);
             placeSpinner.Adapter = adapter_place;
-            bool firstTimeSpinner_Place = true;
+
+            int actualPositionSpinner = 0;
+            Place placeSelected = new Place();
+            AlertDialog dialogPlaceDetails = CreateAlertDialog(Resource.Layout.PlaceDetails, this);
+            int timesOnSpinner = 0;
+            game.PlaceID = places.ElementAt(0).PlaceID;
             placeSpinner.ItemSelected += (o, e) =>
-            {                
-                Place placeSelected = places.ElementAt(e.Position);
-                if (!firstTimeSpinner_Place)
+            {
+                actualPositionSpinner = placeSpinner.SelectedItemPosition;
+                placeSelected = places.ElementAt(actualPositionSpinner);
+                if (timesOnSpinner > 0)
                 {
-                    AlertDialog dialogPlaceDetails;
-                    dialogPlaceDetails = CreateAlertDialog(Resource.Layout.PlaceDetails, this);
-                    dialogPlaceDetails.Show();
-                    TextView locationText = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Map);
-                    TextView placeEmail = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Email);
-                    TextView placeLink = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Link);
-                    TextView placeName = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Name);
-                    TextView placePhone = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_PhoneNum);
-                    RatingBar placeValue = dialogPlaceDetails.FindViewById<RatingBar>(Resource.Id.PlaceDetails_ValuationMed);
-                    TextView placeDirection = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Direction);
+                    placeSelected = places.ElementAt(actualPositionSpinner);
+                    dialogPlaceDetails = ShowPlaceDetails(placeSelected);
                     ImageButton aceptButton = dialogPlaceDetails.FindViewById<ImageButton>(Resource.Id.PlaceDetails_AcceptButton);
-
-                    locationText.Text = placeSelected.Longitude.ToString() +"  "+ placeSelected.Latitude.ToString();
-                    placeEmail.Text = placeSelected.PlaceMail;
-                    placeLink.Text = placeSelected.Link == "" ? "" : placeSelected.Link.Substring(0, 6) + "...";
-                    placeName.Text = placeSelected.PlaceName;
-                    placePhone.Text = placeSelected.PhoneNum == null ? placeSelected.PhoneNum.ToString() : "";
-
-                    placeValue.Rating = placeSelected.ValuationMed == null ? 0 : (int)placeSelected.ValuationMed;
-                    placeDirection.Text = placeSelected.Direction;
-                    locationText.Click += (ol, el) =>
-                    {
-                        Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse("geo:" + placeSelected.Longitude 
-                                                                                                   + "," + placeSelected.Latitude
-                                                                                                   + "?z=16&q=" + placeSelected.Longitude 
-                                                                                                   + "," + placeSelected.Latitude));
-                        intent.SetClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                        StartActivity(intent);
-                    };
-                    placeLink.Click += (od, ed) =>
-                    {
-                        var uri = Android.Net.Uri.Parse(placeSelected.Link);
-                        var intent = new Intent(Intent.ActionView, uri);
-                        StartActivity(intent);
-                    };
-                    
                     aceptButton.Click += (oB, eB) =>
                     {
                         game.PlaceID = placeSelected.PlaceID;
@@ -176,12 +150,8 @@ namespace AppGeoFit.Droid.Screens
                     };
                 }
                 else
-                {
-                    game.PlaceID = placeSelected.PlaceID;
-                    firstTimeSpinner_Place = false;
-                }
+                    timesOnSpinner++;                                  
             };
-
             #endregion
             #region SpinnerDuration
             Spinner durationSpinner = FindViewById<Spinner>(Resource.Id.CreateGame_SpinnerDuration);
@@ -189,10 +159,9 @@ namespace AppGeoFit.Droid.Screens
             ArrayAdapter<int> adapter = new ArrayAdapter<int>(this, Android.Resource.Layout.SimpleSpinnerItem, durations);
             durationSpinner.Adapter = adapter;
             int gameDuration = 1;
-            bool firstTimeSpinner = true;
             durationSpinner.ItemSelected += (o, e) =>
             {
-                gameDuration = e.Position + 1;
+                gameDuration = durationSpinner.SelectedItemPosition + 1;
             };
             #endregion
             Button acept = FindViewById<Button>(Resource.Id.CreateGame_AceptButton);
@@ -419,7 +388,33 @@ namespace AppGeoFit.Droid.Screens
         }
     }
 
-    public class MyOnDateChangeListener : Java.Lang.Object, DatePicker.IOnDateChangedListener
+    public class PlaceSpinner : Spinner
+    {
+        public PlaceSpinner (Context context) : base(context) { }
+        public PlaceSpinner(Context context, IAttributeSet attrs) : base(context, attrs) { }
+        public PlaceSpinner(Context context, IAttributeSet attrs, int defstyle) : base(context, attrs, defstyle) { }
+
+        public override void SetSelection(int position, bool animate)
+        {
+            bool sameSelected = position == SelectedItemPosition;
+            base.SetSelection(position, animate);
+               if (sameSelected)
+               {
+                   OnItemSelectedListener.OnItemSelected(null, SelectedView, position, SelectedItemId);
+               }
+        }
+        public override void SetSelection(int position)
+        {
+            bool sameSelected = position == SelectedItemPosition;
+            base.SetSelection(position);
+            if (sameSelected)
+            {
+                OnItemSelectedListener.OnItemSelected(null, SelectedView, position, SelectedItemId);
+            }
+        }
+    }
+
+public class MyOnDateChangeListener : Java.Lang.Object, DatePicker.IOnDateChangedListener
     {
         AlertDialog dialogDate;
         TextView selectDate;

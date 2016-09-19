@@ -5,10 +5,10 @@ using System.Web;
 using System.Net.Http;
 using System.Net;
 using System.Web.Http;
-using RestServiceGeoFit.Models.Managers.Player.Exceptions;
 using RestServiceGeoFit.Models2;
 using System.Web.Mvc;
 using System.Data.SqlClient;
+using System.Text;
 
 namespace RestServiceGeoFit.Controllers
 {
@@ -16,10 +16,17 @@ namespace RestServiceGeoFit.Controllers
     {
         private AppGeoFitDBContext db = new AppGeoFitDBContext("name=AppGeoFitDBContext");
         string dataBase = "GeoFitDB";
+        string authData = string.Format("{0}:{1}", Constants.UserName, Constants.PassWord);
+
 
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetPlayer(int parameter1)
         {
+            
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             Player player = new Player();
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
@@ -40,6 +47,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetAll()
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -62,6 +73,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPost]
         public HttpResponseMessage CreatePlayer([Bind(Include = "Password,PlayerNick,PlayerName,LastName,PhoneNum,PlayerMail,PhotoID,Level,MedOnTime,FavoriteSportID,PlayerSesion")] Player player)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -83,6 +98,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpDelete]
         public HttpResponseMessage DeletePlayer(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             bool response = false;
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
@@ -103,6 +122,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPut]
         public HttpResponseMessage UpdatePlayer([Bind(Include = "PlayerID,Password,PlayerNick,PlayerName,LastName,PhoneNum,PlayerMail,PhotoID,Level,MedOnTime,FavoriteSportID,PlayerSesion")] Player player)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -122,6 +145,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage FindPlayerByMail(string parameter1, string parameter2)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -138,6 +165,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage FindPlayerByNick(string parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -153,6 +184,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPut]
         public HttpResponseMessage Session(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -173,6 +208,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPut]
         public HttpResponseMessage OutSession(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -193,6 +232,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage IsOnSession(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -210,6 +253,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage FindCaptainOnSports(int parameter1, int parameter2)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -237,6 +284,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage FindTeamsJoined(int parameter1, int parameter2)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -263,6 +314,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage FindPlayerOnTeam(string parameter1, int parameter2)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -290,6 +345,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetActualGames(int parameter1, int parameter2, int parameter3, int parameter4)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -328,7 +387,11 @@ namespace RestServiceGeoFit.Controllers
 
         [System.Web.Http.HttpGet]
         public HttpResponseMessage TotalGamesCount(int parameter1, int parameter2)
-        {            
+        {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");

@@ -9,6 +9,7 @@ using Newtonsoft.Json;
 using System.Net;
 using System.Collections.ObjectModel;
 using AppGeoFit.DataAccesLayer.Data.FeedBackRestService.Exceptions;
+using System.Net.Http.Headers;
 
 [assembly: Dependency(typeof(AppGeoFit.DataAccesLayer.Data.FeedBackRestService.FeedBackRestService))]
 namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
@@ -20,13 +21,16 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
 
         public FeedBackRestService()
         {
+            var authData = string.Format("{0}:{1}", Constants.Username, Constants.Password);
+            var authHeaderValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(authData));
             client = new HttpClient();
             client.MaxResponseContentBufferSize = 256000;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeaderValue);
         }
 
         public async Task<int> CreateFeedBackAsync(FeedBack feedBack)
         {
-            var uri = new Uri(string.Format(url + "FeedBack/CreateFeedBack"));
+            var uri = new Uri(string.Format(url + "FeedBack/CreateFeedBack/"));
             int responseSucced = 0;
             HttpResponseMessage response = new HttpResponseMessage();
 
@@ -51,7 +55,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
 
         public void UpdateLvlAndOnTimePlayer(int playerId)
         {
-            var uri = new Uri(string.Format(url + "FeedBack/UpdateLvlAndOnTimePlayer/{0}", playerId));
+            var uri = new Uri(string.Format(url + "FeedBack/UpdateLvlAndOnTimePlayer/{0}/", playerId));
 
             var json = JsonConvert.SerializeObject(playerId);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -66,7 +70,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
 
         public void UpdateLvlTeam(int teamId)
         {
-            var uri = new Uri(string.Format(url + "FeedBack/UpdateLvlTeam/{0}", teamId));
+            var uri = new Uri(string.Format(url + "FeedBack/UpdateLvlTeam/{0}/", teamId));
 
             var json = JsonConvert.SerializeObject(teamId);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -82,7 +86,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
 
         public void UpdateLvlPlace(int placeId)
         {
-            var uri = new Uri(string.Format(url + "FeedBack/UpdateLvlPlace/{0}", placeId));
+            var uri = new Uri(string.Format(url + "FeedBack/UpdateLvlPlace/{0}/", placeId));
 
             var json = JsonConvert.SerializeObject(placeId);
             var content = new StringContent(json, Encoding.UTF8, "application/json");
@@ -98,7 +102,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
         public async Task<FeedBack> GetFeedBackAsync(int feedBackId)
         {
             FeedBack responseAsFeedBack = new FeedBack();
-            var uri = new Uri(string.Format(url + "FeedBack/GetFeedBack/{0}", feedBackId));
+            var uri = new Uri(string.Format(url + "FeedBack/GetFeedBack/{0}/", feedBackId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -122,7 +126,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
 
         public async Task<bool> UpdateFeedBackAsync(FeedBack feedBack)
         {
-            var uri = new Uri(string.Format(url + "FeedBack/UpdateFeedBack"));
+            var uri = new Uri(string.Format(url + "FeedBack/UpdateFeedBack/"));
             Boolean responseSucced = false;
 
             var json = JsonConvert.SerializeObject(feedBack);
@@ -147,7 +151,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
 
         public async Task<bool> DeleteFeedBackAsync(int feedBackId)
         {
-            var uri = new Uri(string.Format(url + "FeedBack/DeleteFeedBack/{0}", feedBackId));
+            var uri = new Uri(string.Format(url + "FeedBack/DeleteFeedBack/{0}/", feedBackId));
             Boolean responseSucced = false;
 
             HttpResponseMessage response = client.DeleteAsync(uri).Result;
@@ -170,7 +174,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
         public async Task<int> TotalPlayerCommentsCount(int playerId)
         {
             int numComments = 0;
-            var uri = new Uri(string.Format(url + "FeedBack/TotalPlayerCommentsCount/{0}", playerId));
+            var uri = new Uri(string.Format(url + "FeedBack/TotalPlayerCommentsCount/{0}/", playerId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -195,7 +199,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
         public async Task<int> TotalPlaceCommentsCount(int placeId)
         {
             int numComments = 0;
-            var uri = new Uri(string.Format(url + "FeedBack/TotalPlaceCommentsCount/{0}", placeId));
+            var uri = new Uri(string.Format(url + "FeedBack/TotalPlaceCommentsCount/{0}/", placeId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -220,7 +224,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
         public async Task<int> TotalGameCommentsCount(int gameId)
         {
             int numComments = 0;
-            var uri = new Uri(string.Format(url + "FeedBack/TotalGameCommentsCount/{0}", gameId));
+            var uri = new Uri(string.Format(url + "FeedBack/TotalGameCommentsCount/{0}/", gameId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -246,7 +250,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
         {
             ICollection<FeedBack> responseListComments = new Collection<FeedBack>();
         
-            var uri = new Uri(string.Format(url + "FeedBack/GetPlaceCommentsPagination/{0}/{1}/{2}", pages, rows, placeId));
+            var uri = new Uri(string.Format(url + "FeedBack/GetPlaceCommentsPagination/{0}/{1}/{2}/", pages, rows, placeId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -272,7 +276,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
         {
             ICollection<FeedBack> responseListComments = new Collection<FeedBack>();
 
-            var uri = new Uri(string.Format(url + "FeedBack/GetPlayerCommentsPagination/{0}/{1}/{2}", pages, rows, playerId));
+            var uri = new Uri(string.Format(url + "FeedBack/GetPlayerCommentsPagination/{0}/{1}/{2}/", pages, rows, playerId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -298,7 +302,7 @@ namespace AppGeoFit.DataAccesLayer.Data.FeedBackRestService
         {
             ICollection<FeedBack> responseListComments = new Collection<FeedBack>();
 
-            var uri = new Uri(string.Format(url + "FeedBack/GetGameCommentsPagination/{0}/{1}/{2}", pages, rows, gameId));
+            var uri = new Uri(string.Format(url + "FeedBack/GetGameCommentsPagination/{0}/{1}/{2}/", pages, rows, gameId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;

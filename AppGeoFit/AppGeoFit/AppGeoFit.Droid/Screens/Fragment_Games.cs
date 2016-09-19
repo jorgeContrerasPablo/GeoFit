@@ -207,12 +207,21 @@ namespace AppGeoFit.Droid.Screens
                 if (!(gameListView.Adapter == null || gameListView.Adapter.Count == 0)
                     && gameListView.LastVisiblePosition >= gameListView.Count - 1)
                 {
-                    int totalGamesCount = gameManager.TotalGamesCount(actualSportId);
-                    if (totalGamesCount > gameListView.Count)
+                    try {
+                        int totalGamesCount = gameManager.TotalGamesCount(actualSportId);
+                        if (totalGamesCount > gameListView.Count)
+                        {
+                            page = (int)Math.Ceiling((double)totalGamesCount / gameListView.LastVisiblePosition) - 1;
+                            updateGameList(selectedType);
+                        }
+                    }catch(GameNotFoundException ex)
                     {
-                        page = (int)Math.Ceiling((double)totalGamesCount / gameListView.LastVisiblePosition) - 1;
-                        updateGameList(selectedType);
+                        Toast.MakeText(Activity.ApplicationContext, ex.Message, ToastLength.Short).Show();
                     }
+                    catch(Exception ex)
+                    {
+                        Toast.MakeText(Activity.ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }                    
                 }
             };
 

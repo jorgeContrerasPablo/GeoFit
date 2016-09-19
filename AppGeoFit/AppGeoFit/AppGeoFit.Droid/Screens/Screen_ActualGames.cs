@@ -50,16 +50,33 @@ namespace AppGeoFit.Droid.Screens
             }
             GameArrayAdapter adapter = new GameArrayAdapter(this, playerGamesList);
             gameListView.Adapter = adapter;
+            int totalGamesCount = 0;
             gameListView.Scroll += (o, e) =>
             {
                 if (!(gameListView.Adapter == null || gameListView.Adapter.Count == 0)
                     && gameListView.LastVisiblePosition >= gameListView.Count - 1)
                 {
-                    int totalGamesCount = playerManager.TotalGamesCount(player.PlayerId, sportId);
+                    try
+                    {
+                        totalGamesCount = playerManager.TotalGamesCount(player.PlayerId, sportId);
+                    }
+                    catch (Exception ex) {
+                        Toast.MakeText(ApplicationContext,
+                            ex.Message, ToastLength.Short).Show();
+                    }                    
                     if (totalGamesCount > gameListView.Count)
                     {
                         page = (int)Math.Ceiling((double)totalGamesCount / gameListView.LastVisiblePosition) - 1;
-                        playerGamesList.AddRange(playerManager.GetActualGames(page, rows, player.PlayerId, sportId));
+                        try
+                        {
+                            playerGamesList.AddRange(playerManager.GetActualGames(page, rows, player.PlayerId, sportId));
+                        }
+                        catch (GameNotFoundException) { }
+                        catch(Exception ex)
+                        {
+                            Toast.MakeText(ApplicationContext,
+                           ex.Message, ToastLength.Short).Show();
+                        }
                         adapter = new GameArrayAdapter(this, playerGamesList);
                         gameListView.Adapter = adapter;
                     }

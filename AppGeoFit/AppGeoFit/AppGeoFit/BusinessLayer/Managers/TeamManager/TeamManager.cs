@@ -39,7 +39,25 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
 
         public Team GetTeam(int teamId)
         {
-            return teamRestService.GetTeamAsync(teamId).Result;
+            Team returnTeam = new Team();
+            try
+            {
+                returnTeam = teamRestService.GetTeamAsync(teamId).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is TeamNotFoundException)
+                    {
+                        throw new TeamNotFoundException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+
+                }
+            }
+            return returnTeam;
         }
 
         public int CreateTeam(Team team, Player player)
@@ -110,6 +128,7 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
                     throw new Exception(ex.Message);
                 }
             }
+            noticeRestService.DeleteAllNoticeByTypeMessengerAndSport(Constants.TEAM_ADD_PLAYER, teamCaptain.PlayerId, team.SportID);
             Notice notice = new Notice();
             foreach (Joined j in team.Joineds)
             {
@@ -188,7 +207,31 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
 
         public bool AddPlayer(int playerId, int teamId)
         {
-            return teamRestService.AddPlayer(teamId, playerId, false).Result;
+            bool succes = false;
+            try
+            {
+                succes = teamRestService.AddPlayer(teamId, playerId, false).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is PlayerNotFoundException)
+                    {
+                        throw new PlayerNotFoundException(ex.Message);
+                    }
+                    else
+                    {
+                        if (ex is TeamNotFoundException)
+                        {
+                            throw new TeamNotFoundException(ex.Message);
+                        }
+                        else
+                            throw new Exception(ex.Message);
+                    }
+                }
+            }
+            return succes;
         }
 
         public int SendNoticeAddPlayer(string playerNick, Team team)
@@ -306,12 +349,46 @@ namespace AppGeoFit.BusinessLayer.Managers.TeamManager
 
         public int FindTeamByNameOnSports(string teamName, int sportId)
         {
-            return teamRestService.FindTeamByNameOnSports(teamName, sportId).Result;
+            int teamId = 0;
+            try
+            {
+                teamId = teamRestService.FindTeamByNameOnSports(teamName, sportId).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is TeamNotFoundException)
+                    {
+                        throw new TeamNotFoundException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return teamId;
         }
 
         public Player GetCaptainAsync(int teamId)
         {
-            return teamRestService.GetCaptainAsync(teamId).Result;
+            Player returnPlayer = null;
+            try
+            {
+                returnPlayer = teamRestService.GetCaptainAsync(teamId).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is TeamNotFoundException)
+                    {
+                        throw new TeamNotFoundException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return returnPlayer;
         }
 
         public Player UpdateCaptain(int captainId, int newCaptainId, int teamId)

@@ -46,7 +46,11 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
             {
                 foreach (var ex in aex.Flatten().InnerExceptions)
                 {
-                    throw new Exception(ex.Message);
+                    if (ex is GameNotFoundException)
+                    {
+                        throw new GameNotFoundException(ex.Message);
+                    }else
+                        throw new Exception(ex.Message);
                 }
             }
             return game;
@@ -286,6 +290,7 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
                     throw new Exception(ex.Message);
                 }
             }
+            noticeRestService.DeleteAllNoticeByTypeMessengerAndSport(Constants.FEEDBACK_GAME, (int) game.CreatorID, game.SportId);
             //Avisos a los jugadores.
             foreach (Player p in game.Players)
             {
@@ -475,11 +480,9 @@ namespace AppGeoFit.BusinessLayer.Managers.GameManager
                     game.Players.Clear();
                     game.Players.Add(player);
                     response = gameRestService.RemovePlayers(game).Result;
-                    if (creator)
-                    {
-                        game.Players.Clear();
-                        response = response & gameRestService.UpdateGameAsync(game).Result;
-                    }
+                    game.Players.Clear();
+                    game.PlayersNum--;
+                    response = response & gameRestService.UpdateGameAsync(game).Result;
                 }
                 catch (AggregateException aex)
                 {

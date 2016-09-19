@@ -108,31 +108,20 @@ namespace AppGeoFit.Droid.Screens
 
             if (game.PlaceID != null)
             {
+                location.SetTextColor(Color.ParseColor("#4785F4"));
                 location.Click += (o, e) =>
                 {
-                    AlertDialog dialogPlaceDetails = ShowPlaceDetails(game.Place);                    
-
-                    if (feedBackManager.TotalPlaceCommentsCount((int)game.PlaceID) > 0)
+                    AlertDialog dialogPlaceDetails = ShowPlaceDetails(game.Place);
+                    ImageButton aceptButton = dialogPlaceDetails.FindViewById<ImageButton>(Resource.Id.PlaceDetails_AcceptButton);
+                    aceptButton.Click += (oB, eB) =>
                     {
-                        dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_ShowCommentsLink).SetTextColor(Color.ParseColor("#4785F4"));
-                        ImageButton aceptButton = dialogPlaceDetails.FindViewById<ImageButton>(Resource.Id.PlaceDetails_AcceptButton);
-
-                        aceptButton.Click += (oB, eB) =>
-                        {
-                            dialogPlaceDetails.Cancel();
-                        };
-                    }
-                   
+                        dialogPlaceDetails.Cancel();
+                    };                   
                 };
             }
-            
-
-            creator.Text = game.Creator.PlayerNick;            
-            if(game.Team1ID != null)
-                homeTeam.Text = game.Team.TeamName;          
-            if (game.Team2ID != null)
-                awayTeam.Text = game.Team1.TeamName;
-           
+            creator.Text = game.Creator.PlayerNick;
+            homeTeam.Text = game.Team1ID != null ? game.Team.TeamName : "";
+            awayTeam.Text = game.Team2ID != null ? game.Team1.TeamName : "";
             List<Player> participatePlayersList = new List<Player>();
             try {
                 participatePlayersList = gameManager.GetParticipatePlayers(gameId);

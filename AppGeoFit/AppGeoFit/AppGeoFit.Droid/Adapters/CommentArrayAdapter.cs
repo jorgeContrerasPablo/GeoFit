@@ -45,8 +45,8 @@ namespace AppGeoFit.Droid.Adapters
             }
             TextView creator = listItemView.FindViewById<TextView>(Resource.Id.ElementCommentList_Creator);
             TextView date = listItemView.FindViewById<TextView>(Resource.Id.ElementCommentList_Date);
-            TextView comment = listItemView.FindViewById<TextView>(Resource.Id.ElementCommentList_Comment);            
-            creator.Text = item.Creator.PlayerNick;
+            TextView comment = listItemView.FindViewById<TextView>(Resource.Id.ElementCommentList_Comment);
+            creator.Text = item.CreatorID == null ? "" : item.Creator.PlayerNick;
             date.Text = item.FeedBackDate.Day + "/" + item.FeedBackDate.Month + "/" + item.FeedBackDate.Year
                 + "  " + item.FeedBackDate.Hour + ":" + item.FeedBackDate.Minute;
             comment.Text = item.Description;

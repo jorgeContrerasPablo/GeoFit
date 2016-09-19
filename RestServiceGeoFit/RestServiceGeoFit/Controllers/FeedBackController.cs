@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Net;
 using System.Net.Http;
+using System.Text;
 using System.Web;
 using System.Web.Mvc;
 
@@ -13,10 +14,15 @@ namespace RestServiceGeoFit.Controllers
     public class FeedBackController : BaseApiController
     {
         private AppGeoFitDBContext db = new AppGeoFitDBContext("name=AppGeoFitDBContext");
+        string authData = string.Format("{0}:{1}", Constants.UserName, Constants.PassWord);
 
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetFeedBack(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             FeedBack feedBack = new FeedBack();
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
@@ -37,6 +43,14 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPost]
         public HttpResponseMessage CreateFeedBack([Bind(Include = "Description, Valuation, FeedBackDate, OnTime, PlaceID, PlayerID, CreatorID, TeamID, GameID")] FeedBack feedBack)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -60,6 +74,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpDelete]
         public HttpResponseMessage DeleteFeedBack(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             bool response = false;
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
@@ -80,6 +98,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPut]
         public HttpResponseMessage UpdateFeedBack([Bind(Include = "Description, Valuation, FeedBackDate, OnTime, PlaceID, PlayerID, CreatorID, TeamID, GameID")] FeedBack feedBack)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -104,6 +126,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPut]
         public HttpResponseMessage UpdateLvlAndOnTimePlayer( int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -129,6 +155,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPut]
         public HttpResponseMessage UpdateLvlTeam(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -150,6 +180,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPut]
         public HttpResponseMessage UpdateLvlPlace(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -171,36 +205,48 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage TotalPlayerCommentsCount(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             int numComments = 0;
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
-            numComments = db.FeedBacks.Where(f => f.PlayerID == parameter1 && f.Description != null).Count();
+            numComments = db.FeedBacks.Where(f => f.PlayerID == parameter1 && f.Description != null && f.CreatorID != null).Count();
            
             return BuildSuccesResult(HttpStatusCode.OK, numComments);
         }
         [System.Web.Http.HttpGet]
         public HttpResponseMessage TotalPlaceCommentsCount(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             int numComments = 0;
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
-            numComments = db.FeedBacks.Where(f => f.PlaceID == parameter1 && f.Description != null).Count();
+            numComments = db.FeedBacks.Where(f => f.PlaceID == parameter1 && f.Description != null && f.CreatorID != null).Count();
             
             return BuildSuccesResult(HttpStatusCode.OK, numComments);
         }
         [System.Web.Http.HttpGet]
         public HttpResponseMessage TotalGameCommentsCount(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             int numComments = 0;
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
-            numComments = db.FeedBacks.Where(f => f.GameID == parameter1 && f.Description != null).Count();
+            numComments = db.FeedBacks.Where(f => f.GameID == parameter1 && f.Description != null && f.CreatorID != null).Count();
             
             return BuildSuccesResult(HttpStatusCode.OK, numComments);
         }
@@ -208,11 +254,15 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetPlaceCommentsPagination(int parameter1/*page*/, int parameter2/*rows*/, int parameter3/*placeId*/)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
-            List<FeedBack> resultFeedBackList = db.FeedBacks.Where(f => f.PlaceID == parameter3 && f.Description != null)
+            List<FeedBack> resultFeedBackList = db.FeedBacks.Where(f => f.PlaceID == parameter3 && f.Description != null && f.CreatorID != null)
                                  .OrderBy(f => f.FeedBackDate)
                                  .Skip(parameter1 * parameter2)
                                  .Take(parameter2)
@@ -227,11 +277,15 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetPlayerCommentsPagination(int parameter1/*page*/, int parameter2/*rows*/, int parameter3/*playerId*/)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
-            List<FeedBack> resultFeedBackList = db.FeedBacks.Where(f => f.PlayerID == parameter3 && f.Description != null)
+            List<FeedBack> resultFeedBackList = db.FeedBacks.Where(f => f.PlayerID == parameter3 && f.Description != null && f.CreatorID != null)
                                  .OrderBy(f => f.FeedBackDate)
                                  .Skip(parameter1 * parameter2)
                                  .Take(parameter2)
@@ -246,11 +300,15 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetGameCommentsPagination(int parameter1/*page*/, int parameter2/*rows*/, int parameter3/*gameId*/)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
-            List<FeedBack> resultFeedBackList = db.FeedBacks.Where(f => f.GameID == parameter3 && f.Description != null)
+            List<FeedBack> resultFeedBackList = db.FeedBacks.Where(f => f.GameID == parameter3 && f.Description != null && f.CreatorID != null)
                                  .OrderBy(f => f.FeedBackDate)
                                  .Skip(parameter1 * parameter2)
                                  .Take(parameter2)

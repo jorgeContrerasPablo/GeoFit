@@ -593,10 +593,17 @@ namespace NUnitTest
             }
         }
 
+        [Test()]
+        public void TestDeletePlayer()
+        {
+
+        }
+
         [TearDown()]
         public void Tear()
         {
-            if(game1.GameID != 0)
+
+            if (game1.GameID != 0)
                 gameManager.DeleteGame(game1.GameID);
             if (game2.GameID != 0)
                 gameManager.DeleteGame(game2.GameID);
@@ -614,6 +621,8 @@ namespace NUnitTest
                 playerManager.DeletePlayer(player4.PlayerId);
             if (player5.PlayerId != 0)
                 playerManager.DeletePlayer(player5.PlayerId);
+
+
 
         }
     }

@@ -12,5 +12,8 @@ namespace RestServiceGeoFit
 
         public static readonly string SqlConTest = "Server=JORGEPC;" + "Database=GeoFitDBTest;" + "User Id= ServicioGeoFit/Session;" + "Password=sqlserver";
 
+        public static readonly string UserName = "GeoFit";
+        public static readonly string PassWord = "1234";
+
     }
 }

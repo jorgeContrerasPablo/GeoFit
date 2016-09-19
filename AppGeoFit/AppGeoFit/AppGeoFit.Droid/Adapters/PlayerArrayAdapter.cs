@@ -13,6 +13,7 @@ using AppGeoFit.DataAccesLayer.Models;
 using AppGeoFit.BusinessLayer.Managers.NoticeManager;
 using Android.Graphics;
 using Xamarin.Forms.Platform.Android;
+using AppGeoFit.DataAccesLayer.Data.NoticeRestService.Exceptions;
 
 namespace AppGeoFit.Droid.Adapters
 {
@@ -82,10 +83,20 @@ namespace AppGeoFit.Droid.Adapters
             if (notice)
             {
                 //Si está pendiente de ser agregado, lo oscurecemos.
-                if (noticeManager.NoticeIsPending(item.PlayerId, captainId, sportId, Constants.TEAM_ADD_PLAYER))
+                try {
+                    if (noticeManager.NoticeIsPending(item.PlayerId, captainId, sportId, Constants.TEAM_ADD_PLAYER))
+                    {
+                        listItemView.SetBackgroundColor(Xamarin.Forms.Color.Default.ToAndroid());
+                        listItemView.Background.SetColorFilter(Color.ParseColor("#80000000"), PorterDuff.Mode.Darken);
+                    }
+                }
+                catch (NoticeNotFoundException ex)
                 {
-                    listItemView.SetBackgroundColor(Xamarin.Forms.Color.Default.ToAndroid());
-                    listItemView.Background.SetColorFilter(Color.ParseColor("#80000000"), PorterDuff.Mode.Darken);
+                    Toast.MakeText(context, ex.Message, ToastLength.Short).Show();
+                }
+                catch (Exception ex)
+                {
+                    Toast.MakeText(context, ex.Message, ToastLength.Short).Show();
                 }
             }
 

@@ -166,7 +166,18 @@ namespace AppGeoFit.Droid.Screens
                 builder.SetView(dialogView);
 
                 AutoCompleteTextView AutocompleteView = dialogView.FindViewById<AutoCompleteTextView>(Resource.Id.D_SPlayer_playerToFind);
-                var adapterAutoComplete = new PlayerArrayAdapter(Context, playerManager.GetAll().ToList(), captain.PlayerId, actualSportId, false, null, true);
+                List<Player> playerList = new List<Player>();
+                try
+                {
+                    playerList = playerManager.GetAll().ToList();
+                }
+                catch (PlayerNotFoundException){}
+                catch (Exception ex)
+                {
+                    Toast.MakeText(Activity.ApplicationContext,
+                             ex.Message, ToastLength.Short).Show();
+                }
+                var adapterAutoComplete = new PlayerArrayAdapter(Context, playerList, captain.PlayerId, actualSportId, false, null, true);
 
                 AutocompleteView.Adapter = adapterAutoComplete;
                 AlertDialog ad = builder.Create();
@@ -233,7 +244,17 @@ namespace AppGeoFit.Droid.Screens
             //Recuperamos el equipo actual seleccionado
             actualTeam = Teams.ElementAt(Teams.FindIndex(t => t.TeamName == spinnerTeams.SelectedItem.ToString()));
             //Recuperamos el equipo de base de datos por si ha sufrido alguna alta o baja.
-            var updateTeam = teamManager.GetTeam(actualTeam.TeamID);
+            Team updateTeam = new Team();
+            try {
+                teamManager.GetTeam(actualTeam.TeamID); }
+            catch(TeamNotFoundException ex)
+            {
+                Toast.MakeText(Context, ex.Message, ToastLength.Short).Show();
+            }
+            catch(Exception ex)
+            {
+                Toast.MakeText(Context, ex.Message, ToastLength.Short).Show();
+            }
             var n = 0;
             while (n < updateTeam.Joineds.Count)
             {
@@ -263,12 +284,17 @@ namespace AppGeoFit.Droid.Screens
             Spinner spinnerFavoriteSport_et = this.Activity.FindViewById<Spinner>(Resource.Id.Toolbar_spinnerSports);
             ImageView imageColor = view.FindViewById<ImageView>(Resource.Id.Team_imageColor);
 
-
-
-            Teams = playerManager.
-               FindTeamsJoined(actualPlayer.PlayerId,
-               spinnerFavoriteSport_et.SelectedItem
-               .GetHashCode()).ToList();
+            try
+            {
+                Teams = playerManager.FindTeamsJoined(actualPlayer.PlayerId,spinnerFavoriteSport_et.SelectedItem
+                                                      .GetHashCode()).ToList();
+            }
+            catch(NotTeamJoinedOnSportException){}
+            catch(Exception ex)
+            {
+                Toast.MakeText(Context, ex.Message, ToastLength.Short).Show();
+            }
+                       
             if (Teams.Count == 0)
             {
                 teamNameT.Text = "";
@@ -330,20 +356,27 @@ namespace AppGeoFit.Droid.Screens
 
             int idplayer = playerList.Adapter.GetItem(info.Position).GetHashCode();
             //Solo inflamos un menu, si no estan pendientes
-            if (noticeManager.NoticeIsPending(idplayer, captain.PlayerId, actualSportId, Constants.TEAM_ADD_PLAYER)){}
-            else
+            try
             {
-                //Inflamos un menu con delete solo si el jugador es capitan, o sea el mismo.
-                if (captain.PlayerId != actualPlayer.PlayerId)
-                {
-                    if (actualPlayer.PlayerNick.Equals(playerList.Adapter.GetItem(info.Position).ToString()))
-                        inflater.Inflate(Resource.Menu.MenuPlayerList, menu);
-                    else
-                        inflater.Inflate(Resource.Menu.MenuPlayerListNoC, menu);
-                }
+                if (noticeManager.NoticeIsPending(idplayer, captain.PlayerId, actualSportId, Constants.TEAM_ADD_PLAYER)) { }
                 else
-                    inflater.Inflate(Resource.Menu.MenuPlayerList, menu);
+                {
+                    //Inflamos un menu con delete solo si el jugador es capitan, o sea el mismo.
+                    if (captain.PlayerId != actualPlayer.PlayerId)
+                    {
+                        if (actualPlayer.PlayerNick.Equals(playerList.Adapter.GetItem(info.Position).ToString()))
+                            inflater.Inflate(Resource.Menu.MenuPlayerList, menu);
+                        else
+                            inflater.Inflate(Resource.Menu.MenuPlayerListNoC, menu);
+                    }
+                    else
+                        inflater.Inflate(Resource.Menu.MenuPlayerList, menu);
+                }
             }
+            catch (Exception ex)
+            {
+                Toast.MakeText(this.Context, ex.Message, ToastLength.Long).Show();
+            }         
         }
 
         public override bool OnContextItemSelected(IMenuItem item)
@@ -368,7 +401,7 @@ namespace AppGeoFit.Droid.Screens
                         try
                         {
                             teamManager.RemovePlayer(actualTeam.TeamID, player.PlayerId);
-                            UpdatePlayersList(view);
+                            UpdateTeams(view);
                             baDelete.Cancel();
                             Toast.MakeText(this.Context, "Player: "+player.PlayerNick+" has been delete correctly", ToastLength.Long).Show();
                         }
@@ -380,10 +413,18 @@ namespace AppGeoFit.Droid.Screens
                             Button aDialog_onePlayerPositiveButton = aDialog_onePlayer.GetButton((int)DialogButtonType.Positive);
                             aDialog_onePlayerPositiveButton.Click += (oDOP, eDOP) =>
                             {
-                                teamManager.DeleteTeam(actualTeam.TeamID);
-                                UpdateTeams(view);
-                                aDialog_onePlayer.Cancel();                                
-                                Toast.MakeText(this.Context, "Your team has been delete correctly", ToastLength.Long).Show();
+                                try
+                                {
+                                    teamManager.DeleteTeam(actualTeam.TeamID);
+                                    UpdateTeams(view);
+                                    aDialog_onePlayer.Cancel();
+                                    Toast.MakeText(this.Context, "Your team has been delete correctly", ToastLength.Long).Show();
+                                }
+                                catch (Exception)
+                                {
+                                    Toast.MakeText(this.Context, ex.Message, ToastLength.Long).Show();
+                                }
+                               
                             };
                         }
                         catch (CaptainRemoveException ex)
@@ -470,19 +511,26 @@ namespace AppGeoFit.Droid.Screens
                     dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_MedOnTime).Text = string.Format("{0:P2}", player.MedOnTime);
                     dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_Email).Text = player.PlayerMail;
                     TextView commentsLink = dialogView.FindViewById<TextView>(Resource.Id.PlayerDetails_ShowCommentsLink);
-                    if (feedBackManager.TotalPlayerCommentsCount((int)player.PlayerId) > 0)
+                    try
                     {
-                        commentsLink.SetTextColor(Color.ParseColor("#4785F4"));
-                        commentsLink.Click += (o, e) =>
+                        if (feedBackManager.TotalPlayerCommentsCount((int)player.PlayerId) > 0)
                         {
-                            var screen_Comments = new Intent(Context, typeof(Screen_Comments));
-                            screen_Comments.PutExtra("playerId", player.PlayerId);
-                            StartActivity(screen_Comments);
-                        };
+                            commentsLink.SetTextColor(Color.ParseColor("#4785F4"));
+                            commentsLink.Click += (o, e) =>
+                            {
+                                var screen_Comments = new Intent(Context, typeof(Screen_Comments));
+                                screen_Comments.PutExtra("playerId", player.PlayerId);
+                                StartActivity(screen_Comments);
+                            };
+                        }
+                        builder.SetView(dialogView);
+                        ad = builder.Create();
+                        ad.Show();
                     }
-                    builder.SetView(dialogView);
-                    ad = builder.Create();
-                    ad.Show();
+                    catch(Exception ex)
+                    {
+                        Toast.MakeText(this.Context, ex.Message, ToastLength.Long).Show();
+                    }                   
                     return true;
                 default:
                     return base.OnContextItemSelected(item);

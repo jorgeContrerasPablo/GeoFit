@@ -54,6 +54,7 @@ namespace AppGeoFit.Droid.Screens
             teamManager = DependencyService.Get<ITeamManager>().InitiateServices(false);
             noticeManager = DependencyService.Get<INoticeManager>().InitiateServices(false);
             gameManager = DependencyService.Get<IGameManager>().InitiateServices(false);
+            feedBackManager = DependencyService.Get<IFeedBackManager>().InitiateServices(false);
             //Recuperamos la sesion
             appSession = new AppSession(ApplicationContext);
             player = appSession.getPlayer();

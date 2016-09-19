@@ -499,6 +499,7 @@ namespace NUnitTest
         [TearDown()]
         public void Tear()
         {
+
             if (team1.TeamID != 0)
                 teamManager.DeleteTeam(team1.TeamID);
             if (team2.TeamID != 0)

@@ -66,7 +66,12 @@ namespace AppGeoFit.Droid.Screens
                 noticeList.Adapter = adapterLNotice;
                 RegisterForContextMenu(noticeList);
             }
-            catch (NotPendingNoticeException ex) { }
+            catch (NotPendingNoticeException ex) {
+                pendingNotice = new List<Notice>();
+                adapterLNotice = new NoticeArrayAdapter(this, pendingNotice);
+                noticeList.Adapter = adapterLNotice;
+                RegisterForContextMenu(noticeList);
+            }
             catch (Exception ex)
             {
                 Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
@@ -132,6 +137,7 @@ namespace AppGeoFit.Droid.Screens
                         notice.Accepted = true;
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
+                        updateNoticeList();
                     };
                     noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
                     {
@@ -139,7 +145,6 @@ namespace AppGeoFit.Droid.Screens
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
                     };
-                    updateNoticeList();
                     break;
 
                 case Constants.PLAYER_ADD_TO_A_GAME:
@@ -151,6 +156,7 @@ namespace AppGeoFit.Droid.Screens
                         notice.Accepted = true;
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
+                        updateNoticeList();
                     };
                     noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
                     {
@@ -158,7 +164,6 @@ namespace AppGeoFit.Droid.Screens
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
                     };
-                    updateNoticeList();
                     break;
                 case Constants.FEEDBACK_GAME:
                     int noiticeId = (int) notice.GameID;
@@ -177,6 +182,7 @@ namespace AppGeoFit.Droid.Screens
                         notice.Accepted = true;
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
+                        updateNoticeList();
                     };
                     noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
                     {
@@ -184,7 +190,6 @@ namespace AppGeoFit.Droid.Screens
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
                     };
-                    updateNoticeList();
                     break;
                 case Constants.GAME_UPDATED:
                     builder.SetMessage("The game at: "+notice.Game.Place.Direction+" has been updated.");
@@ -195,6 +200,7 @@ namespace AppGeoFit.Droid.Screens
                         notice.Accepted = true;
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
+                        updateNoticeList();
                     };
                     noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
                     {
@@ -202,7 +208,6 @@ namespace AppGeoFit.Droid.Screens
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
                     };
-                    updateNoticeList();
                     break;
                 case Constants.TEAM_DELETED:
                     builder.SetMessage("You have been removed for a team");
@@ -213,6 +218,7 @@ namespace AppGeoFit.Droid.Screens
                         notice.Accepted = true;
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
+                        updateNoticeList();
                     };
                     noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
                     {
@@ -220,7 +226,6 @@ namespace AppGeoFit.Droid.Screens
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
                     };
-                    updateNoticeList();
                     break;
                 default:
                     break;                
