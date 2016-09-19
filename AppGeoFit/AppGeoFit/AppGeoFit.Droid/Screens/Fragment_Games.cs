@@ -118,7 +118,7 @@ namespace AppGeoFit.Droid.Screens
                     numPlayersCB.Checked = false;
                     selectedType = "distance";
                     //TODO
-                    //position = GetPositionAsync().Result;
+                    position = GetPositionAsync().Result;
                     updateGameList(selectedType);
 
                 };
@@ -418,8 +418,8 @@ namespace AppGeoFit.Droid.Screens
         public async Task<Position> GetPositionAsync()
         {
             Position currentPositionPlugin = new Position();
-            currentPositionPlugin.Latitude = 42.1354955;
-            currentPositionPlugin.Longitude = -8.812848199999962;
+            //currentPositionPlugin.Latitude = 42.1354955;
+            //currentPositionPlugin.Longitude = -8.812848199999962;
             try
             {
                 IGeolocator geolocator = new GeolocatorImplementation();

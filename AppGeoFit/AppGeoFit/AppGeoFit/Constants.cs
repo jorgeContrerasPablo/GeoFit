@@ -7,8 +7,8 @@ namespace AppGeoFit
     public static class Constants
     {
         // URL of REST service
-        public static string RestUrl { get; set; } = "http://192.168.1.36:51830/api/";
-        public static string RestUrlTest { get; set; } = "http://192.168.1.36:51830/apiTest/";
+        public static string RestUrl { get; set; } = "http://192.168.1.38:51830/api/";
+        public static string RestUrlTest { get; set; } = "http://192.168.1.38:51830/apiTest/";
 
         //Type of Notice
         public const string TEAM_ADD_PLAYER = "Team add player";

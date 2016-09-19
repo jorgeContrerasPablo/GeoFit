@@ -222,17 +222,6 @@
     <Compile Include="Models2\Player.cs" />
     <Compile Include="Models2\Sport.cs" />
     <Compile Include="Models2\Team.cs" />
-    <Compile Include="Models3\FeedBack.cs" />
-    <Compile Include="Models3\Game.cs" />
-    <Compile Include="Models3\Joined.cs" />
-    <Compile Include="Models3\Model1.cs" />
-    <Compile Include="Models3\Notice.cs" />
-    <Compile Include="Models3\Photo.cs" />
-    <Compile Include="Models3\Place.cs" />
-    <Compile Include="Models3\Player.cs" />
-    <Compile Include="Models3\Sport.cs" />
-    <Compile Include="Models3\sysdiagram.cs" />
-    <Compile Include="Models3\Team.cs" />
     <Compile Include="Models\FeedBack.cs" />
     <Compile Include="Models\Game.cs" />
     <Compile Include="Models\Managers\Player\Exceptions\PlayerNotFoundException.cs" />
