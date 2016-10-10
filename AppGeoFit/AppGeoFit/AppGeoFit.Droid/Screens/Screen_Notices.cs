@@ -15,6 +15,8 @@ using AppGeoFit.BusinessLayer.Managers.PlayerManager;
 using AppGeoFit.BusinessLayer.Managers.TeamManager;
 using AppGeoFit.BusinessLayer.Managers.GameManager;
 using Android.Views;
+using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
+using AppGeoFit.DataAccesLayer.Data.TeamRestService.Exceptions;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -66,7 +68,12 @@ namespace AppGeoFit.Droid.Screens
                 noticeList.Adapter = adapterLNotice;
                 RegisterForContextMenu(noticeList);
             }
-            catch (NotPendingNoticeException ex) { }
+            catch (NotPendingNoticeException ex) {
+                pendingNotice = new List<Notice>();
+                adapterLNotice = new NoticeArrayAdapter(this, pendingNotice);
+                noticeList.Adapter = adapterLNotice;
+                RegisterForContextMenu(noticeList);
+            }
             catch (Exception ex)
             {
                 Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
@@ -76,7 +83,6 @@ namespace AppGeoFit.Droid.Screens
         public override void OnCreateContextMenu(IContextMenu menu, View vValue, IContextMenuContextMenuInfo menuInfo)
         {
             base.OnCreateContextMenu(menu, vValue, menuInfo);
-            //var info = (AdapterView.AdapterContextMenuInfo)menuInfo;
             MenuInflater inflater = new MenuInflater(this);
             inflater.Inflate(Resource.Menu.MenuNotice, menu);
         }
@@ -99,7 +105,13 @@ namespace AppGeoFit.Droid.Screens
                     baDeletePositiveButton.Click += (oPB, ePB) =>
                     {
                         noticeSelected.Accepted = false;
-                        noticeManager.UpdateNotice(noticeSelected);
+                        try
+                        {
+                            noticeManager.UpdateNotice(noticeSelected);
+                        }catch(Exception ex)
+                        {
+                            Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
+                        }
                         baDelete.Cancel();
                     };
                     baDeleteNegativeButton.Click += (oNB, eNB) =>
@@ -114,7 +126,13 @@ namespace AppGeoFit.Droid.Screens
 
         void ShowNotice(int noticeId)
         {
-            Notice notice = noticeManager.GetNotice(noticeId);
+            Notice notice = new Notice();
+            try
+            { notice = noticeManager.GetNotice(noticeId); }
+            catch(Exception ex)
+            {
+                Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
+            }
             AlertDialog noticeAD;
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.SetTitle("New message");
@@ -129,10 +147,23 @@ namespace AppGeoFit.Droid.Screens
                     noticeAD.Show();
                     noticeAD.GetButton((int)DialogButtonType.Positive).Click += (oDb, eDb) =>
                     {
-                        teamManager.AddPlayer(notice.ReceiverID, playerManager.FindTeamCaptainOnSport(notice.MessengerID, notice.SportID).TeamID);
-                        notice.Accepted = true;
-                        noticeManager.UpdateNotice(notice);
+                        int teamCaptainOnSportId = 0;
+                        try
+                        {
+                            teamCaptainOnSportId = playerManager.FindTeamCaptainOnSport((int)notice.MessengerID, notice.SportID).TeamID;
+                            teamManager.AddPlayer((int)notice.ReceiverID, teamCaptainOnSportId);
+                            notice.Accepted = true;
+                            noticeManager.UpdateNotice(notice);
+                        }
+                        catch (CaptainNotFoundException) { }
+                        catch (PlayerNotFoundException) { }
+                        catch (TeamNotFoundException) { }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
+                        }
                         noticeAD.Cancel();
+                        updateNoticeList();
                     };
                     noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
                     {
@@ -140,7 +171,6 @@ namespace AppGeoFit.Droid.Screens
                         noticeManager.UpdateNotice(notice);
                         noticeAD.Cancel();
                     };
-                    updateNoticeList();
                     break;
 
                 case Constants.PLAYER_ADD_TO_A_GAME:
@@ -150,16 +180,30 @@ namespace AppGeoFit.Droid.Screens
                     noticeAD.GetButton((int)DialogButtonType.Positive).Click += (oDb, eDb) =>
                     {
                         notice.Accepted = true;
-                        noticeManager.UpdateNotice(notice);
+                        try
+                        {
+                            noticeManager.UpdateNotice(notice);
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
+                        }
                         noticeAD.Cancel();
+                        updateNoticeList();
                     };
                     noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
                     {
                         notice.Accepted = true;
-                        noticeManager.UpdateNotice(notice);
+                        try
+                        {
+                            noticeManager.UpdateNotice(notice);
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
+                        }
                         noticeAD.Cancel();
                     };
-                    updateNoticeList();
                     break;
                 case Constants.FEEDBACK_GAME:
                     int noiticeId = (int) notice.GameID;
@@ -168,6 +212,102 @@ namespace AppGeoFit.Droid.Screens
                     screen_FeedBack.PutExtra("gameId", noiticeId);
                     screen_FeedBack.PutExtra("noticeId", notice.NoticeID);
                     StartActivity(screen_FeedBack);
+                    break;
+                case Constants.GAME_DELETED:
+                    builder.SetMessage("A game you are joined, has been delted.");
+                    noticeAD = builder.Create();
+                    noticeAD.Show();
+                    noticeAD.GetButton((int)DialogButtonType.Positive).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        try
+                        {
+                            noticeManager.UpdateNotice(notice);
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
+                        }
+                        noticeAD.Cancel();
+                        updateNoticeList();
+                    };
+                    noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        try
+                        {
+                            noticeManager.UpdateNotice(notice);
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
+                        }
+                        noticeAD.Cancel();
+                    };
+                    break;
+                case Constants.GAME_UPDATED:
+                    builder.SetMessage("The game at: "+notice.Game.Place.Direction+" has been updated.");
+                    noticeAD = builder.Create();
+                    noticeAD.Show();
+                    noticeAD.GetButton((int)DialogButtonType.Positive).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        try
+                        {
+                            noticeManager.UpdateNotice(notice);
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
+                        }
+                        noticeAD.Cancel();
+                        updateNoticeList();
+                    };
+                    noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        try
+                        {
+                            noticeManager.UpdateNotice(notice);
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
+                        }
+                        noticeAD.Cancel();
+                    };
+                    break;
+                case Constants.TEAM_DELETED:
+                    builder.SetMessage("You have been removed for a team");
+                    noticeAD = builder.Create();
+                    noticeAD.Show();
+                    noticeAD.GetButton((int)DialogButtonType.Positive).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        try
+                        {
+                            noticeManager.UpdateNotice(notice);
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
+                        }
+                        noticeAD.Cancel();
+                        updateNoticeList();
+                    };
+                    noticeAD.GetButton((int)DialogButtonType.Negative).Click += (oDb, eDb) =>
+                    {
+                        notice.Accepted = true;
+                        try
+                        {
+                            noticeManager.UpdateNotice(notice);
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(this, ex.Message, ToastLength.Short).Show();
+                        }
+                        noticeAD.Cancel();
+                    };
                     break;
                 default:
                     break;                

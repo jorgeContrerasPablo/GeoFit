@@ -1,12 +1,17 @@
 ﻿using AppGeoFit.BusinessLayer.Exceptions;
+using AppGeoFit.BusinessLayer.Managers.GameManager;
 using AppGeoFit.DataAccesLayer.Data.GameRestService.Exceptions;
+using AppGeoFit.DataAccesLayer.Data.NoticeRestService;
+using AppGeoFit.DataAccesLayer.Data.NoticeRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService;
 using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Data.TeamRestService;
+using AppGeoFit.DataAccesLayer.Data.TeamRestService.Exceptions;
 using AppGeoFit.DataAccesLayer.Models;
 using DevOne.Security.Cryptography.BCrypt;
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Threading.Tasks;
 using Xamarin.Forms;
@@ -18,6 +23,8 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
     {
         IPlayerRestService playerRestService;
         ITeamRestService teamRestService;
+        IGameManager gameManager;
+        INoticeRestService noticeRestService;
 
         public PlayerManager(){}
 
@@ -27,20 +34,56 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
             teamRestService.url = test ? Constants.RestUrlTest : Constants.RestUrl;
             playerRestService = DependencyService.Get<IPlayerRestService>();
             playerRestService.url = test ? Constants.RestUrlTest : Constants.RestUrl;
+            noticeRestService = DependencyService.Get<INoticeRestService>();
+            noticeRestService.url = test ? Constants.RestUrlTest : Constants.RestUrl;
+            gameManager = DependencyService.Get<IGameManager>().InitiateServices(test);
             return this;
         }
 
-        public Task<Player> GetPlayer(int playerId)
+        public Player GetPlayer(int playerId)
         {
-            return playerRestService.GetPlayerAsync(playerId);
+            Player playerReturn = new Player();
+            try
+            {
+                playerReturn = playerRestService.GetPlayerAsync(playerId).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is PlayerNotFoundException)
+                    {
+                        throw new PlayerNotFoundException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return playerReturn;
         }
 
-        public Task<ICollection<Player>> GetAll()
+        public ICollection<Player> GetAll()
         {
-            return playerRestService.GetAllAsync();
+            ICollection<Player> returnCollection = new Collection<Player>();
+            try {
+                returnCollection= playerRestService.GetAllAsync().Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is PlayerNotFoundException)
+                    {
+                        throw new PlayerNotFoundException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return returnCollection;
         }
 
-        public Task<int> CreatePlayer(Player player)
+        public int CreatePlayer(Player player)
         {
             string[] finalEmail = splitFunction( player.PlayerMail );
             int reciveIdEmail = 0;
@@ -82,15 +125,190 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
             //Encriptacion de la contraseña
             player.Password = BCryptHelper.HashPassword(player.Password, BCryptHelper.GenerateSalt());
 
-            return playerRestService.CreatePlayerAsync(player);
+            return playerRestService.CreatePlayerAsync(player).Result;
         }
 
-        public Task<Boolean> DeletePlayer(int playerId)
-        {        
-            return playerRestService.DeletePlayerAsync(playerId);
+        public bool DeletePlayer(int playerId)
+        {
+            Random random = new Random();
+            List<Team> teamsJoined = new List<Team>();
+            List<Sport> sports = new List<Sport>();
+            sports = teamRestService.GetSports().Result.ToList();
+            int numTeamsJoined = 0;
+            Player captain = new Player();
+            foreach (Sport s in sports)
+            {
+                try
+                {
+                    teamsJoined = playerRestService.FindTeamsJoinedAsync(playerId, s.SportID).Result.ToList();
+                    numTeamsJoined = teamsJoined.Count;
+                }
+                catch (AggregateException aex)
+                {
+                    foreach (var ex in aex.Flatten().InnerExceptions)
+                    {
+                        if (ex is NotTeamJoinedOnSportException)
+                            numTeamsJoined = 0;
+                        else
+                            throw new Exception(ex.Message);
+                    }
+                }
+
+                if (numTeamsJoined != 0)
+                {
+                    foreach(Team t in teamsJoined)
+                    {
+                        try
+                        {
+                            captain = teamRestService.GetCaptainAsync(t.TeamID).Result;
+                        }
+                        catch (AggregateException aex)
+                        {
+                            foreach (var ex in aex.Flatten().InnerExceptions)
+                            {
+                                if (ex is TeamNotFoundException) {
+                                    throw new TeamNotFoundException(ex.Message);
+                                }
+                                else
+                                    throw new Exception(ex.Message);
+                            }
+                        }
+
+                        List<Joined> joineds = new List<Joined>();
+                        joineds.AddRange(t.Joineds);
+                        if (playerId == captain.PlayerId)
+                        {
+                            try
+                            {
+                                noticeRestService.DeleteAllNoticeByTypeMessengerAndSport(Constants.TEAM_ADD_PLAYER, playerId, s.SportID);
+                            }
+                            catch (AggregateException aex)
+                            {
+                                foreach (var ex in aex.Flatten().InnerExceptions)
+                                {
+                                    if (ex is NoticeNotFoundException) { }
+                                    else
+                                        throw new Exception(ex.Message);
+                                }
+                            }
+                            try
+                            {
+                                teamRestService.RemovePlayer(t.TeamID, playerId, true);
+                            }
+                            catch (AggregateException aex)
+                            {
+                                foreach (var ex in aex.Flatten().InnerExceptions)
+                                {
+                                    if (ex is NotJoinedException)
+                                    {
+                                        throw new NotJoinedException(ex.Message);
+                                    }
+                                    else
+                                        throw new Exception(ex.Message);
+                                }
+                            }
+                            joineds.RemoveAt(joineds.FindIndex(p => p.PlayerID == playerId));
+                            if (joineds.Count != 0)
+                            {
+                                int rPlayer = random.Next(joineds.Count);
+                                Joined newCaptain = joineds[rPlayer];
+                                try
+                                {
+                                    teamRestService.RemovePlayer(newCaptain.TeamID, newCaptain.PlayerID, false);
+                                    teamRestService.AddPlayer(newCaptain.TeamID, newCaptain.PlayerID, true);
+                                }
+                                catch (AggregateException aex)
+                                {
+                                    foreach (var ex in aex.Flatten().InnerExceptions)
+                                    {
+                                        if (ex is NotJoinedException)
+                                        {
+                                            throw new NotJoinedException(ex.Message);
+                                        }
+                                        else
+                                        {
+                                            if (ex is PlayerNotFoundException)
+                                            { throw new PlayerNotFoundException(ex.Message); }
+                                            else
+                                            { 
+                                                if (ex is TeamNotFoundException)
+                                                {
+                                                    throw new TeamNotFoundException(ex.Message);
+                                                }
+                                                else
+                                                    throw new Exception(ex.Message);
+                                            }
+                                        }
+                                    }
+                                }
+                            }
+                            else
+                            {
+                                try
+                                {
+                                    teamRestService.DeleteTeamAsync(t.TeamID);
+                                }
+                                catch (AggregateException aex)
+                                {
+                                    foreach (var ex in aex.Flatten().InnerExceptions)
+                                    {
+                                            throw new Exception(ex.Message);
+                                    }
+                                }
+                            }
+                        }
+                        else
+                        {
+                            teamRestService.RemovePlayer(t.TeamID, playerId, false);
+                            if (joineds.Count == 1)
+                            {
+                                try
+                                {
+                                    teamRestService.DeleteTeamAsync(t.TeamID);
+                                }
+                                catch (AggregateException aex)
+                                {
+                                    foreach (var ex in aex.Flatten().InnerExceptions)
+                                    {
+                                        throw new Exception(ex.Message);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+               
+                List<Game> gameList = new List<Game>();
+                int totalGames = 0;
+                try
+                {
+                    totalGames = playerRestService.TotalGamesCount(playerId, s.SportID).Result;
+                }
+                catch (AggregateException aex)
+                {
+                    foreach (var ex in aex.Flatten().InnerExceptions)
+                    {
+                        if (ex is GameNotFoundException)
+                            totalGames = 0;
+                        else
+                            throw new Exception(ex.Message);
+                    }
+                }
+                if (totalGames != 0)
+                {
+                    gameList.AddRange(playerRestService.GetActualGames(0, totalGames, playerId, s.SportID).Result.ToList());
+                    foreach (Game g in gameList)
+                    {
+                        gameManager.RemovePlayer(g.GameID, playerId);
+                    }
+                }
+
+            }           
+            return playerRestService.DeletePlayerAsync(playerId).Result;
+
         }
 
-        public Task<Boolean> UpdatePlayer(Player player)
+        public bool UpdatePlayer(Player player)
         {
             string[] finalEmail = splitFunction(player.PlayerMail);
             int id_responseMail = 0;
@@ -129,7 +347,7 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
                 }
             }
 
-            return playerRestService.UpdatePlayerAsync(player);
+            return playerRestService.UpdatePlayerAsync(player).Result;
 
         }
 
@@ -188,9 +406,26 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
 
         }
 
-        public Task<int> FindPlayerByMail(string nickOrMail, string post)
+        public int FindPlayerByMail(string nickOrMail, string post)
         {
-            return playerRestService.FindPlayerByMailAsync(nickOrMail, post);
+            int playerId = 0;
+            try
+            {
+                playerId = playerRestService.FindPlayerByMailAsync(nickOrMail, post).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is PlayerNotFoundException)
+                    {
+                        throw new PlayerNotFoundException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return playerId;
         }
 
 
@@ -216,9 +451,26 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
             return returnId;
         }
 
-        public Task<ICollection<Team>> FindTeamsJoined(int playerId, int sportId)
+        public ICollection<Team> FindTeamsJoined(int playerId, int sportId)
         {
-            return playerRestService.FindTeamsJoinedAsync(playerId, sportId);
+            ICollection<Team> teams = new Collection<Team>();
+            try
+            {
+                teams = playerRestService.FindTeamsJoinedAsync(playerId, sportId).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is NotTeamJoinedOnSportException)
+                    {
+                        throw new NotTeamJoinedOnSportException(ex.Message);
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return teams;
         }
 
         public Team FindTeamCaptainOnSport(int playerId, int SportId)
@@ -246,7 +498,23 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
         public List<Player> FindAllPlayersOnOurTeams(int playerId, int sportId)
         {
             List<Player> playersReturn = new List<Player>();
-            List<Team> teamsJoined = (List<Team>)playerRestService.FindTeamsJoinedAsync(playerId, sportId).Result;
+            List<Team> teamsJoined = new List<Team>();
+            try
+            {
+                teamsJoined = playerRestService.FindTeamsJoinedAsync(playerId, sportId).Result.ToList();
+            }              
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is NotTeamJoinedOnSportException)
+                    {
+                        throw new NotTeamJoinedOnSportException(ex.Message);
+                     }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
             foreach (Team t in teamsJoined)
             {
                 foreach (Joined j in t.Joineds)
@@ -340,11 +608,9 @@ namespace AppGeoFit.BusinessLayer.Managers.PlayerManager
             while (n <= emailParts.Length - 2)
             {
                 if (n == 0)
-                    //finalEmail[0].Insert(0,emailParts[n]);
                     finalEmail[0] = emailParts[n];
                 else
                 {
-                    //finalEmail[0].Insert(emailParts[n - 1].Length, "." + emailParts[n]);
                     finalEmail[0] += "." + emailParts[n];
                 }
                 n++;

@@ -4,7 +4,7 @@ using System.Text;
 
 namespace AppGeoFit.BusinessLayer.Exceptions
 {
-    class DuplicateNoticeException : Exception
+    public class DuplicateNoticeException : Exception
     {
         public DuplicateNoticeException(string message) : base(message){ }
 

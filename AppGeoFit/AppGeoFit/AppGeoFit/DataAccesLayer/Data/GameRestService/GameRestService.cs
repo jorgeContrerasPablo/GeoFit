@@ -13,6 +13,8 @@ using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 using AppGeoFit.BusinessLayer.Exceptions;
 using Plugin.Geolocator;
 using Plugin.Geolocator.Abstractions;
+using System.Net.Http.Headers;
+using System.Globalization;
 
 [assembly: Dependency(typeof(AppGeoFit.DataAccesLayer.Data.GameRestService.GameRestService))]
 namespace AppGeoFit.DataAccesLayer.Data.GameRestService
@@ -24,13 +26,16 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
 
         public GameRestService()
         {
+            var authData = string.Format("{0}:{1}", Constants.Username, Constants.Password);
+            var authHeaderValue = Convert.ToBase64String(Encoding.UTF8.GetBytes(authData));
             client = new HttpClient();
             client.MaxResponseContentBufferSize = 256000;
+            client.DefaultRequestHeaders.Authorization = new AuthenticationHeaderValue("Basic", authHeaderValue);
         }
 
         public async Task<int> CreateGameAsync(Game game)
         {
-            var uri = new Uri(string.Format(url + "Game/CreateGame"));
+            var uri = new Uri(string.Format(url + "Game/CreateGame/"));
             int responseSucced = 0;
             HttpResponseMessage response = new HttpResponseMessage();
 
@@ -56,7 +61,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
 
         public async Task<bool> DeleteGameAsync(int gameId)
         {
-            var uri = new Uri(string.Format(url + "Game/DeleteGame/{0}", gameId));
+            var uri = new Uri(string.Format(url + "Game/DeleteGame/{0}/", gameId));
             Boolean responseSucced = false;
 
             HttpResponseMessage response = client.DeleteAsync(uri).Result;
@@ -79,7 +84,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
         public async Task<Game> GetGameAsync(int gameId)
         {
             Game responseAsGame= new Game();
-            var uri = new Uri(string.Format(url + "Game/GetGame/{0}", gameId));
+            var uri = new Uri(string.Format(url + "Game/GetGame/{0}/", gameId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -103,7 +108,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
 
         public async Task<bool> UpdateGameAsync(Game game)
         {
-            var uri = new Uri(string.Format(url + "Game/UpdateGame"));
+            var uri = new Uri(string.Format(url + "Game/UpdateGame/"));
             Boolean responseSucced = false;
 
             var json = JsonConvert.SerializeObject(game);
@@ -129,7 +134,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
         public async Task<int> FindOnTime(int playerId, string startDate, string endDate)
         {
             int responseId = 0;
-            Uri uri = new Uri(string.Format(url + "Game/FindOnTime/{0}/{1}/{2}", playerId, startDate, endDate));
+            Uri uri = new Uri(string.Format(url + "Game/FindOnTime/{0}/{1}/{2}/", playerId, startDate, endDate));
 
             HttpResponseMessage response = client.GetAsync(uri).Result;
 
@@ -149,11 +154,10 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
 
             return responseId;
         }
-        //TODO PLACE
-        public async Task<bool> FindOnTimeAndPlace(int placeId, DateTime startDate, DateTime endDate)
+        public async Task<bool> FindOnTimeAndPlace(int placeId, string startDate, string endDate)
         {
             bool responseSucced = false;
-            Uri uri = new Uri(string.Format(url + "Game/FindOnTimeAndPlace/{0}/{1}/{2}", placeId, startDate, endDate));
+            Uri uri = new Uri(string.Format(url + "Game/FindOnTimeAndPlace/{0}/{1}/{2}/", placeId, startDate, endDate));
 
             HttpResponseMessage response = client.GetAsync(uri).Result;
 
@@ -173,11 +177,10 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
 
             return responseSucced;
         }
-        //TODO Coordinates
-        public async Task<bool> FindOnTimeAndPlace(double latitude, double longitude, DateTime startDate, DateTime endDate)
+        public async Task<bool> FindOnTimeAndPlace(double latitude, double longitude, string startDate, string endDate)
         {
             bool responseSucced = false;
-            Uri uri = new Uri(string.Format(url + "Game/FindOnTimeAndPlace/{0}/{1}/{2}/{4}", latitude, longitude, startDate, endDate));
+            Uri uri = new Uri(string.Format(url + "Game/FindOnTimeAndPlace/{0}/{1}/{2}/{4}/", latitude, longitude, startDate, endDate));
 
             HttpResponseMessage response = client.GetAsync(uri).Result;
 
@@ -201,7 +204,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
         public async Task<ICollection<Game>> GetPaginationByTime(int pages, int rows, int sportId)
         {
             ICollection<Game> responseListGames = new Collection<Game>();
-            var uri = new Uri(string.Format(url + "Game/GetPaginationByTime/{0}/{1}/{2}", pages, rows, sportId));
+            var uri = new Uri(string.Format(url + "Game/GetPaginationByTime/{0}/{1}/{2}/", pages, rows, sportId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -226,7 +229,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
         public async Task<ICollection<Game>> GetAllPaginationByNumPlayers(int pages, int rows, int sportId)
         {
             ICollection<Game> responseListGames = new Collection<Game>();
-            var uri = new Uri(string.Format(url + "Game/GetAllPaginationByNumPlayers/{0}/{1}/{2}", pages, rows, sportId));
+            var uri = new Uri(string.Format(url + "Game/GetAllPaginationByNumPlayers/{0}/{1}/{2}/", pages, rows, sportId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -251,7 +254,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
         public async Task<ICollection<Game>> GetAllPaginationByDistance(int pages, int rows, int sportId, double longitude, double latitude)
         {
             ICollection <Game> responseListGames = new Collection<Game>();
-            var uri = new Uri(string.Format(url + "Game/GetAllPaginationByDistance/{0}/{1}/{2}/{3}/{4}/", pages, rows, sportId, longitude, latitude));
+            var uri = new Uri(string.Format(CultureInfo.InvariantCulture, url + "Game/GetAllPaginationByDistance/{0}/{1}/{2}/{3}/{4}/", pages, rows, sportId, longitude, latitude));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -276,7 +279,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
         public async Task<int> TotalGamesCount(int sportId)
         {
             int numGames = 0;
-            var uri = new Uri(string.Format(url + "Game/TotalGamesCount/{0}", sportId));
+            var uri = new Uri(string.Format(url + "Game/TotalGamesCount/{0}/", sportId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -302,7 +305,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
         public async Task<bool> IsPlayerOnGame(int gameId, int playerId)
         {
             bool isOnGame = false;
-            var uri = new Uri(string.Format(url + "Game/IsPlayerOnGame/{0}/{1}", gameId, playerId));
+            var uri = new Uri(string.Format(url + "Game/IsPlayerOnGame/{0}/{1}/", gameId, playerId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -325,7 +328,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
         public async Task<bool> AddPlayer(int gameId, int playerId)
         {
             bool isOnGame = false;
-            var uri = new Uri(string.Format(url + "Game/AddPlayer/{0}/{1}", gameId, playerId));
+            var uri = new Uri(string.Format(url + "Game/AddPlayer/{0}/{1}/", gameId, playerId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -343,7 +346,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
 
         public async Task<bool> AddPlayers(Game game)
         {
-            var uri = new Uri(string.Format(url + "Game/AddPlayers"));
+            var uri = new Uri(string.Format(url + "Game/AddPlayers/"));
             Boolean responseSucced = false;
 
             var json = JsonConvert.SerializeObject(game);
@@ -368,7 +371,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
 
         public async Task<bool> RemovePlayers(Game game)
         {
-            var uri = new Uri(string.Format(url + "Game/RemovePlayers"));
+            var uri = new Uri(string.Format(url + "Game/RemovePlayers/"));
             Boolean responseSucced = false;
 
             var json = JsonConvert.SerializeObject(game);
@@ -394,7 +397,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
         public async Task<int> FindTeamOnTime(int teamId, string startDate, string endDate)
         {
             int responseId = 0;
-            Uri uri = new Uri(string.Format(url + "Game/FindTeamOnTime/{0}/{1}/{2}", teamId, startDate, endDate));
+            Uri uri = new Uri(string.Format(url + "Game/FindTeamOnTime/{0}/{1}/{2}/", teamId, startDate, endDate));
 
             HttpResponseMessage response = client.GetAsync(uri).Result;
 
@@ -418,7 +421,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
         public async Task<ICollection<Player>> GetParticipatePlayers(int gameId)
         {
             ICollection<Player> responsePlayerList = new Collection<Player>();
-            var uri = new Uri(string.Format(url + "Game/GetParticipatePlayers/{0}", gameId));
+            var uri = new Uri(string.Format(url + "Game/GetParticipatePlayers/{0}/", gameId));
             HttpResponseMessage response;
 
             response = client.GetAsync(uri).Result;
@@ -442,7 +445,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
 
         public async Task<ICollection<Place>> GetPlacesBySport(int sportId)
         {
-            var uri = new Uri(string.Format(url + "Game/GetPlacesBySport/{0}", sportId));
+            var uri = new Uri(string.Format(url + "Game/GetPlacesBySport/{0}/", sportId));
             ICollection<Place> responsePlaces = new Collection<Place>();
 
             HttpResponseMessage response = client.GetAsync(uri).Result;
@@ -467,7 +470,7 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
 
         public async Task<ICollection<Place>> GetPlacesWithOutSport()
         {
-            var uri = new Uri(string.Format(url + "Game/GetPlacesWithOutSport"));
+            var uri = new Uri(string.Format(url + "Game/GetPlacesWithOutSport/"));
             ICollection<Place> responsePlaces = new Collection<Place>();
 
             HttpResponseMessage response = client.GetAsync(uri).Result;

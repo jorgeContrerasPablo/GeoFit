@@ -18,6 +18,7 @@ using AppGeoFit.BusinessLayer.Managers.TeamManager;
 using Android.Views;
 using Android.Graphics;
 using AppGeoFit.DataAccesLayer.Data.NoticeRestService.Exceptions;
+using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -53,8 +54,15 @@ namespace AppGeoFit.Droid.Screens
             playerManager = Xamarin.Forms.DependencyService.Get<IPlayerManager>().InitiateServices(false);
 
             teamManager = Xamarin.Forms.DependencyService.Get<ITeamManager>().InitiateServices(false);
-
-            Game actualGame = gameManager.GetGame(actualGameId);
+            Game actualGame = new Game();
+            try
+            {
+                actualGame = gameManager.GetGame(actualGameId);
+            }
+            catch (Exception ex)
+            {
+                Toast.MakeText(ApplicationContext,ex.Message, ToastLength.Long).Show();
+            }
 
             EditText commentGame = FindViewById<EditText>(Resource.Id.FeedBack_GameComent);
             EditText commentPlace = FindViewById<EditText>(Resource.Id.FeedBack_PlaceComent);
@@ -66,9 +74,16 @@ namespace AppGeoFit.Droid.Screens
             //Se crea el icono exclamation_error
             Drawable errorD = ContextCompat.GetDrawable(this, Resource.Drawable.exclamation_error);
             errorD.SetBounds(0, 0, errorD.IntrinsicWidth, errorD.IntrinsicHeight);
-
-            lPlayersOnGame = gameManager.GetParticipatePlayers(actualGameId);
-            lPlayersOnGame.Remove(actualPlayer);
+            try
+            {
+                lPlayersOnGame = gameManager.GetParticipatePlayers(actualGameId);
+                lPlayersOnGame.Remove(actualPlayer);
+            }
+            catch(PlayerNotFoundException) { }
+            catch (Exception ex)
+            {
+                Toast.MakeText(ApplicationContext,ex.Message, ToastLength.Long).Show();
+            }
             lPlayersPendingToFeedBack.AddRange(lPlayersOnGame);
             UpdatePlayers();
 
@@ -79,7 +94,7 @@ namespace AppGeoFit.Droid.Screens
             {
                 place.SetTextColor(Color.ParseColor("#4785F4"));
             }
-                game.Click += (o, e) =>
+            game.Click += (o, e) =>
             {
                 AlertDialog dialogProfile = CreateAlertDialog(Resource.Layout.GameDetails_NoCreator, this);
                 dialogProfile.Show();
@@ -99,8 +114,16 @@ namespace AppGeoFit.Droid.Screens
                 if (actualGame.PlaceID != null)
                 {
                     AlertDialog dialogPlaceDetails = ShowPlaceDetails(actualGame.Place);
-
-                    if (feedBackManager.TotalPlaceCommentsCount((int)actualGame.PlaceID) > 0)
+                    int totalPlaceComments = 0;
+                    try
+                    {
+                        totalPlaceComments = feedBackManager.TotalPlaceCommentsCount((int)actualGame.PlaceID);
+                    }
+                    catch(Exception ex)
+                    {
+                        Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }
+                    if (totalPlaceComments > 0)
                     {
                         dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_ShowCommentsLink).SetTextColor(Color.ParseColor("#4785F4"));
                         ImageButton aceptButton = dialogPlaceDetails.FindViewById<ImageButton>(Resource.Id.PlaceDetails_AcceptButton);
@@ -132,7 +155,16 @@ namespace AppGeoFit.Droid.Screens
                 {
                     AlertDialog dialogProfile = ShowPlayerDetails(player);
                     TextView commentsLink = dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_ShowCommentsLink);
-                    if (feedBackManager.TotalPlayerCommentsCount((int)player.PlayerId) > 0)
+                    int totalPlayerComments = 0;
+                    try
+                    {
+                        totalPlayerComments = feedBackManager.TotalPlayerCommentsCount((int)player.PlayerId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }
+                    if (totalPlayerComments > 0)
                     {
                         commentsLink.SetTextColor(Color.ParseColor("#4785F4"));
                     }
@@ -197,13 +229,37 @@ namespace AppGeoFit.Droid.Screens
                         foreach (FeedBack f in pendingFeedBacks)
                         {
                             Player playerF = lPlayersOnGame.ElementAt(lPlayersOnGame.FindIndex(p => p.PlayerId == f.PlayerID));
-                            if (actualGame.Team1ID != null && teamManager.IsOnTeam((int)actualGame.Team1ID, playerF.PlayerId))
+                            bool isOnTeam1 = false;
+                            try
+                            {
+                                isOnTeam1 = teamManager.IsOnTeam((int)actualGame.Team1ID, playerF.PlayerId);
+                            }
+                            catch(Exception ex)
+                            {
+                                Toast.MakeText(ApplicationContext,
+                            ex.Message, ToastLength.Short).Show();
+                            }
+                            if (actualGame.Team1ID != null && isOnTeam1)
                             {
                                 lvlTotalLocalTeam = lvlTotalLocalTeam + (double)f.Valuation;
                             }
                             else
-                               if (actualGame.Team2ID != null && teamManager.IsOnTeam((int)actualGame.Team2ID, playerF.PlayerId))
-                                lvlTotalAwayTeam = lvlTotalAwayTeam + (double)f.Valuation;
+                            {
+                                bool isOnTeam2 = false;
+                                try
+                                {
+                                    isOnTeam1 = teamManager.IsOnTeam((int)actualGame.Team2ID, playerF.PlayerId);
+                                }
+                                catch (Exception ex)
+                                {
+                                    Toast.MakeText(ApplicationContext,
+                            ex.Message, ToastLength.Short).Show();
+                                }
+                                if (actualGame.Team2ID != null && isOnTeam2)
+                                    lvlTotalAwayTeam = lvlTotalAwayTeam + (double)f.Valuation;
+                            }
+
+                               
                         }
                         if (actualGame.Team1ID != null)
                         {

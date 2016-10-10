@@ -38,7 +38,6 @@ namespace AppGeoFit.Droid.Screens
             //Recuperamos la sesion
             appSession = new AppSession(ApplicationContext);            
 
-            appSession.setSports(teamManager.GetSports());
             string colorCode = Intent.GetStringExtra("ColorCode") ?? "#ffffff";
             string teamName = Intent.GetStringExtra("teamName") ?? "";
 
@@ -98,7 +97,7 @@ namespace AppGeoFit.Droid.Screens
                     {
                         okName = IsValid(teamNameET, exN.Message, errorD, false);
                     }
-                    catch (AlreadyCaptainOnSport ex)
+                    catch (AlreadyCaptainOnSportException ex)
                     {
                         Toast.MakeText(this, ex.Message, ToastLength.Long).Show();
                     }

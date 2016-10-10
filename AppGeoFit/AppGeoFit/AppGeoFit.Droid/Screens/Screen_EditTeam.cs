@@ -45,8 +45,15 @@ namespace AppGeoFit.Droid.Screens
             int teamId = Intent.GetIntExtra("teamId", 0);
             if (teamId != 0)
             {
-                team = teamManager.GetTeam(teamId).Result;
-                captain = teamManager.GetCaptainAsync(teamId).Result;
+                try
+                {
+                    team = teamManager.GetTeam(teamId);
+                    captain = teamManager.GetCaptainAsync(teamId);
+                }
+                catch (Exception ex)
+                {
+                    Toast.MakeText(ApplicationContext,ex.Message, ToastLength.Short).Show();
+                }
             }
             string colorCode = Intent.GetStringExtra("ColorCode") ?? team.ColorTeam;
             string teamName = Intent.GetStringExtra("teamName") ?? team.TeamName;
@@ -73,10 +80,6 @@ namespace AppGeoFit.Droid.Screens
                 lplayersSelectCaptain.Add(team.Joineds.ElementAt(n).Player);
                 n++;
             }
-            //Eliminamos el capitan actual de la lista
-           // int actualCaptainPos = lplayersSelectCaptain.FindIndex(p => p.PlayerNick == captain.PlayerNick);
-           // lplayersSelectCaptain.RemoveAt(actualCaptainPos);
-
             spinnerCaptains.ItemSelected += (o, e) =>
             {
                 newCaptain = lplayersSelectCaptain.ElementAt(e.Position);
@@ -111,7 +114,7 @@ namespace AppGeoFit.Droid.Screens
                     {
                         okName = IsValid(teamNameET, exN.Message, errorD, false);
                     }
-                    catch (AlreadyCaptainOnSport ex)
+                    catch (AlreadyCaptainOnSportException ex)
                     {
                         Toast.MakeText(this,ex.Message, ToastLength.Long).Show();
                     }

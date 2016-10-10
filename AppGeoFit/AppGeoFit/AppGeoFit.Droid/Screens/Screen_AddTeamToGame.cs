@@ -16,6 +16,7 @@ using AppGeoFit.BusinessLayer.Managers.TeamManager;
 using AppGeoFit.Droid.Adapters;
 using AppGeoFit.BusinessLayer.Managers.GameManager;
 using AppGeoFit.BusinessLayer.Exceptions;
+using AppGeoFit.DataAccesLayer.Data.PlayerRestService.Exceptions;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -37,15 +38,26 @@ namespace AppGeoFit.Droid.Screens
             IPlayerManager playerManager = Xamarin.Forms.DependencyService.Get<IPlayerManager>().InitiateServices(false);
             IGameManager gameManager = Xamarin.Forms.DependencyService.Get<IGameManager>().InitiateServices(false);
             AppSession appSession = new AppSession(ApplicationContext);
-            actualPlayer = appSession.getPlayer();            
-            //ITeamManager teamManager = Xamarin.Forms.DependencyService.Get<ITeamManager>().InitiateServices(false);
-            Team actualTeam = playerManager.FindTeamCaptainOnSport(actualPlayer.PlayerId, actualSportId);
+            actualPlayer = appSession.getPlayer();
+            Team actualTeam = new Team();
+            try
+            {
+                actualTeam = playerManager.FindTeamCaptainOnSport(actualPlayer.PlayerId, actualSportId);
+            }
+            catch(CaptainNotFoundException){}
+            catch (Exception ex)
+            {
+                Toast.MakeText(ApplicationContext,ex.Message, ToastLength.Short).Show();
+            }
+            
             ListView playerListView = FindViewById<ListView>(Resource.Id.SelectPlayers_Captain_playerListView);
             Button aceptButton = FindViewById<Button>(Resource.Id.SelectPlayers_Captain_AceptButton);
 
             List<int> positionsCheckeds = new List<int>();
             List<Player> playerList = new List<Player>();
-            List<Joined> joineds = actualTeam.Joineds.ToList();
+            List<Joined> joineds = new List<Joined>();
+            if (actualTeam.Joineds != null)
+                joineds = actualTeam.Joineds.ToList();
             joineds.RemoveAt(joineds.FindIndex(j => j.Player.PlayerId == actualPlayer.PlayerId));
             foreach (Joined j in joineds)
             {
@@ -65,27 +77,47 @@ namespace AppGeoFit.Droid.Screens
                     teamList.Remove(playerCheked);
                 }
                 else
-                {   //Comprobar jugador no está ya vinculado a esta partida.                 
-                    if (gameManager.IsPlayerOnGame(actualGameId, playerCheked.PlayerId))
+                {   //Comprobar jugador no está ya vinculado a esta partida.           
+                    try
+                    {
+                        if (gameManager.IsPlayerOnGame(actualGameId, playerCheked.PlayerId))
+                        {
+                            Toast.MakeText(ApplicationContext,
+                                "Player: " + playerCheked.PlayerId + " is already joining this game", ToastLength.Short).Show();
+                        }
+                        else
+                        {
+                            cBox.Checked = true;
+                            teamList.Add(playerCheked);
+                        }
+                    }
+                    catch (PlayerOnGameException)
                     {
                         Toast.MakeText(ApplicationContext,
-                            "Player: "+playerCheked.PlayerId+" is already joining this game", ToastLength.Short).Show();
+                               "Player: " + playerCheked.PlayerId + " is already joining this game", ToastLength.Short).Show();
                     }
-                    else
+                    catch (Exception ex)
                     {
-                        cBox.Checked = true;
-                        teamList.Add(playerCheked);
-                    }
+                        Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }                  
                 }
             };
             aceptButton.Click += (oc, ec) =>
             {
                 //Comprobar capitan ya vinculado a esta partida.
-                if (!gameManager.IsPlayerOnGame(actualGameId, actualPlayer.PlayerId))
+                try
                 {
-                    teamList.Add(actualPlayer);
+                    if (!gameManager.IsPlayerOnGame(actualGameId, actualPlayer.PlayerId))
+                    {
+                        teamList.Add(actualPlayer);
+                    }
                 }
-                
+                catch (PlayerOnGameException){}
+                catch (Exception ex)
+                {
+                    Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                }
+
                 try
                 {
                     gameManager.AddTeam(actualGameId, teamList, actualTeam.TeamID);

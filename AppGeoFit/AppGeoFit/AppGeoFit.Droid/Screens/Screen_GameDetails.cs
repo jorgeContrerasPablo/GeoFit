@@ -39,7 +39,16 @@ namespace AppGeoFit.Droid.Screens
             AppSession appSession = new AppSession(ApplicationContext);
             Player player = appSession.getPlayer();
             gameId = Intent.GetIntExtra("gameId", 0);
-            game = gameManager.GetGame(gameId);
+            try
+            {
+
+                game = gameManager.GetGame(gameId);
+            }
+            catch(Exception ex)
+            {
+                Toast.MakeText(ApplicationContext,
+                               ex.Message, ToastLength.Short).Show();
+            }
 
             bool isCreator = false;
 
@@ -89,14 +98,24 @@ namespace AppGeoFit.Droid.Screens
                 leaveGameB = FindViewById<ImageButton>(Resource.Id.GameDetails_Creator_LeaveB);
                 isCreator = true;
             }
-            //android: textColor = "#4785F4"
             startDateEt.Text = game.StartDate.Day + "/" + game.StartDate.Month + "/" + game.StartDate.Year
                 + "  " + game.StartDate.Hour + ":" + game.StartDate.Minute;            
             endDateEt.Text = game.EndDate.Day + "/" + game.EndDate.Month + "/" + game.EndDate.Year
                 + "  " + game.EndDate.Hour + ":" + game.EndDate.Minute;            
             numPlayers.Text = game.PlayersNum + "/" + game.Sport.NumPlayers;
 
-            if(feedBackManager.TotalGameCommentsCount(game.GameID) > 0)
+            int totalGameComments = 0;
+            try
+            {
+                totalGameComments = feedBackManager.TotalGameCommentsCount(game.GameID);
+            }
+            catch (Exception ex)
+            {
+                Toast.MakeText(ApplicationContext,
+                             ex.Message, ToastLength.Short).Show();
+            }
+
+            if(totalGameComments > 0)
             {
                 showCommentsLink.SetTextColor(Color.ParseColor("#4785F4"));
                 showCommentsLink.Click += (o, e) =>
@@ -109,31 +128,20 @@ namespace AppGeoFit.Droid.Screens
 
             if (game.PlaceID != null)
             {
+                location.SetTextColor(Color.ParseColor("#4785F4"));
                 location.Click += (o, e) =>
                 {
-                    AlertDialog dialogPlaceDetails = ShowPlaceDetails(game.Place);                    
-
-                    if (feedBackManager.TotalPlaceCommentsCount((int)game.PlaceID) > 0)
+                    AlertDialog dialogPlaceDetails = ShowPlaceDetails(game.Place);
+                    ImageButton aceptButton = dialogPlaceDetails.FindViewById<ImageButton>(Resource.Id.PlaceDetails_AcceptButton);
+                    aceptButton.Click += (oB, eB) =>
                     {
-                        dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_ShowCommentsLink).SetTextColor(Color.ParseColor("#4785F4"));
-                        ImageButton aceptButton = dialogPlaceDetails.FindViewById<ImageButton>(Resource.Id.PlaceDetails_AcceptButton);
-
-                        aceptButton.Click += (oB, eB) =>
-                        {
-                            dialogPlaceDetails.Cancel();
-                        };
-                    }
-                   
+                        dialogPlaceDetails.Cancel();
+                    };                   
                 };
             }
-            
-
-            creator.Text = game.Creator.PlayerNick;            
-            if(game.Team1ID != null)
-                homeTeam.Text = game.Team.TeamName;          
-            if (game.Team2ID != null)
-                awayTeam.Text = game.Team1.TeamName;
-           
+            creator.Text = game.Creator.PlayerNick;
+            homeTeam.Text = game.Team1ID != null ? game.Team.TeamName : "";
+            awayTeam.Text = game.Team2ID != null ? game.Team1.TeamName : "";
             List<Player> participatePlayersList = new List<Player>();
             try {
                 participatePlayersList = gameManager.GetParticipatePlayers(gameId);
@@ -151,9 +159,19 @@ namespace AppGeoFit.Droid.Screens
             playerList.ItemClick += (o, e) =>
             {
                 Player playerClick = adapter.GetItem(e.Position);
-                AlertDialog dialogProfile = ShowPlayerDetails(player);
+                AlertDialog dialogProfile = ShowPlayerDetails(playerClick);
                 TextView commentsLink = dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_ShowCommentsLink);
-                if (feedBackManager.TotalPlayerCommentsCount((int)player.PlayerId) > 0)
+                int totalPlayerComments = 0;
+                try
+                {
+                    totalPlayerComments = feedBackManager.TotalPlayerCommentsCount((int)playerClick.PlayerId);
+                }
+                catch(Exception ex)
+                {
+                    Toast.MakeText(ApplicationContext,
+                             ex.Message, ToastLength.Short).Show();
+                }
+                if (totalPlayerComments > 0)
                 {
                     commentsLink.SetTextColor(Color.ParseColor("#4785F4"));
                 }
@@ -250,24 +268,20 @@ namespace AppGeoFit.Droid.Screens
         protected override void OnResume()
         {
             base.OnStart();
-            game = gameManager.GetGame(gameId);
-            startDateEt.Text = game.StartDate.Day + "/" + game.StartDate.Month + "/" + game.StartDate.Year
-                + "  " + game.StartDate.Hour + ":" + game.StartDate.Minute;
-            endDateEt.Text = game.EndDate.Day + "/" + game.EndDate.Month + "/" + game.EndDate.Year
-                + "  " + game.EndDate.Hour + ":" + game.EndDate.Minute;
-        }
-
-        /*public override bool OnKeyDown([GeneratedEnum] Keycode keyCode, KeyEvent e)
-        {
-            if (keyCode == Keycode.Back)
+            try
             {
-                var mainActivity = new Intent(ApplicationContext, typeof(FragmentActivity_MainActivity));
-                mainActivity.PutExtra("toOpen", "TabGame");
-                mainActivity.SetFlags(ActivityFlags.ClearTop);
-                StartActivity(mainActivity);
-                return true;
+                game = gameManager.GetGame(gameId);
+                startDateEt.Text = game.StartDate.Day + "/" + game.StartDate.Month + "/" + game.StartDate.Year
+              + "  " + game.StartDate.Hour + ":" + game.StartDate.Minute;
+                endDateEt.Text = game.EndDate.Day + "/" + game.EndDate.Month + "/" + game.EndDate.Year
+                    + "  " + game.EndDate.Hour + ":" + game.EndDate.Minute;
             }
-            return false;
-        }*/
+            catch(Exception ex)
+            {
+                Toast.MakeText(ApplicationContext,
+                               ex.Message, ToastLength.Short).Show();
+            }
+          
+        }
     }
 }

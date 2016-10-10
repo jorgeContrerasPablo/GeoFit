@@ -18,6 +18,7 @@ using AppGeoFit.DataAccesLayer.Data.GameRestService.Exceptions;
 using AppGeoFit.Droid.Adapters;
 using AppGeoFit.BusinessLayer.Managers.FeedBackManager;
 using Android.Graphics;
+using Android.Util;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -69,14 +70,14 @@ namespace AppGeoFit.Droid.Screens
             DatePicker datePicker;
             AlertDialog dialogDate;
             MyOnDateChangeListener changeListener = new MyOnDateChangeListener();
-            changeListener.setDate(date);
             selectDate.Click += (o, e) =>
             {
                 dialogDate = CreateAlertDialog(Resource.Layout.dialog_DatePicker, this);
                 dialogDate.Show();
                 datePicker = dialogDate.FindViewById<DatePicker>(Resource.Id.datePicker1);
                 changeListener = new MyOnDateChangeListener(dialogDate, selectDate, date);
-                datePicker.Init(date.Year, date.Month, date.Day, changeListener);        
+                changeListener.setDate(date);
+                datePicker.Init(date.Year, date.Month -1, date.Day, changeListener);
             };
             #endregion
             #region timePicker
@@ -122,53 +123,33 @@ namespace AppGeoFit.Droid.Screens
             };
             #endregion
             #region SpinnerPlaces
-
-            Spinner placeSpinner = FindViewById<Spinner>(Resource.Id.CreateGame_SpinnerPlaces);
-            List<Place> places = gameManager.GetPlaces(actualSportId);
+            List<Place> places = new List<Place>();
+            try
+            {
+                places = gameManager.GetPlaces(actualSportId);
+            }
+            catch(Exception ex)
+            {
+                Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+            }
+            PlaceSpinner placeSpinner = FindViewById<PlaceSpinner>(Resource.Id.CreateGame_SpinnerPlaces);
             ArrayAdapter<Place> adapter_place = new ArrayAdapter<Place>(this, Android.Resource.Layout.SimpleSpinnerItem, places);
             placeSpinner.Adapter = adapter_place;
-            bool firstTimeSpinner_Place = true;
+
+            int actualPositionSpinner = 0;
+            Place placeSelected = new Place();
+            AlertDialog dialogPlaceDetails = CreateAlertDialog(Resource.Layout.PlaceDetails, this);
+            int timesOnSpinner = 0;
+            game.PlaceID = places.ElementAt(0).PlaceID;
             placeSpinner.ItemSelected += (o, e) =>
-            {                
-                Place placeSelected = places.ElementAt(e.Position);
-                if (!firstTimeSpinner_Place)
+            {
+                actualPositionSpinner = placeSpinner.SelectedItemPosition;
+                placeSelected = places.ElementAt(actualPositionSpinner);
+                if (timesOnSpinner > 0)
                 {
-                    AlertDialog dialogPlaceDetails;
-                    dialogPlaceDetails = CreateAlertDialog(Resource.Layout.PlaceDetails, this);
-                    dialogPlaceDetails.Show();
-                    TextView locationText = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Map);
-                    TextView placeEmail = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Email);
-                    TextView placeLink = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Link);
-                    TextView placeName = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Name);
-                    TextView placePhone = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_PhoneNum);
-                    RatingBar placeValue = dialogPlaceDetails.FindViewById<RatingBar>(Resource.Id.PlaceDetails_ValuationMed);
-                    TextView placeDirection = dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_Direction);
+                    placeSelected = places.ElementAt(actualPositionSpinner);
+                    dialogPlaceDetails = ShowPlaceDetails(placeSelected);
                     ImageButton aceptButton = dialogPlaceDetails.FindViewById<ImageButton>(Resource.Id.PlaceDetails_AcceptButton);
-
-                    locationText.Text = placeSelected.Longitude.ToString() +"  "+ placeSelected.Latitude.ToString();
-                    placeEmail.Text = placeSelected.PlaceMail;
-                    placeLink.Text = placeSelected.Link == "" ? "" : placeSelected.Link.Substring(0, 6) + "...";
-                    placeName.Text = placeSelected.PlaceName;
-                    placePhone.Text = placeSelected.PhoneNum == null ? placeSelected.PhoneNum.ToString() : "";
-
-                    placeValue.Rating = placeSelected.ValuationMed == null ? 0 : (int)placeSelected.ValuationMed;
-                    placeDirection.Text = placeSelected.Direction;
-                    locationText.Click += (ol, el) =>
-                    {
-                        Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse("geo:" + placeSelected.Longitude 
-                                                                                                   + "," + placeSelected.Latitude
-                                                                                                   + "?z=16&q=" + placeSelected.Longitude 
-                                                                                                   + "," + placeSelected.Latitude));
-                        intent.SetClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                        StartActivity(intent);
-                    };
-                    placeLink.Click += (od, ed) =>
-                    {
-                        var uri = Android.Net.Uri.Parse(placeSelected.Link);
-                        var intent = new Intent(Intent.ActionView, uri);
-                        StartActivity(intent);
-                    };
-                    
                     aceptButton.Click += (oB, eB) =>
                     {
                         game.PlaceID = placeSelected.PlaceID;
@@ -176,12 +157,8 @@ namespace AppGeoFit.Droid.Screens
                     };
                 }
                 else
-                {
-                    game.PlaceID = placeSelected.PlaceID;
-                    firstTimeSpinner_Place = false;
-                }
+                    timesOnSpinner++;                                  
             };
-
             #endregion
             #region SpinnerDuration
             Spinner durationSpinner = FindViewById<Spinner>(Resource.Id.CreateGame_SpinnerDuration);
@@ -189,10 +166,9 @@ namespace AppGeoFit.Droid.Screens
             ArrayAdapter<int> adapter = new ArrayAdapter<int>(this, Android.Resource.Layout.SimpleSpinnerItem, durations);
             durationSpinner.Adapter = adapter;
             int gameDuration = 1;
-            bool firstTimeSpinner = true;
             durationSpinner.ItemSelected += (o, e) =>
             {
-                gameDuration = e.Position + 1;
+                gameDuration = durationSpinner.SelectedItemPosition + 1;
             };
             #endregion
             Button acept = FindViewById<Button>(Resource.Id.CreateGame_AceptButton);
@@ -239,7 +215,11 @@ namespace AppGeoFit.Droid.Screens
                 {
                     Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
                 }
-                catch(Exception ex)
+                catch (GameOnTimeAndPlaceException ex)
+                {
+                    Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                }
+                catch (Exception ex)
                 {
                     Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
                 }
@@ -326,8 +306,7 @@ namespace AppGeoFit.Droid.Screens
 
                         aceptButton.Click += (oc, ec) =>
                         {
-                            addTeam = false;                            
-                            //TODO guardar equipo para vincularlo.
+                            addTeam = false;
                             finalSelectList.Clear();
                             finalSelectList.Add(actualPlayer);
                             finalSelectList.AddRange(SelectedList_Individual);
@@ -344,9 +323,6 @@ namespace AppGeoFit.Droid.Screens
 
                         };
 
-                        /* var screen_CreateGame_Captain = new Intent(this, typeof(Screen_SelectPlayers_Captain));
-                         screen_CreateGame_Captain.PutExtra("sportId", actualSportId);
-                         StartActivity(screen_CreateGame_Captain);*/
                     }
                     return true;
                 case Resource.Id.MenuCTIndividual:
@@ -356,7 +332,16 @@ namespace AppGeoFit.Droid.Screens
 
                     AlertDialog dialogSelect_Individual = CreateAlertDialog(Resource.Layout.dialog_SearchPlayer, this);
                     dialogSelect_Individual.Show();
-                    List<Player> playersOnOurTeams = playerManager.FindAllPlayersOnOurTeams(actualPlayer.PlayerId, actualSportId);
+                    List<Player> playersOnOurTeams = new List<Player>();
+                    try
+                    {
+                        playersOnOurTeams = playerManager.FindAllPlayersOnOurTeams(actualPlayer.PlayerId, actualSportId);
+                    }
+                    catch(NotTeamJoinedOnSportException ex) {}
+                    catch(Exception ex)
+                    {
+                        Toast.MakeText(ApplicationContext,ex.Message, ToastLength.Short).Show();
+                    }
                     AutoCompleteTextView autoCompleteTextView = dialogSelect_Individual.FindViewById<AutoCompleteTextView>(Resource.Id.D_SPlayer_playerToFind);
                     var adapterAutoComplete = new PlayerArrayAdapter(this, playersOnOurTeams, actualPlayer.PlayerId, actualSportId, false, null, false);
                     //Rellenamos y creamos el autocompleteView
@@ -372,7 +357,7 @@ namespace AppGeoFit.Droid.Screens
                             try
                             {
                                 int playerId = playerManager.FindPlayerByNick(autoCompleteTextView.Text);
-                                SelectedList_Individual.Add(playerManager.GetPlayer(playerId).Result);
+                                SelectedList_Individual.Add(playerManager.GetPlayer(playerId));
                                 finalSelectList.Clear();
                                 finalSelectList.Add(actualPlayer);
                                 finalSelectList.AddRange(SelectedList_Individual);
@@ -387,16 +372,26 @@ namespace AppGeoFit.Droid.Screens
                             {
                                 IsValid(autoCompleteTextView, ex.Message, errorD, false);
                             }
+                            catch(Exception ex)
+                            {
+                                Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                            }
                     };
-                    /*  var screen_CreateGame_Individual = new Intent(this, typeof(Screen_SelectPlayers_Individual));
-                      screen_CreateGame_Individual.PutExtra("sportId", actualSportId);
-                      StartActivity(screen_CreateGame_Individual);*/
                     break;
                 case Resource.Id.CtxLstProfile:
                     Player player = finalArrayAdapter.GetItem(info.Position);
                     AlertDialog dialogProfile = ShowPlayerDetails(player);
                     TextView commentsLink = dialogProfile.FindViewById<TextView>(Resource.Id.PlayerDetails_ShowCommentsLink);
-                    if (feedBackManager.TotalPlayerCommentsCount((int)player.PlayerId) > 0)
+                    int totalPlayerComments = 0;
+                    try
+                    {
+                        totalPlayerComments = feedBackManager.TotalPlayerCommentsCount((int)player.PlayerId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }
+                    if (totalPlayerComments > 0)
                     {
                         commentsLink.SetTextColor(Color.ParseColor("#4785F4"));
                     }
@@ -422,7 +417,33 @@ namespace AppGeoFit.Droid.Screens
         }
     }
 
-    public class MyOnDateChangeListener : Java.Lang.Object, DatePicker.IOnDateChangedListener
+    public class PlaceSpinner : Spinner
+    {
+        public PlaceSpinner (Context context) : base(context) { }
+        public PlaceSpinner(Context context, IAttributeSet attrs) : base(context, attrs) { }
+        public PlaceSpinner(Context context, IAttributeSet attrs, int defstyle) : base(context, attrs, defstyle) { }
+
+        public override void SetSelection(int position, bool animate)
+        {
+            bool sameSelected = position == SelectedItemPosition;
+            base.SetSelection(position, animate);
+               if (sameSelected)
+               {
+                   OnItemSelectedListener.OnItemSelected(null, SelectedView, position, SelectedItemId);
+               }
+        }
+        public override void SetSelection(int position)
+        {
+            bool sameSelected = position == SelectedItemPosition;
+            base.SetSelection(position);
+            if (sameSelected)
+            {
+                OnItemSelectedListener.OnItemSelected(null, SelectedView, position, SelectedItemId);
+            }
+        }
+    }
+
+public class MyOnDateChangeListener : Java.Lang.Object, DatePicker.IOnDateChangedListener
     {
         AlertDialog dialogDate;
         TextView selectDate;

@@ -102,7 +102,7 @@
                 android:layout_marginLeft="14dp"
                 android:layout_marginRight="14dp"
                 android:textColor="#4785F4" />
-            <Spinner
+            <AppGeoFit.Droid.Screens.PlaceSpinner
                 android:textAppearance="?android:attr/textAppearanceSmall"
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
@@ -117,7 +117,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="35dp"
                 android:id="@+id/CreateGame_SpinnerDuration"
-                android:layout_below="@+id/CreateGame_SpinnerPlaces"
+                android:layout_below="@id/CreateGame_SpinnerPlaces"
                 android:gravity="center"
                 android:layout_marginBottom="16dp"
                 android:layout_marginLeft="14dp"

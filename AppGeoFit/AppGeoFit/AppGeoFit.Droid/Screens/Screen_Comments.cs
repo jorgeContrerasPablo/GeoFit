@@ -61,12 +61,19 @@ namespace AppGeoFit.Droid.Screens
                 if (!(commentListView.Adapter == null || commentListView.Adapter.Count == 0)
                     && commentListView.LastVisiblePosition >= commentListView.Count - 1)
                 {
-                    if (commentPlayerId != 0)
-                        totalCommentsCount = feedBackManager.TotalPlayerCommentsCount(commentPlayerId);
-                    if (commentPlaceId != 0)
-                        totalCommentsCount = feedBackManager.TotalPlaceCommentsCount(commentPlaceId);
-                    if (commentGameId != 0)
-                        totalCommentsCount = feedBackManager.TotalGameCommentsCount(commentGameId);
+                    try
+                    {
+                        if (commentPlayerId != 0)
+                            totalCommentsCount = feedBackManager.TotalPlayerCommentsCount(commentPlayerId);
+                        if (commentPlaceId != 0)
+                            totalCommentsCount = feedBackManager.TotalPlaceCommentsCount(commentPlaceId);
+                        if (commentGameId != 0)
+                            totalCommentsCount = feedBackManager.TotalGameCommentsCount(commentGameId);
+                    }
+                    catch (Exception ex)
+                    {
+                        Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }
                     if (totalCommentsCount > commentListView.Count)
                     {
                         page = (int)Math.Ceiling((double)totalCommentsCount / commentListView.LastVisiblePosition) - 1;
@@ -136,7 +143,7 @@ namespace AppGeoFit.Droid.Screens
                     EditText comment = dialogEditComment.FindViewById<EditText>(Resource.Id.D_EditComment_Comment);
                     comment.Text = feedBackSelected.Description;
                     Button acceptButton = dialogEditComment.FindViewById<Button>(Resource.Id.D_EditComment_AcceptB);
-                    Button canceButton = dialogEditComment.FindViewById<Button>(Resource.Id.D_EditComment_CancelB);
+                    Button cancelButton = dialogEditComment.FindViewById<Button>(Resource.Id.D_EditComment_CancelB);
                     bool commentN = false;
                     acceptButton.Click += (o, e) =>
                     {
@@ -144,16 +151,29 @@ namespace AppGeoFit.Droid.Screens
                         if (!commentN)
                         {
                             feedBackSelected.Description = comment.Text;
-                            feedBackManager.UpdateFeedBack(feedBackSelected);
-                            updateCommentList();
+                            try
+                            {
+                                feedBackManager.UpdateFeedBack(feedBackSelected);
+                                updateCommentList();
+                            }
+                            catch(Exception ex)
+                            {
+                                Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                            }
                             dialogEditComment.Cancel();
                         }
                     };
-                    canceButton.Click += (o, e) =>
+                    cancelButton.Click += (o, e) =>
                     {
                         dialogEditComment.Cancel();
-
-                        updateCommentList();
+                        try
+                        {
+                            updateCommentList();
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                        }
                     };
                     return true;
                 case Resource.Id.MenuCommentDelete:
@@ -167,7 +187,14 @@ namespace AppGeoFit.Droid.Screens
                     baDeletePositiveButton.Click += (oPB, ePB) =>
                     {
                         feedBackSelected.Description = null;
-                        feedBackManager.UpdateFeedBack(feedBackSelected);
+                        try
+                        {
+                            updateCommentList();
+                        }
+                        catch (Exception ex)
+                        {
+                            Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                        }
                         baDelete.Cancel();
                     };
                     baDeleteNegativeButton.Click += (oNB, eNB) =>

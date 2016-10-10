@@ -35,8 +35,7 @@ namespace RestServiceGeoFit.Models2
 
         public int? PlaceID { get; set; }
 
-        [Required]
-        public int CreatorID { get; set; }
+        public int? CreatorID { get; set; }
 
         [Required]
         public int SportId { get; set; }

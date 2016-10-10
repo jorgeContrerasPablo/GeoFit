@@ -39,17 +39,24 @@ namespace AppGeoFit.Droid.Adapters
             TextView message = listItemView.FindViewById<TextView>(Resource.Id.ElementNoticeL_Message);
             Notice item = GetItem(position);
 
-            playerSend.Text = item.Messenger.PlayerNick;
+            playerSend.Text = item.Messenger != null? item.Messenger.PlayerNick : "";
             switch (item.Type)
             {
                 case Constants.TEAM_ADD_PLAYER:
-                    // message.Text = "Team captain: " + item.Messenger.PlayerNick + " want's add you to her/his team.";
                     message.Text = "Team captain: " + item.Messenger.PlayerNick + " want's...";
                     break;
 
                 case Constants.PLAYER_ADD_TO_A_GAME:
-                    //message.Text = "You have been added to a game. Show your current games!";   
                     message.Text = "You have been added to a game...";
+                    break;
+                case Constants.GAME_DELETED:
+                    message.Text = "A game you are...";
+                    break;
+                case Constants.GAME_UPDATED:
+                    message.Text = "The game at...";
+                    break;
+                case Constants.TEAM_DELETED:
+                    message.Text = "You have been...";
                     break;
                 default:
                     break;

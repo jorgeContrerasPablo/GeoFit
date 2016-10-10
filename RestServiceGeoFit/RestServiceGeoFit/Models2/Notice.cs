@@ -19,11 +19,9 @@ namespace RestServiceGeoFit.Models2
 
         public bool? Accepted { get; set; }
 
-        [Required]
-        public int MessengerID { get; set; }        
+        public int? MessengerID { get; set; }        
 
-        [Required]
-        public int ReceiverID { get; set; }        
+        public int? ReceiverID { get; set; }        
 
         [Required]
         public int SportID { get; set; }

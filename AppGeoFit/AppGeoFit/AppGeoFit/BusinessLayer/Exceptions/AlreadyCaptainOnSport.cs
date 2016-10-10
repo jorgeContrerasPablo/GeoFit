@@ -4,9 +4,9 @@ using System.Text;
 
 namespace AppGeoFit.BusinessLayer.Exceptions
 {
-    class AlreadyCaptainOnSport : Exception
+    public class AlreadyCaptainOnSportException : Exception
     {
-        public AlreadyCaptainOnSport(string message) : base(message){ }
+        public AlreadyCaptainOnSportException(string message) : base(message){ }
 
     }
 }

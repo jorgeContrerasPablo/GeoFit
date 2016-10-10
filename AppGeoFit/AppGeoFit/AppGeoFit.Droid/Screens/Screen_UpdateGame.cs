@@ -86,7 +86,15 @@ namespace AppGeoFit.Droid.Screens
             #region SpinnerPlaces
 
             Spinner placeSpinner = FindViewById<Spinner>(Resource.Id.UpdateGame_SpinnerPlace);
-            List<Place> places = gameManager.GetPlaces(game.SportId);
+            List<Place> places = new List<Place>();
+            try
+            {
+                places = gameManager.GetPlaces(game.SportId);
+            }
+            catch(Exception ex)
+            {
+                Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+            }
             ArrayAdapter<Place> adapter_place = new ArrayAdapter<Place>(this, Android.Resource.Layout.SimpleSpinnerItem, places);
             placeSpinner.Adapter = adapter_place;
             bool firstTimeSpinner_Place = true;
@@ -98,7 +106,15 @@ namespace AppGeoFit.Droid.Screens
                 if (!firstTimeSpinner_Place)
                 {
                     AlertDialog dialogPlaceDetails = ShowPlaceDetails(game.Place);
-                    if (feedBackManager.TotalPlaceCommentsCount((int)game.PlaceID) > 0)
+                    int totalPlaceComments = 0;
+                    try
+                    {
+                        totalPlaceComments = feedBackManager.TotalPlaceCommentsCount((int)game.PlaceID);
+                    }catch(Exception ex)
+                    {
+                        Toast.MakeText(ApplicationContext, ex.Message, ToastLength.Short).Show();
+                    }
+                    if (totalPlaceComments > 0)
                     {
                         dialogPlaceDetails.FindViewById<TextView>(Resource.Id.PlaceDetails_ShowCommentsLink).SetTextColor(Color.ParseColor("#4785F4"));
                         ImageButton aceptButton = dialogPlaceDetails.FindViewById<ImageButton>(Resource.Id.PlaceDetails_AcceptButton);
@@ -142,10 +158,6 @@ namespace AppGeoFit.Droid.Screens
                     gameManager.UpdateGame(game);
                     Toast.MakeText(ApplicationContext,
                             "Your Game has been update correctly", ToastLength.Short).Show();
-                    /* var screen_GameDetails = new Intent(this, typeof(Screen_GameDetails));
-                     screen_GameDetails.PutExtra("gameId", gameId);
-                     //  screen_AddTeamToGame.PutExtra("gameId", adapterLGames.GetItem(info.Position).GameID);
-                     StartActivity(screen_GameDetails);*/
                     Finish();
                 }
                 catch (WrongTimeException ex)

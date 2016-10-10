@@ -24,7 +24,7 @@ namespace RestServiceGeoFit.Models2
 
         public int? PlayerID { get; set; }
 
-        public int CreatorID { get; set; }
+        public int? CreatorID { get; set; }
 
         public int? TeamID { get; set; }
 

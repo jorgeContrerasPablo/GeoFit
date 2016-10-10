@@ -10,23 +10,31 @@ using System.Net.Http;
 using System.Web;
 using System.Web.Mvc;
 using System.Data.Entity.Spatial;
+using System.Text;
 
 namespace RestServiceGeoFit.Controllers
 {
     public class GameController : BaseApiController
     {
         private AppGeoFitDBContext db = new AppGeoFitDBContext("name=AppGeoFitDBContext");
-        
+        string dataBase = "GeoFitDB";
+        string authData = string.Format("{0}:{1}", Constants.UserName, Constants.PassWord);
+
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetGame(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
             }
             var gameId = new SqlParameter("@GameId", parameter1);
             string nativeSQLQuery = @"SELECT GameID, StartDate, EndDate, PlayersNum, Longitude, Latitude, Team1ID, Team2ID, PlaceID, CreatorID, SportID" +
-                                     " FROM GeoFitDB.dbo.Game" +
+                                     " FROM "+dataBase+".dbo.Game" +
                                     " WHERE GameID = @GameId;";
             var gameResult = db.Games.SqlQuery(nativeSQLQuery, gameId).FirstOrDefault();
             if (gameResult == null)
@@ -55,6 +63,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPost]
         public HttpResponseMessage CreateGame([Bind(Include = "StartDate, EndDate, PlayersNum, Longitude, Latitude, Team1ID, Team2ID, PlaceID, CreatorID,SportId")] Game game)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             List<Player> playersToAdd = game.Players.ToList();
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
@@ -78,9 +90,6 @@ namespace RestServiceGeoFit.Controllers
                 }
                 db.Games.Add(game);
                 db.SaveChanges();
-               // db.Games.Find(game.GameID);
-               // game.Players = playersToAdd;
-               // db.SaveChanges();
             }
             else
                 return BuildErrorResult(HttpStatusCode.BadRequest, "Not valid parameter.");
@@ -91,6 +100,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpDelete]
         public HttpResponseMessage DeleteGame(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             bool response = false;
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
@@ -111,6 +124,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPut]
         public HttpResponseMessage UpdateGame([Bind(Include = "Longitude, Latitude, CreatorID, PlaceID, PlayersNum, StartDate, Team1ID, Team2ID")] Game game)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             // Acces Data Base Test according to request
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -134,40 +151,27 @@ namespace RestServiceGeoFit.Controllers
 
             return BuildSuccesResult(HttpStatusCode.OK, true);
         }
-        //[System.Web.Http.HttpGet]
-        //  [Route ("api/Game/{parameter1:int}/parameter2:datetime/paraneter3:datetime")]
-        /*public HttpResponseMessage FindOnTime(int parameter1, string parameter2, string parameter3)
-        {
-            DateTime startDate = DateTime.ParseExact(parameter2, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-            DateTime endDate = DateTime.ParseExact(parameter3, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
-            if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
-            {
-                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
-            }
-            Game game = db.Games.Where(g => g.CreatorID == parameter1 && !((g.StartDate.CompareTo(startDate) <0 && g.EndDate.CompareTo(startDate) <0) || (g.StartDate.CompareTo(endDate) > 0 && g.EndDate.CompareTo(endDate) > 0 ))).FirstOrDefault<Game>();
-            if (game == null)
-            {
-                return BuildErrorResult(HttpStatusCode.NotFound, "Player with id: " + parameter1 + " don't have any game on this time.");
-            }
-            return BuildSuccesResult(HttpStatusCode.OK, true);
-
-        }*/
         [System.Web.Http.HttpGet]
         public HttpResponseMessage FindOnTime(int parameter1, string parameter2, string parameter3)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             DateTime startDate = DateTime.ParseExact(parameter2, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
             DateTime endDate = DateTime.ParseExact(parameter3, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
             }
             var playerId = new SqlParameter("@PlayerId", parameter1);
             var startDatePrameter = new SqlParameter("@StartDate", startDate);
             var endDateParameter = new SqlParameter("@EndDate", endDate);
             string nativeSQLQuery = @"SELECT GameID" +
-                                    " FROM GeoFitDB.dbo.Participate" +
+                                    " FROM " +dataBase+".dbo.Participate" +
                                     " WHERE PlayerID = @PlayerId AND GameID IN( SELECT GameID" +
-                                    " FROM GeoFitDB.dbo.Game" +
+                                    " FROM "+dataBase+".dbo.Game" +
                                     " WHERE NOT((StartDate < @StartDate AND EndDate < @StartDate) OR (StartDate > @EndDate AND EndDate > @EndDate)));";
 
             var gameIdReturn = db.Database.SqlQuery<int>(nativeSQLQuery, playerId, startDatePrameter, endDateParameter).FirstOrDefault();
@@ -180,8 +184,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetPaginationByTime(int parameter1/*page*/, int parameter2/*rows*/, int parameter3/*sportId*/)
         {
-            //int totalRows = db.Games.Count();
-            //int totalPages = (int)Math.Ceiling((double)totalRows / parameter2);
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -197,12 +203,8 @@ namespace RestServiceGeoFit.Controllers
             {
                 return BuildErrorResult(HttpStatusCode.NotFound, "There are no games on this page");
             }
-          //  Sport sport = 
-          //  Player player = 
             foreach(Game g in resultGameList)
             {
-                //g.Sport = db.Sports.Find(g.SportId);
-                // g.Creator = db.Players.Find(g.CreatorID);
                 g.Place.Games.Clear();
                 g.Sport.Games.Clear();
                 g.Creator.GamesCreated.Clear();
@@ -227,9 +229,11 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetAllPaginationByDistance(int parameter1/*page*/, int parameter2/*rows*/, int parameter3/*sportId*/, double parameter4 /*Longitude*/, double parameter5 /*Latitude*/)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
 
-            //int totalRows = db.Games.Count();
-            //int totalPages = (int)Math.Ceiling((double)totalRows / parameter2);
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -251,8 +255,6 @@ namespace RestServiceGeoFit.Controllers
 
             foreach (Game g in resultGameList)
             {               
-                //g.Sport = db.Sports.Find(g.SportId);
-                // g.Creator = db.Players.Find(g.CreatorID);
                 g.Place.Games.Clear();
                 g.Sport.Games.Clear();
                 g.Creator.GamesCreated.Clear();
@@ -289,8 +291,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetAllPaginationByNumPlayers(int parameter1/*page*/, int parameter2/*rows*/, int parameter3/*sportId*/)
         {
-            //int totalRows = db.Games.Count();
-            //int totalPages = (int)Math.Ceiling((double)totalRows / parameter2);
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -306,12 +310,8 @@ namespace RestServiceGeoFit.Controllers
             {
                 return BuildErrorResult(HttpStatusCode.NotFound, "There are no games on this page");
             }
-            //  Sport sport = 
-            //  Player player = 
             foreach (Game g in resultGameList)
             {
-                //g.Sport = db.Sports.Find(g.SportId);
-                // g.Creator = db.Players.Find(g.CreatorID);
                 g.Place.Games.Clear();
                 g.Sport.Games.Clear();
                 g.Creator.GamesCreated.Clear();
@@ -336,6 +336,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage TotalGamesCount(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             int numGames = 0;
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
@@ -353,14 +357,19 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage IsPlayerOnGame(int parameter1, int parameter2)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
             }
             var gameId = new SqlParameter("@GameId", parameter1);
             var playerId = new SqlParameter("@PlayerId", parameter2);
             string nativeSQLQuery = @"SELECT playerID" +
-                                    " FROM GeoFitDB.dbo.Participate" +
+                                    " FROM " +dataBase+".dbo.Participate" +
                                     " WHERE PlayerID = @PlayerId AND GameID = @GameId;";
             var playerIdReturn = db.Database.SqlQuery<int>(nativeSQLQuery, playerId, gameId).FirstOrDefault();
             if(playerIdReturn == 0)
@@ -373,7 +382,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage AddPlayer(int parameter1, int parameter2)
         {
-            //bool playerAdded= false;
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
@@ -391,6 +403,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPost]
         public HttpResponseMessage AddPlayers([Bind(Include = "Longitude, Latitude, CreatorID, PlaceID, PlayersNum, StartDate, Team1ID, Team2ID")] Game game)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             List<Player> playersToAdd = game.Players.ToList();
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
@@ -402,17 +418,6 @@ namespace RestServiceGeoFit.Controllers
             {
                 game = db.Games.Find(game.GameID);
                 db.Entry(game).State = EntityState.Unchanged;
-
-                /*  game = gameLl.GameLlToGame(gameLl);
-                  //game.Players.Clear();
-                  if (game.Team1ID != null)
-                      game.Team = db.Teams.Find(game.Team1ID);
-                  if (game.Team2ID != null)
-                      game.Team1 = db.Teams.Find(game.Team2ID);
-                  if (game.PlaceID != null)
-                      game.Place = db.Places.Find(game.PlaceID);
-                  game.Creator = null;
-                  game.Sport = null;*/
                 Player player;
                 foreach (Player p in playersToAdd)
                 {
@@ -422,9 +427,6 @@ namespace RestServiceGeoFit.Controllers
                     game.PlayersNum++;
                 }
                 db.SaveChanges();
-                // db.Games.Find(game.GameID);
-                // game.Players = playersToAdd;
-                // db.SaveChanges();
             }
             else
                 return BuildErrorResult(HttpStatusCode.BadRequest, "Not valid parameter.");
@@ -435,6 +437,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpPost]
         public HttpResponseMessage RemovePlayers([Bind(Include = "Longitude, Latitude, CreatorID, PlaceID, PlayersNum, StartDate, Team1ID, Team2ID")] Game game)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             List<Player> playersToRemove = game.Players.ToList();
             // Acces Data Base Test according to request
             if (this.ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
@@ -463,6 +469,10 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage FindTeamOnTime(int parameter1, string parameter2, string parameter3)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
             DateTime startDate = DateTime.ParseExact(parameter2, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
             DateTime endDate = DateTime.ParseExact(parameter3, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
@@ -479,18 +489,46 @@ namespace RestServiceGeoFit.Controllers
         }
 
         [System.Web.Http.HttpGet]
-        public HttpResponseMessage GetParticipatePlayers(int parameter1)
+        public HttpResponseMessage FindOnTimeAndPlace(int parameter1, string parameter2, string parameter3)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
+            DateTime startDate = DateTime.ParseExact(parameter2, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
+            DateTime endDate = DateTime.ParseExact(parameter3, "yyyyMMddHHmmss", CultureInfo.InvariantCulture);
             if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
             {
                 db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
             }
+            Game game = db.Games.Where(g => (g.PlaceID == parameter1) && !((g.StartDate.CompareTo(startDate) < 0 && g.EndDate.CompareTo(startDate) < 0) || (g.StartDate.CompareTo(endDate) > 0 && g.EndDate.CompareTo(endDate) > 0))).FirstOrDefault<Game>();
+            if (game == null)
+            {
+                return BuildErrorResult(HttpStatusCode.NotFound, "place with id: " + parameter1 + " don't have any game on this time.");
+            }
+            return BuildSuccesResult(HttpStatusCode.OK, game.GameID);
+
+        }
+       
+
+        [System.Web.Http.HttpGet]
+        public HttpResponseMessage GetParticipatePlayers(int parameter1)
+        {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
+            if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
+            }
             var gameId = new SqlParameter("@GameId", parameter1);
             string nativeSQLQuery = @"SELECT PlayerID, Password, PlayerNick, PlayerName, LastName," +
                                     " PhoneNum, PlayerMail, PhotoID, Level, MedOnTime, FavoriteSportID, PlayerSesion " +
-                                    " FROM GeoFitDB.dbo.Player" +
+                                    " FROM "+dataBase+".dbo.Player" +
                                     " WHERE PlayerID IN( SELECT PlayerID" +
-                                    " FROM GeoFitDB.dbo.Participate" +
+                                    " FROM "+dataBase+".dbo.Participate" +
                                     " WHERE GameID = @GameId);";
 
             var playerListReturn = db.Players.SqlQuery(nativeSQLQuery, gameId);
@@ -504,12 +542,20 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetPlacesWithOutSport()
         {
-            // var Places = db.Places.Where(p=> !p.SportId.HasValue).OrderBy(p=> p.ValuationMed);
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
+            if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
+            }
 
-            string nativeSQLQuery = @"SELECT * FROM GeoFitDB.dbo.Place WHERE SportID IS NULL;";
+            string nativeSQLQuery = @"SELECT * FROM "+dataBase+".dbo.Place WHERE SportID IS NULL;";
             var Places = db.Places.SqlQuery(nativeSQLQuery);
 
-            if (Places.Count() == 0)
+            if (!Places.Any())
             {
                 return BuildErrorResult(HttpStatusCode.NotFound, "Don't exists any place!.");
             }
@@ -520,6 +566,15 @@ namespace RestServiceGeoFit.Controllers
         [System.Web.Http.HttpGet]
         public HttpResponseMessage GetPlacesBySport(int parameter1)
         {
+            if (ControllerContext.Request.Headers.Authorization == null || !Encoding.UTF8.GetString(Convert.FromBase64String(ControllerContext.Request.Headers.Authorization.Parameter)).Equals(authData))
+            {
+                return BuildErrorResult(HttpStatusCode.Unauthorized, "Your username or password are incorrect.");
+            }
+            if (ControllerContext.RouteData.Route.RouteTemplate.Contains("apiTest"))
+            {
+                db = new AppGeoFitDBContext("name=AppGeoFitDBContextTest");
+                dataBase = "GeoFitDBTest";
+            }
             var Places = from p in db.Places
                          where p.SportId == parameter1
                          orderby p.ValuationMed
@@ -531,15 +586,10 @@ namespace RestServiceGeoFit.Controllers
             }
             foreach (Place p in Places)
             {
-                //g.Sport = db.Sports.Find(g.SportId);
-                // g.Creator = db.Players.Find(g.CreatorID);
                 p.Sport.Places.Clear();
-                // g.Creator.GamesCreated.Clear();
             }
             return BuildSuccesResult(HttpStatusCode.OK, Places);
-
-            // return BuildSuccesResult(HttpStatusCode.OK, Places);
-
+            
         }
     }
 }

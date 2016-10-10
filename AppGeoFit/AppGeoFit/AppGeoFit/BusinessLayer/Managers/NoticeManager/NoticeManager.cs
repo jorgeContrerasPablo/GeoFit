@@ -62,14 +62,43 @@ namespace AppGeoFit.BusinessLayer.Managers.NoticeManager
             return succes;
         }
 
-        public Task<int> CreateNotice(Notice notice)
+        public int CreateNotice(Notice notice)
         {
-            return restService.CreateNoticeAsync(notice);
+            int noticeId = 0;
+            try
+            {
+                noticeId = restService.CreateNoticeAsync(notice).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    throw new Exception(ex.Message);
+                }
+            }
+            return noticeId;
         }
 
-        public Task<bool> DeleteNotice(int noticeId)
+        public bool DeleteNotice(int noticeId)
         {
-            return restService.DeleteNoticeAsync(noticeId);
+            bool succes = false;
+            try
+            {
+                succes = restService.DeleteNoticeAsync(noticeId).Result;
+            }
+            catch (AggregateException aex)
+            {
+                foreach (var ex in aex.Flatten().InnerExceptions)
+                {
+                    if (ex is NoticeNotFoundException)
+                    {
+                        return false;
+                    }
+                    else
+                        throw new Exception(ex.Message);
+                }
+            }
+            return succes;
         }
 
         public ICollection<Notice> GetAllPendingNotice(int PlayerId)

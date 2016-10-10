@@ -13,6 +13,7 @@ using Xamarin.Forms;
 using Android.Content.PM;
 using Android.Views;
 using AppGeoFit.DataAccesLayer.Models;
+using Java.Util;
 
 namespace AppGeoFit.Droid.Screens
 {
@@ -128,12 +129,14 @@ namespace AppGeoFit.Droid.Screens
             placeDirection.Text = place.Direction;
             locationText.Click += (ol, el) =>
             {
-                Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse("geo:" + place.Longitude
-                                                                                           + "," + place.Latitude
-                                                                                           + "?z=16&q=" + place.Longitude
-                                                                                           + "," + place.Latitude));
+                string coordinates = Java.Lang.String.Format(Locale.English, "geo:%f,%f?z=16&q=%f,%f ", place.Longitude, place.Latitude, place.Longitude, place.Latitude);/* "geo:" + place.Longitude
+                                                                                             + "," + place.Latitude
+                                                                                             + "?z=16&q=" + place.Longitude
+                                                                                             + "," + place.Latitude);*/
+                Intent intent = new Intent(Intent.ActionView, Android.Net.Uri.Parse(coordinates));
+
                 intent.SetClassName("com.google.android.apps.maps", "com.google.android.maps.MapsActivity");
-                StartActivity(intent);
+                StartActivity (intent);
             };
             placeLink.Click += (od, ed) =>
             {
@@ -174,7 +177,7 @@ namespace AppGeoFit.Droid.Screens
             {
                 try
                 {
-                    appSession.setPlayer(playerManager.GetPlayer(appSession.getPlayer().PlayerId).Result);
+                    appSession.setPlayer(playerManager.GetPlayer(appSession.getPlayer().PlayerId));
                 }
                 catch (AggregateException aex)
                 {

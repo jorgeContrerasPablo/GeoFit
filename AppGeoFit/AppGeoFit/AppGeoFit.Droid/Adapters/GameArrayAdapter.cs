@@ -5,7 +5,6 @@ using Android.Content;
 using Android.Views;
 using Android.Widget;
 using AppGeoFit.DataAccesLayer.Models;
-using AppGeoFit.BusinessLayer.Managers.GameManager;
 
 namespace AppGeoFit.Droid.Adapters
 {

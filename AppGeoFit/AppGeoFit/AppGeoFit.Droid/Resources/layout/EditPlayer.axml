@@ -77,18 +77,28 @@
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="14dp"
             android:layout_marginRight="14dp" />
+        <TextView
+            android:text="Edit password"
+            android:gravity="center"
+            android:textAppearance="?android:attr/textAppearanceSmall"
+            android:layout_below="@+id/Edit_LabelFavoriteSport"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:id="@+id/Edit_EditPassWord"
+            android:textColor="#4785F4"
+            android:layout_marginTop="4.0dp" />
         <Button
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:text="Acept"
             android:layout_width="match_parent"
             android:layout_height="35dp"
             android:id="@+id/Edit_AceptButton"
-            android:layout_below="@+id/Edit_LabelFavoriteSport"
+            android:layout_below="@+id/Edit_EditPassWord"
             android:gravity="center"
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="45.0dp"
             android:layout_marginRight="43.0dp"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="18.0dp" />
     </RelativeLayout>
     <RelativeLayout
         android:minWidth="25px"
@@ -100,6 +110,7 @@
         <EditText
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:hint="Name"
+            android:maxLength="20"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:id="@+id/Edit_Name"
@@ -110,6 +121,7 @@
         <EditText
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:hint="LastName"
+            android:maxLength="20"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:id="@+id/Edit_LastName"
@@ -121,6 +133,7 @@
         <EditText
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:hint="Nick"
+            android:maxLength="10"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:id="@+id/Edit_Nick"
@@ -132,6 +145,7 @@
         <EditText
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:hint="600123456"
+            android:maxLength="9"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:id="@+id/Edit_PhoneNumber"
@@ -141,6 +155,7 @@
             android:layout_marginLeft="14dp"
             android:layout_marginRight="14dp" />
         <EditText
+            android:maxLength="50"
             android:textAppearance="?android:attr/textAppearanceSmall"
             android:hint="Email@GeoFit.com"
             android:inputType="textEmailAddress"
@@ -173,6 +188,6 @@
             android:layout_marginBottom="16dp"
             android:layout_marginLeft="45.0dp"
             android:layout_marginRight="43.0dp"
-            android:layout_marginTop="5dp" />
+            android:layout_marginTop="38.3dp" />
     </RelativeLayout>
 </LinearLayout>

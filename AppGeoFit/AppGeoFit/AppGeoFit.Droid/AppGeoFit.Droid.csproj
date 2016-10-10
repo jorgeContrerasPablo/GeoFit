@@ -231,10 +231,7 @@
     <Compile Include="Screens\Screen_FeedBack.cs" />
     <Compile Include="Screens\Screen_GameDetails.cs" />
     <Compile Include="Screens\Screen_Notices.cs" />
-    <Compile Include="Screens\Screen_PlaceDetails.cs" />
     <Compile Include="Screens\Screen_SelectIp.cs" />
-    <Compile Include="Screens\Screen_SelectPlayers_Captain.cs" />
-    <Compile Include="Screens\Screen_SelectPlayers_Individual.cs" />
     <Compile Include="Screens\Screen_SignUp.cs" />
     <Compile Include="Screens\Fragment_Team.cs" />
     <Compile Include="Screens\Screen_UpdateGame.cs" />
@@ -363,6 +360,9 @@
       <SubType>AndroidResource</SubType>
     </AndroidResource>
     <AndroidResource Include="Resources\layout\dialog_EditComment.axml">
+      <SubType>AndroidResource</SubType>
+    </AndroidResource>
+    <AndroidResource Include="Resources\layout\dialog_EditPassword.axml">
       <SubType>AndroidResource</SubType>
     </AndroidResource>
   </ItemGroup>

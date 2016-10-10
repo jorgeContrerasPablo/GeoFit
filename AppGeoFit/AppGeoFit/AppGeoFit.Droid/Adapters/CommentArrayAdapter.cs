@@ -34,19 +34,20 @@ namespace AppGeoFit.Droid.Adapters
             if (null == convertView)
             {
                 listItemView = inflater.Inflate(Resource.Layout.ElementCommentList, parent, false);
-                RatingBar rate = listItemView.FindViewById<RatingBar>(Resource.Id.ElementCommentList_Rating);
-                //Si es un comentario sobre la partida, no contendrá rate, por lo que se pondría invisible
-                if (item.GameID == null)
-                {                   
-                    rate.Rating = (float)item.Valuation;
-                }
-                else
-                    rate.Visibility = ViewStates.Invisible;
             }
+            RatingBar rate = listItemView.FindViewById<RatingBar>(Resource.Id.ElementCommentList_Rating);
+            //Si es un comentario sobre la partida, no contendrá rate, por lo que se pondría invisible
+            if (item.GameID == null)
+            {
+                rate.Rating = (float)item.Valuation;
+            }
+            else
+                rate.Visibility = ViewStates.Invisible;
+
             TextView creator = listItemView.FindViewById<TextView>(Resource.Id.ElementCommentList_Creator);
             TextView date = listItemView.FindViewById<TextView>(Resource.Id.ElementCommentList_Date);
-            TextView comment = listItemView.FindViewById<TextView>(Resource.Id.ElementCommentList_Comment);            
-            creator.Text = item.Creator.PlayerNick;
+            TextView comment = listItemView.FindViewById<TextView>(Resource.Id.ElementCommentList_Comment);
+            creator.Text = item.CreatorID == null ? "" : item.Creator.PlayerNick;
             date.Text = item.FeedBackDate.Day + "/" + item.FeedBackDate.Month + "/" + item.FeedBackDate.Year
                 + "  " + item.FeedBackDate.Hour + ":" + item.FeedBackDate.Minute;
             comment.Text = item.Description;

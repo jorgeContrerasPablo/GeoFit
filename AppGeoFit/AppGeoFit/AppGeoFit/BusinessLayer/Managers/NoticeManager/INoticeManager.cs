@@ -11,8 +11,8 @@ namespace AppGeoFit.BusinessLayer.Managers.NoticeManager
         INoticeManager InitiateServices(bool test);
         bool NoticeIsPending(int receiverId, int messengerId, int sportId, string type);
         ICollection<Notice>  GetAllPendingNotice(int PlayerId);
-        Task<int> CreateNotice(Notice notice);
-        Task<Boolean> DeleteNotice(int noticeId);
+        int CreateNotice(Notice notice);
+        bool DeleteNotice(int noticeId);
         bool UpdateNotice(Notice notice);
         Notice GetNotice(int noticeId);
         int TotalNoticesCount(int playerId);

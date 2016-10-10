@@ -14,8 +14,8 @@ namespace AppGeoFit.DataAccesLayer.Data.GameRestService
         Task<bool> DeleteGameAsync(int gameId);
         Task<bool> UpdateGameAsync(Game game);
         Task<int> FindOnTime(int playerId, string startDate, string endDate);
-        Task<bool> FindOnTimeAndPlace(int placeId, DateTime startDate, DateTime endDate);
-        Task<bool> FindOnTimeAndPlace(double latitude, double longitude, DateTime startDate, DateTime endDate);
+        Task<bool> FindOnTimeAndPlace(int placeId, string startDate, string endDate);
+        Task<bool> FindOnTimeAndPlace(double latitude, double longitude, string startDate, string endDate);
         Task<ICollection<Game>> GetAllPaginationByDistance(int pages, int rows, int sportId, double longitude, double latitude);
         Task<ICollection<Game>> GetPaginationByTime(int pages, int rows, int sportId);
         Task<ICollection<Game>> GetAllPaginationByNumPlayers(int pages, int rows, int sportId);
